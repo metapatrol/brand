@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>metapatrol – object SVG preview</title>
+    <link rel="stylesheet" href="./logo.css" />
+</head>
+<body>
+<div class="wrap">
+    <div class="row">
+        <div class="label">Dark</div>
+        <div class="preview dark">
+            <object id="logoDark" class="logoObj dark" data="./logo.svg" type="image/svg+xml"></object>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="label">Light</div>
+        <div class="preview light">
+            <object id="logoLight" class="logoObj light" data="./logo.svg" type="image/svg+xml"></object>
+        </div>
+    </div>
+</div>
+
+<script>
+    // CSS that will be injected INTO the SVG document (so it can override fills/strokes + animate glare)
+    function getInjectedCss(mode) {
+        const isLight = mode === "light";
+
+        // You will need these classes inside logo.svg:
+        // .mp-bg, .mp-text, .mp-token, .mp-accent, .glare-sweep
+        // (Hex values can stay as defaults; we override them here.)
+        return `
+        /* theme overrides */
+        .mp-bg     { fill: ${isLight ? "#F5F7FA" : "#0B0F14"} !important; }
+        .mp-text   { fill: ${isLight ? "#0B0F14" : "#F5F7FA"} !important; }
+        .mp-token  { fill: ${isLight ? "#0B0F14" : "#F5F7FA"} !important; }
+        .mp-stroke { stroke: ${isLight ? "#0B0F14" : "#F5F7FA"} !important; }
+        .mp-accent { fill: #22D3EE !important; stroke: #22D3EE !important; }
+
+        /* glare animation */
+        @keyframes mpGlare {
+          0%   { transform: translateX(-30px); opacity: 0; }
+          15%  { opacity: 0.35; }
+          45%  { transform: translateX(55px); opacity: 0.35; }
+          60%  { opacity: 0; }
+          100% { transform: translateX(55px); opacity: 0; }
+        }
+        .glare-sweep {
+          animation: mpGlare 2.8s ease-in-out infinite;
+          transform-origin: 0 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .glare-sweep { animation: none; }
+        }
+      `;
+    }
+
+    function injectCssIntoObject(objEl, mode) {
+        objEl.addEventListener("load", () => {
+            const svgDoc = objEl.contentDocument;
+            if (!svgDoc) {
+                console.warn("No contentDocument (CORS / blocked?).");
+                return;
+            }
+
+            // Find the root <svg>
+            const svg = svgDoc.querySelector("svg");
+            if (!svg) return;
+
+            // Insert a <style> element into the SVG (best: inside <defs>, else at top of <svg>)
+            let defs = svg.querySelector("defs");
+            if (!defs) {
+                defs = svgDoc.createElementNS("http://www.w3.org/2000/svg", "defs");
+                svg.insertBefore(defs, svg.firstChild);
+            }
+
+            // Replace if already injected
+            let styleEl = svgDoc.getElementById("mp-injected-style");
+            if (!styleEl) {
+                styleEl = svgDoc.createElementNS("http://www.w3.org/2000/svg", "style");
+                styleEl.setAttribute("id", "mp-injected-style");
+                defs.appendChild(styleEl);
+            }
+
+            styleEl.textContent = getInjectedCss(mode);
+
+            // Optional: force a consistent display size for preview
+            svg.removeAttribute("width");
+            svg.removeAttribute("height");
+            svg.style.width = "auto";
+            svg.style.height = "64px";
+            svg.style.display = "block";
+        });
+    }
+
+    injectCssIntoObject(document.getElementById("logoDark"), "dark");
+    injectCssIntoObject(document.getElementById("logoLight"), "light");
+</script>
+</body>
+</html>

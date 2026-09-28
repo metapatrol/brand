@@ -1,0 +1,4 @@
+/* The whole integration: Tailwind, fonts, tokens, patterns ... */
+@import "@metapatrol/style/tailwind.css";
+/* ... and the shadcn/ui variables, so shadcn components render in the metapatrol look. */
+@import "@metapatrol/style/shadcn.css";

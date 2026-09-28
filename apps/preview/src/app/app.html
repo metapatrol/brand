@@ -1,0 +1,281 @@
+<header class="sticky top-0 z-10 border-b border-line bg-bg/90 backdrop-blur">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
+    <span class="mp-namespace flex items-center gap-3">
+      <img class="size-7 light:hidden" src="brand/mark/metapatrol-mark-small-dark.svg" alt="" />
+      <img class="hidden size-7 light:block" src="brand/mark/metapatrol-mark-small-light.svg" alt="" />
+      <span><span class="mp-namespace-org">metapatrol / </span><span class="mp-namespace-project">brand</span></span>
+    </span>
+    <nav class="hidden gap-5 font-mono text-xs text-fg-muted md:flex">
+      <a class="text-fg-muted no-underline hover:text-fg" href="#mark">mark</a>
+      <a class="text-fg-muted no-underline hover:text-fg" href="#lockups">lockups</a>
+      <a class="text-fg-muted no-underline hover:text-fg" href="#colour">colour</a>
+      <a class="text-fg-muted no-underline hover:text-fg" href="#type">type</a>
+      <a class="text-fg-muted no-underline hover:text-fg" href="#patterns">patterns</a>
+      <a class="text-fg-muted no-underline hover:text-fg" href="#use">use</a>
+      <a class="text-fg-muted no-underline hover:text-fg" href="#downloads">downloads</a>
+    </nav>
+    <button
+      class="rounded-md border border-line-strong px-3 py-1.5 font-mono text-xs text-fg-muted hover:bg-surface-2"
+      (click)="cycleTheme()"
+    >
+      theme: {{ theme() }}
+    </button>
+  </div>
+</header>
+
+<main class="mx-auto grid max-w-6xl gap-4 px-4 py-8">
+  <!-- hero -->
+  <section class="mp-panel grid items-center gap-8 p-8 md:grid-cols-[1fr_auto] md:p-10">
+    <div class="min-w-0">
+      <img class="w-full max-w-xl light:hidden" src="brand/lockup/metapatrol-lockup-descriptor-dark.svg" alt="metapatrol — infrastructure / developer tools / autonomous systems" />
+      <img class="hidden w-full max-w-xl light:block" src="brand/lockup/metapatrol-lockup-descriptor-light.svg" alt="metapatrol — infrastructure / developer tools / autonomous systems" />
+    </div>
+    <p class="border-line font-mono text-sm leading-8 tracking-[0.18em] text-fg-muted md:border-l md:pl-8">
+      systems for a<br />more autonomous<br />world.
+      <span class="mt-3 block text-xs tracking-[0.14em] text-signal-fg">brand identity v3.1</span>
+    </p>
+  </section>
+
+  <!-- mark -->
+  <section id="mark" class="grid gap-4 md:grid-cols-[1fr_2fr]">
+    <div class="mp-panel">
+      <p class="mp-label"><span class="mp-label-index">01</span>brand mark</p>
+      <div class="grid aspect-square place-items-center rounded-lg border border-line bg-bg">
+        <img class="w-3/5 light:hidden" src="brand/mark/metapatrol-mark-dark.svg" alt="metapatrol mark" />
+        <img class="hidden w-3/5 light:block" src="brand/mark/metapatrol-mark-light.svg" alt="metapatrol mark" />
+      </div>
+      <p class="mt-3 text-sm text-fg-muted">
+        Structure in steel (dark) or graphite (light), the signal panel in cyan. Every edge is vertical or at ±30° on an isometric lattice.
+      </p>
+    </div>
+
+    <div class="mp-panel">
+      <p class="mp-label"><span class="mp-label-index">02</span>variations</p>
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        @for (cw of colourways; track cw.name) {
+          <figure class="m-0">
+            <div class="grid aspect-square place-items-center rounded-lg border border-line {{ cw.bg }}" [attr.data-theme]="cw.theme">
+              <img class="w-3/5" [src]="'brand/mark/metapatrol-mark-' + cw.name + '.svg'" alt="" />
+            </div>
+            <figcaption class="mt-2 font-mono text-xs text-fg-muted">
+              {{ cw.name }}
+              <span class="block">
+                <a [href]="'brand/mark/metapatrol-mark-' + cw.name + '.svg'" download>svg</a> ·
+                <a [href]="'brand/mark/metapatrol-mark-' + cw.name + '.png'" download>png</a>
+              </span>
+            </figcaption>
+          </figure>
+        }
+        <figure class="m-0">
+          <img class="aspect-square w-full" src="brand/app/metapatrol-app-icon.svg" alt="" />
+          <figcaption class="mt-2 font-mono text-xs text-fg-muted">
+            app icon
+            <span class="block"><a href="brand/app/metapatrol-app-icon-1024.png" download>png 1024</a></span>
+          </figcaption>
+        </figure>
+        <figure class="m-0">
+          <img class="aspect-square w-full rounded-[14%] border border-line" src="brand/app/metapatrol-avatar-light.svg" alt="" />
+          <figcaption class="mt-2 font-mono text-xs text-fg-muted">
+            github avatar
+            <span class="block"><a href="brand/app/metapatrol-avatar-light-1024.png" download>png 1024</a></span>
+          </figcaption>
+        </figure>
+      </div>
+
+      <p class="mp-label mt-6">optical sizes</p>
+      <div class="flex flex-wrap items-end gap-7 rounded-lg border border-line bg-bg p-5">
+        @for (s of sizes; track s.px) {
+          <figure class="m-0 grid justify-items-center gap-2">
+            <img class="light:hidden" [width]="s.px" [height]="s.px" [src]="'brand/mark/metapatrol-mark' + (s.file ? '-' + s.file : '') + '-dark.svg'" alt="" />
+            <img class="hidden light:block" [width]="s.px" [height]="s.px" [src]="'brand/mark/metapatrol-mark' + (s.file ? '-' + s.file : '') + '-light.svg'" alt="" />
+            <figcaption class="font-mono text-xs text-fg-muted">{{ s.px }} {{ s.label }}</figcaption>
+          </figure>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="mp-panel">
+    <p class="mp-label"><span class="mp-label-index">03</span>construction &amp; clear space</p>
+    <div class="grid gap-3 md:grid-cols-3">
+      <img class="w-full rounded-lg border border-line" src="brand/construction/construction.svg" alt="primary construction on the isometric lattice" />
+      <img class="w-full rounded-lg border border-line" src="brand/construction/construction-small.svg" alt="small construction" />
+      <img class="w-full rounded-lg border border-line" src="brand/construction/clearspace.svg" alt="clear space x around the mark" />
+    </div>
+    <p class="mt-3 text-sm text-fg-muted">
+      One gap width everywhere. <code>x</code> = the signal panel’s vertical edge = ¼ of the mark height; keep at least 1x around mark and lockups.
+      Use the favicon construction at 16 px, the small one at 20–40 px, the primary mark from 48 px.
+    </p>
+  </section>
+
+  <!-- lockups -->
+  <section id="lockups" class="mp-panel">
+    <p class="mp-label"><span class="mp-label-index">04</span>lockups</p>
+    <div class="grid gap-3 md:grid-cols-[1.4fr_1fr]">
+      <div class="grid place-items-center gap-3 rounded-lg border border-line bg-bg p-8" data-theme="dark">
+        <img class="w-full max-w-md" src="brand/lockup/metapatrol-lockup-horizontal-dark.svg" alt="" />
+      </div>
+      <div class="grid place-items-center gap-3 rounded-lg border border-line bg-bg p-8" data-theme="dark">
+        <img class="w-3/4 max-w-56" src="brand/lockup/metapatrol-lockup-stacked-dark.svg" alt="" />
+      </div>
+      <div class="grid place-items-center gap-3 rounded-lg border border-line bg-bg p-8 md:col-span-2" data-theme="light">
+        <img class="w-full max-w-md" src="brand/lockup/metapatrol-lockup-horizontal-light.svg" alt="" />
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-fg-muted">
+      Wordmark: Inter Medium, lowercase, −0.015em, as outlines. Gap between mark and wordmark: 1x. Every lockup exists in dark, light,
+      mono-white and mono-black, as SVG and PNG — see <a href="#downloads">downloads</a>.
+    </p>
+  </section>
+
+  <!-- colour -->
+  <section id="colour" class="mp-panel">
+    <p class="mp-label"><span class="mp-label-index">05</span>colour</p>
+    <p class="mb-4 text-sm text-fg-muted">
+      Semantic roles from <code>&#64;metapatrol/tokens</code>. Contrast is measured against each theme’s <code>bg</code>; every pair CI checks meets WCAG 2.2.
+    </p>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr>
+            <th class="px-2 py-2">role</th>
+            <th class="px-2 py-2">dark</th>
+            <th class="px-2 py-2">light</th>
+            <th class="hidden px-2 py-2 md:table-cell">use</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of roles; track r.role) {
+            <tr>
+              <td class="px-2 py-2 font-mono text-xs">{{ r.role }}</td>
+              <td class="px-2 py-2">
+                <span class="flex items-center gap-2">
+                  <span class="inline-block size-6 flex-none rounded-sm border border-line" [style.background]="r.dark"></span>
+                  <span class="font-mono text-xs">{{ r.dark }}</span>
+                  @if (r.darkRatio) { <span class="font-mono text-xs text-fg-subtle">{{ r.darkRatio.toFixed(1) }}:1</span> }
+                </span>
+              </td>
+              <td class="px-2 py-2">
+                <span class="flex items-center gap-2">
+                  <span class="inline-block size-6 flex-none rounded-sm border border-line" [style.background]="r.light"></span>
+                  <span class="font-mono text-xs">{{ r.light }}</span>
+                  @if (r.lightRatio) { <span class="font-mono text-xs text-fg-subtle">{{ r.lightRatio.toFixed(1) }}:1</span> }
+                </span>
+              </td>
+              <td class="hidden px-2 py-2 text-fg-muted md:table-cell">{{ r.use }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- type -->
+  <section id="type" class="mp-panel">
+    <p class="mp-label"><span class="mp-label-index">06</span>typography</p>
+    <div class="grid gap-3 md:grid-cols-2">
+      <div class="rounded-lg border border-line p-6">
+        <p class="text-3xl font-semibold leading-none">Aa <span class="text-xl font-medium">Inter</span></p>
+        <p class="mt-4 text-md text-fg-muted">abcdefghijklmnopqrstuvwxyz 0123456789</p>
+        <p class="mt-3 flex flex-wrap gap-4"><span class="font-normal">Regular</span><span class="font-medium">Medium</span><span class="font-semibold">Semibold</span><span class="font-bold">Bold</span></p>
+        <p class="mt-3 font-mono text-xs text-fg-muted">ui, web, documentation, wordmark</p>
+      </div>
+      <div class="rounded-lg border border-line p-6 font-mono">
+        <p class="text-3xl font-medium leading-none">Aa <span class="text-lg">JetBrains Mono</span></p>
+        <p class="mt-4 text-md text-fg-muted">abcdefghijklmnopqrstuvwxyz 0123456789</p>
+        <p class="mt-3 flex flex-wrap gap-4"><span class="font-normal">Regular</span><span class="font-medium">Medium</span><span class="font-bold">Bold</span></p>
+        <p class="mt-3 text-xs text-fg-muted">code, cli, identifiers, metadata, labels</p>
+      </div>
+    </div>
+    <p class="mp-label mt-6">scale</p>
+    <div class="grid gap-2">
+      @for (t of typeScale; track t.name) {
+        <div class="flex items-baseline gap-4 border-b border-line pb-2">
+          <span class="w-32 flex-none font-mono text-xs text-fg-muted">{{ t.name }} · {{ t.px }}</span>
+          <span class="truncate" [style.font-size.px]="t.px">small, composable infrastructure tools</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- patterns -->
+  <section id="patterns" class="grid gap-4 md:grid-cols-2">
+    <div class="mp-panel">
+      <p class="mp-label"><span class="mp-label-index">07</span>patterns</p>
+      <dl class="mp-kv">
+        <dt>version</dt><dd><code>0.14.2</code></dd>
+        <dt>image</dt><dd><code>registry.example/metapatrol/steward:0.14.2</code></dd>
+        <dt>state</dt><dd><span class="mp-status" data-status="success">healthy</span></dd>
+      </dl>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <span class="mp-status" data-status="success">success</span>
+        <span class="mp-status" data-status="warning">warning</span>
+        <span class="mp-status" data-status="error">error</span>
+        <span class="mp-status" data-status="info">info</span>
+        <span class="mp-status" data-status="active">active</span>
+        <span class="mp-status">idle</span>
+      </div>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <button class="mp-chip" aria-pressed="true">prod</button>
+        <button class="mp-chip">staging</button>
+        <button class="mp-chip">dev</button>
+      </div>
+      <p class="mt-4 font-mono text-xs text-fg-muted">mp-panel · mp-label · mp-kv · mp-status · mp-chip · mp-namespace</p>
+    </div>
+    <div class="mp-panel">
+      <p class="mp-label"><span class="mp-label-index">08</span>controls</p>
+      <div class="flex flex-wrap gap-2">
+        <button class="rounded-md bg-signal px-4 py-2 font-medium text-on-signal">Primary</button>
+        <button class="rounded-md border border-line-strong px-4 py-2 font-medium hover:bg-surface-2">Secondary</button>
+        <button class="rounded-md bg-error px-4 py-2 font-medium text-bg">Destructive</button>
+        <button class="rounded-md px-4 py-2 text-fg-muted hover:text-fg">Ghost</button>
+      </div>
+      <input class="mt-3 w-full rounded-md border border-line-strong bg-bg px-3 py-2" placeholder="Placeholder in fg-subtle" />
+      <div class="mt-3 rounded-md border border-line border-l-4 border-l-info bg-bg px-3 py-2 text-sm">
+        <b class="font-semibold text-info">info </b><span class="text-fg-muted">Maintenance window on Saturday.</span>
+      </div>
+      <p class="mt-3 text-sm">Links use <a href="#colour">signal-fg</a>: cyan on dark, petrol on light.</p>
+    </div>
+  </section>
+
+  <!-- use -->
+  <section id="use" class="mp-panel">
+    <p class="mp-label"><span class="mp-label-index">09</span>use it</p>
+    <div class="grid gap-3">
+      <div><p class="mb-2 font-mono text-xs text-fg-muted">angular + tailwind</p><pre>{{ snippets.angular }}</pre></div>
+      <div><p class="mb-2 font-mono text-xs text-fg-muted">react + vite + shadcn/ui</p><pre>{{ snippets.react }}</pre></div>
+      <div><p class="mb-2 font-mono text-xs text-fg-muted">sass</p><pre>{{ snippets.sass }}</pre></div>
+    </div>
+  </section>
+
+  <!-- downloads -->
+  <section id="downloads" class="mp-panel">
+    <p class="mp-label"><span class="mp-label-index">10</span>downloads</p>
+    <p class="mb-4 text-sm text-fg-muted">
+      Every file of <code>&#64;metapatrol/brand</code>. The marks are not open source: use them unchanged, see the <a href="brand/LICENSE.md">licence</a>.
+    </p>
+    @if (groups().length === 0) {
+      <p class="text-sm text-fg-subtle">No manifest found — run the build through <code>npm run build</code>.</p>
+    }
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      @for (g of groups(); track g.dir) {
+        <div class="min-w-0">
+          <p class="mb-2 font-mono text-xs text-signal-fg">{{ g.dir }}/</p>
+          <ul class="m-0 grid list-none gap-1 p-0 font-mono text-xs">
+            @for (f of g.files; track f.path) {
+              <li class="flex justify-between gap-3">
+                <a class="truncate" [href]="'brand/' + f.path" download>{{ name(f.path) }}</a>
+                <span class="flex-none text-fg-subtle">{{ size(f.size) }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  </section>
+</main>
+
+<footer class="mx-auto flex max-w-6xl flex-wrap justify-between gap-3 px-4 pb-10 font-mono text-xs tracking-[0.14em] text-fg-muted">
+  <span>metapatrol</span>
+  <span>infrastructure / developer tools / autonomous systems</span>
+</footer>

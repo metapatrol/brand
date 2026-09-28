@@ -1,0 +1,77 @@
+{
+  "$description": "Contrast every theme must meet (WCAG 2.2). Checked by `npm run check`.",
+  "rules": [
+    {
+      "fg": [
+        "fg",
+        "fg-muted",
+        "signal-fg"
+      ],
+      "bg": [
+        "bg",
+        "surface",
+        "surface-2"
+      ],
+      "min": 4.5,
+      "why": "text (1.4.3)"
+    },
+    {
+      "fg": [
+        "success",
+        "warning",
+        "error",
+        "info"
+      ],
+      "bg": [
+        "bg",
+        "surface"
+      ],
+      "min": 4.5,
+      "why": "status text (1.4.3)"
+    },
+    {
+      "fg": [
+        "fg-subtle"
+      ],
+      "bg": [
+        "bg",
+        "surface",
+        "surface-2"
+      ],
+      "min": 3,
+      "why": "non-essential text"
+    },
+    {
+      "fg": [
+        "line-strong",
+        "mark.structure"
+      ],
+      "bg": [
+        "bg",
+        "surface"
+      ],
+      "min": 3,
+      "why": "control borders and graphics (1.4.11)"
+    },
+    {
+      "fg": [
+        "on-signal"
+      ],
+      "bg": [
+        "signal"
+      ],
+      "min": 4.5,
+      "why": "text on signal fill (1.4.3)"
+    },
+    {
+      "fg": [
+        "bg"
+      ],
+      "bg": [
+        "error"
+      ],
+      "min": 4.5,
+      "why": "text on an error fill, e.g. destructive buttons (1.4.3)"
+    }
+  ]
+}

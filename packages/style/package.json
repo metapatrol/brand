@@ -1,0 +1,53 @@
+{
+  "name": "@metapatrol/style",
+  "version": "0.0.0",
+  "private": false,
+  "description": "metapatrol styles: fonts, light and dark themes, element defaults, patterns, Tailwind CSS v4 theme, shadcn/spartan mapping, Sass API.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "sass": "./dist/scss/_index.scss",
+      "style": "./dist/index.css",
+      "default": "./dist/index.css"
+    },
+    "./tailwind.css": "./dist/tailwind.css",
+    "./tailwind-theme.css": "./dist/tailwind-theme.css",
+    "./shadcn.css": "./dist/shadcn.css",
+    "./base.css": "./dist/base.css",
+    "./components.css": "./dist/components.css",
+    "./fonts.css": "./dist/fonts.css",
+    "./scss": {
+      "sass": "./dist/scss/_index.scss"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --experimental-strip-types --no-warnings=ExperimentalWarning --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@metapatrol/tokens": "^0.0.0"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^4.3.0"
+  },
+  "peerDependenciesMeta": {
+    "tailwindcss": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "postcss": "^8.5.28",
+    "sass": "^1.105.0",
+    "tailwindcss": "^4.3.3"
+  }
+}

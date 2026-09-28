@@ -1,0 +1,40 @@
+{
+  "$description": "Raw palette. Never used directly by apps; the themes map these to semantic roles.",
+  "color": {
+    "$type": "color",
+    "neutral": {
+      "0":   { "$value": "#FFFFFF", "$description": "light background" },
+      "50":  { "$value": "#F4F6F8", "$description": "light surface" },
+      "100": { "$value": "#E6EDF3", "$description": "dark text, light raised surface" },
+      "200": { "$value": "#D5DBE1", "$description": "light line" },
+      "400": { "$value": "#9AA7B4", "$description": "dark secondary text" },
+      "500": { "$value": "#748291", "$description": "subtle text, light strong line" },
+      "600": { "$value": "#5B6776", "$description": "steel: mark structure on dark, dark strong line" },
+      "700": { "$value": "#4A5563", "$description": "light secondary text" },
+      "800": { "$value": "#25303A", "$description": "dark line" },
+      "850": { "$value": "#171D25", "$description": "graphite: mark structure on light, light text, dark raised surface" },
+      "900": { "$value": "#0F1419", "$description": "dark surface" },
+      "950": { "$value": "#050607", "$description": "dark background" }
+    },
+    "cyan": {
+      "400": { "$value": "#00E5FF", "$description": "signal cyan" },
+      "700": { "$value": "#00707F", "$description": "petrol: signal as text on light backgrounds" }
+    },
+    "green": {
+      "500": { "$value": "#22C55E" },
+      "700": { "$value": "#15803D" }
+    },
+    "amber": {
+      "500": { "$value": "#F59E0B" },
+      "700": { "$value": "#B45309" }
+    },
+    "red": {
+      "500": { "$value": "#EF4444" },
+      "700": { "$value": "#B91C1C" }
+    },
+    "blue": {
+      "500": { "$value": "#3B82F6" },
+      "700": { "$value": "#1D4ED8" }
+    }
+  }
+}

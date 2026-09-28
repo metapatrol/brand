@@ -1,0 +1,78 @@
+/* Element defaults on top of the tokens. In a Tailwind build this layer comes
+   after Tailwind's preflight, so it wins over the reset; utilities still win
+   over it. */
+@layer base {
+  html {
+    font-family: var(--mp-font-family-sans);
+    background: var(--mp-bg);
+    color: var(--mp-fg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scrollbar-color: var(--mp-line-strong) transparent;
+  }
+
+  body {
+    margin: 0;
+    font-size: var(--mp-font-size-base);
+    line-height: 1.5;
+  }
+
+  a {
+    color: var(--mp-signal-fg);
+    text-underline-offset: 3px;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--mp-signal-fg);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--mp-signal);
+    color: var(--mp-on-signal);
+  }
+
+  ::placeholder {
+    color: var(--mp-fg-subtle);
+    opacity: 1;
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--mp-font-family-mono);
+    font-size: 0.925em;
+  }
+
+  pre {
+    margin: 0;
+    padding: 12px 14px;
+    overflow-x: auto;
+    background: var(--mp-surface);
+    border: 1px solid var(--mp-line);
+    border-radius: var(--mp-radius-md);
+    line-height: 1.7;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--mp-line);
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  th {
+    text-align: left;
+    font-weight: var(--mp-font-weight-medium);
+    color: var(--mp-fg-muted);
+  }
+
+  th,
+  td {
+    border-bottom: 1px solid var(--mp-line);
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "metapatrol-brand",
+  "private": true,
+  "description": "metapatrol brand: tokens, styles, assets, generator and components",
+  "license": "Apache-2.0",
+  "workspaces": [
+    "packages/tokens",
+    "packages/style",
+    "packages/brand-kit",
+    "packages/brand",
+    "examples/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+  },
+  "scripts": {
+    "check": "npm run check -w @metapatrol/tokens",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm test --workspaces --if-present",
+    "preview": "npm run preview -w @metapatrol/tokens",
+    "changeset": "changeset"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^3.0.3",
+    "@types/node": "^22.20.4",
+    "typescript": "~6.0.2"
+  }
+}

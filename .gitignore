@@ -1,1 +1,7 @@
 .idea/
+.venv/
+__pycache__/
+node_modules/
+dist/
+archive/python-generator/out/
+.angular/

@@ -1,6 +1,6 @@
 {
   "name": "@metapatrol/brand-kit",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": false,
   "description": "Generates the metapatrol brand assets from their construction: npx @metapatrol/brand-kit build.",
   "license": "Apache-2.0",
@@ -26,7 +26,7 @@
     "parity": "node --experimental-strip-types --no-warnings=ExperimentalWarning --conditions=@metapatrol/source test/parity.ts"
   },
   "dependencies": {
-    "@metapatrol/tokens": "^0.0.0",
+    "@metapatrol/tokens": "^0.1.0",
     "@resvg/resvg-js": "^2.6.2",
     "fontkit": "^2.0.4"
   },

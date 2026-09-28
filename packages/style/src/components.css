@@ -1,0 +1,95 @@
+/* metapatrol patterns that no component library ships. Plain classes, usable
+   with and without Tailwind; framework components (@metapatrol/ng) render them. */
+@layer components {
+  /* panel: the basic surface */
+  .mp-panel {
+    background: var(--mp-surface);
+    border: 1px solid var(--mp-line);
+    border-radius: var(--mp-radius-lg);
+    padding: 20px;
+  }
+
+  /* section label: "01  DEPLOYMENT" */
+  .mp-label {
+    margin: 0 0 14px;
+    font: var(--mp-font-weight-medium) var(--mp-font-size-xs) / 1.4 var(--mp-font-family-mono);
+    letter-spacing: var(--mp-font-tracking-label);
+    text-transform: uppercase;
+    color: var(--mp-fg-muted);
+  }
+  .mp-label-index {
+    margin-right: 10px;
+    color: var(--mp-signal-fg);
+  }
+
+  /* chip: filters, tags; pressed or .mp-chip-active uses the signal fill */
+  .mp-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 8px;
+    font: 11px/1.6 var(--mp-font-family-mono);
+    color: var(--mp-fg-muted);
+    background: transparent;
+    border: 1px solid var(--mp-line);
+    border-radius: 999px;
+  }
+  .mp-chip[aria-pressed="true"],
+  .mp-chip-active {
+    color: var(--mp-on-signal);
+    background: var(--mp-signal);
+    border-color: var(--mp-signal);
+  }
+
+  /* status: coloured dot plus text; data-status sets both */
+  .mp-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--mp-fg-muted);
+  }
+  .mp-status::before {
+    content: "";
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--mp-fg-subtle);
+  }
+  .mp-status[data-status="success"] { color: var(--mp-success); }
+  .mp-status[data-status="warning"] { color: var(--mp-warning); }
+  .mp-status[data-status="error"] { color: var(--mp-error); }
+  .mp-status[data-status="info"] { color: var(--mp-info); }
+  .mp-status[data-status="active"] { color: var(--mp-signal-fg); }
+  .mp-status[data-status]::before { background: currentColor; }
+
+  /* key-value list: <dl class="mp-kv"><dt>…</dt><dd>…</dd></dl> */
+  .mp-kv {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 6px 20px;
+    margin: 0;
+  }
+  .mp-kv > dt {
+    font: var(--mp-font-size-xs) / 1.9 var(--mp-font-family-mono);
+    letter-spacing: 0.06em;
+    color: var(--mp-fg-muted);
+  }
+  .mp-kv > dd {
+    margin: 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* namespace: "metapatrol / project" */
+  .mp-namespace {
+    font-weight: var(--mp-font-weight-medium);
+  }
+  .mp-namespace-org {
+    font-weight: var(--mp-font-weight-regular);
+    color: var(--mp-fg-muted);
+  }
+  .mp-namespace-project {
+    font-family: var(--mp-font-family-mono);
+  }
+}

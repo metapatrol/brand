@@ -1,0 +1,13 @@
+/* One import for Tailwind CSS v4 applications:
+
+     @import "@metapatrol/style/tailwind.css";
+
+   replaces `@import "tailwindcss";`. To pass options to Tailwind (source(),
+   prefix()), import the parts instead:
+
+     @import "tailwindcss" source("../src");
+     @import "@metapatrol/style";
+     @import "@metapatrol/style/tailwind-theme.css";                          */
+@import "tailwindcss";
+@import "./index.css";
+@import "./tailwind-theme.css";

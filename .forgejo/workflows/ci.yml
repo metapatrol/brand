@@ -1,0 +1,51 @@
+# Checks that run on every pull request, and on pushes to develop.
+#
+# Same shape as the platform repositories (mcp-gateway, oci-registry): ci.yml
+# gates pull requests, main.yml releases from main (added with the first
+# publishable package, see ROADMAP.md).
+#
+# Phase 0 of ROADMAP.md: the workspace installs, the design tokens resolve and
+# meet their contrast rules (tokens/contrast.json), and every package builds
+# and tests. Packages join through the workspace scripts; this file should not
+# need to change when they do.
+#
+# `runs-on: docker` names a runner *label*, not an image.
+name: ci
+
+# A ref is built once. Branch work is built through its pull request; develop
+# keeps a push trigger because it also receives direct pushes, and those reach
+# no pull request.
+on:
+  push:
+    branches: [develop]
+  pull_request:
+
+env:
+  # The instance uses a private CA the runner may not carry.
+  GIT_SSL_NO_VERIFY: "true"
+  # Same Node as the Angular 22 applications that consume these packages.
+  NODE_VERSION: "24"
+
+jobs:
+  check:
+    runs-on: docker
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci
+      - name: Tokens resolve and meet the contrast rules
+        run: npm run check
+      - run: npm run build
+      # The assets in packages/brand are generated but committed, so they can be
+      # reviewed in pull requests. The build is byte-reproducible; any difference
+      # means the generator or the tokens changed without regenerating them.
+      - name: Generated assets are up to date
+        run: |
+          if [ -n "$(git status --porcelain -- packages/brand)" ]; then
+            git status --short -- packages/brand
+            echo "packages/brand is out of date: run 'npm run build' and commit the result"
+            exit 1
+          fi
+      - run: npm test

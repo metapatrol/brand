@@ -1,0 +1,3 @@
+@import "@metapatrol/style/tailwind.css";
+@import "@metapatrol/style/shadcn.css";
+@source "./app.html";

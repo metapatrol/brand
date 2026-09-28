@@ -1,0 +1,6 @@
+/* @metapatrol/style without Tailwind: fonts, tokens (both themes), element
+   defaults and the metapatrol patterns. */
+@import "./fonts.css";
+@import "@metapatrol/tokens/tokens.css";
+@import "./base.css";
+@import "./components.css";

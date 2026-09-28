@@ -1,0 +1,26 @@
+{
+  "$description": "Semantic roles, dark theme. Apps and components use only these.",
+  "color": {
+    "$type": "color",
+    "bg":           { "$value": "{color.neutral.950}", "$description": "page background" },
+    "surface":      { "$value": "{color.neutral.900}", "$description": "cards, panels" },
+    "surface-2":    { "$value": "{color.neutral.850}", "$description": "raised or hovered surface" },
+    "line":         { "$value": "{color.neutral.800}", "$description": "dividers, decorative borders" },
+    "line-strong":  { "$value": "{color.neutral.600}", "$description": "borders of inputs and controls (>= 3:1)" },
+    "fg":           { "$value": "{color.neutral.100}", "$description": "primary text" },
+    "fg-muted":     { "$value": "{color.neutral.400}", "$description": "secondary text, labels, metadata" },
+    "fg-subtle":    { "$value": "{color.neutral.500}", "$description": "placeholders, disabled, non-essential text" },
+    "signal":       { "$value": "{color.cyan.400}", "$description": "signal as fill: active state, selection, the mark's panel" },
+    "signal-fg":    { "$value": "{color.cyan.400}", "$description": "signal as text or line: links, focus rings" },
+    "on-signal":    { "$value": "{color.neutral.950}", "$description": "text on a signal fill" },
+    "signal-wash":  { "$value": "#00E5FF1A", "$description": "tinted background for selected rows and items" },
+    "success":      { "$value": "{color.green.500}" },
+    "warning":      { "$value": "{color.amber.500}" },
+    "error":        { "$value": "{color.red.500}" },
+    "info":         { "$value": "{color.blue.500}", "$description": "informational notices, never links" },
+    "mark": {
+      "structure":  { "$value": "{color.neutral.600}" },
+      "signal":     { "$value": "{color.cyan.400}" }
+    }
+  }
+}

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>metapatrol themes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #7A8693; font: var(--mp-font-size-base)/1.5 var(--mp-font-family-sans); }
+  .themes { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
+  @media (max-width: 960px) { .themes { grid-template-columns: 1fr; } }
+  .theme { background: var(--mp-bg); color: var(--mp-fg); padding: 32px 24px 48px; display: grid; gap: 16px; align-content: start; min-width: 0; }
+
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--mp-line); }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 15px; }
+  .brand img { width: 26px; height: 26px; }
+  .brand .ns { color: var(--mp-fg-muted); font-weight: 400; }
+  .brand .project { font-family: var(--mp-font-family-mono); }
+  .theme-name { font: 12px var(--mp-font-family-mono); letter-spacing: var(--mp-font-tracking-label); text-transform: uppercase; color: var(--mp-fg-muted); }
+
+  .panel { background: var(--mp-surface); border: 1px solid var(--mp-line); border-radius: var(--mp-radius-lg); padding: 20px; min-width: 0; }
+  .label { font: 500 12px var(--mp-font-family-mono); letter-spacing: var(--mp-font-tracking-label); text-transform: uppercase; color: var(--mp-fg-muted); margin: 0 0 14px; }
+  .label b { color: var(--mp-signal-fg); font-weight: 500; margin-right: 10px; }
+  h2 { font-size: var(--mp-font-size-xl); font-weight: 600; margin: 0 0 4px; letter-spacing: -0.01em; }
+  p { margin: 0 0 10px; }
+  .muted { color: var(--mp-fg-muted); }
+  a { color: var(--mp-signal-fg); text-underline-offset: 3px; }
+
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  button { font: 500 var(--mp-font-size-base) var(--mp-font-family-sans); border-radius: var(--mp-radius-md); padding: 8px 14px; cursor: pointer; }
+  .primary { background: var(--mp-signal); color: var(--mp-on-signal); border: 1px solid var(--mp-signal); }
+  .secondary { background: transparent; color: var(--mp-fg); border: 1px solid var(--mp-line-strong); }
+  .ghost { background: transparent; color: var(--mp-fg-muted); border: 1px solid transparent; }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--mp-signal-fg); outline-offset: 2px; }
+  .focus { outline: 2px solid var(--mp-signal-fg); outline-offset: 2px; }
+  input { font: var(--mp-font-size-base) var(--mp-font-family-sans); color: var(--mp-fg); background: var(--mp-bg); border: 1px solid var(--mp-line-strong); border-radius: var(--mp-radius-md); padding: 8px 10px; min-width: 0; flex: 1 1 180px; }
+  input::placeholder { color: var(--mp-fg-subtle); }
+
+  table { width: 100%; border-collapse: collapse; font-size: var(--mp-font-size-sm); }
+  th { text-align: left; font: 500 11px var(--mp-font-family-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--mp-fg-muted); padding: 8px 10px; border-bottom: 1px solid var(--mp-line); }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--mp-line); }
+  tr.selected td { background: var(--mp-signal-wash); }
+  tr.hover td { background: var(--mp-surface-2); }
+  td code, .mono { font-family: var(--mp-font-family-mono); font-size: 12.5px; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; vertical-align: 1px; }
+  .s-success { color: var(--mp-success); } .s-warning { color: var(--mp-warning); } .s-error { color: var(--mp-error); } .s-info { color: var(--mp-info); }
+  .d-success { background: var(--mp-success); } .d-warning { background: var(--mp-warning); } .d-error { background: var(--mp-error); } .d-idle { background: var(--mp-fg-subtle); }
+
+  .notice { border: 1px solid var(--mp-line); border-left: 3px solid var(--mp-info); border-radius: var(--mp-radius-md); padding: 10px 12px; background: var(--mp-bg); }
+  .notice b { color: var(--mp-info); font-weight: 600; }
+  pre { margin: 0; background: var(--mp-bg); border: 1px solid var(--mp-line); border-radius: var(--mp-radius-md); padding: 12px; font: 12.5px/1.7 var(--mp-font-family-mono); color: var(--mp-fg-muted); overflow-x: auto; }
+  pre .p { color: var(--mp-signal-fg); } pre .t { color: var(--mp-fg); }
+  .chip { font: 11px var(--mp-font-family-mono); border: 1px solid var(--mp-line); border-radius: 999px; padding: 2px 8px; color: var(--mp-fg-muted); }
+  .chip.on { background: var(--mp-signal); border-color: var(--mp-signal); color: var(--mp-on-signal); }
+
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+  .sw { border: 1px solid var(--mp-line); border-radius: var(--mp-radius-md); overflow: hidden; background: var(--mp-bg); }
+  .sw i { display: block; height: 34px; border-bottom: 1px solid var(--mp-line); }
+  .sw div { padding: 6px 8px; font: 11px/1.45 var(--mp-font-family-mono); }
+  .sw .n { color: var(--mp-fg); } .sw .v, .sw .c { color: var(--mp-fg-muted); }
+</style>
+</head>
+<body>
+<div class="themes">
+  <template id="tpl">
+    <header>
+      <div class="brand"><img alt=""><span><span class="ns">metapatrol /</span> <span class="project">steward</span></span></div>
+      <span class="theme-name"></span>
+    </header>
+
+    <section class="panel">
+      <p class="label"><b>01</b>deployment</p>
+      <h2>release 0.14.2</h2>
+      <p class="muted">Rolled out to 3 of 4 environments. <a href="#">View the change log</a>.</p>
+      <div class="row" style="margin-top:14px">
+        <button class="primary">Promote</button>
+        <button class="secondary">Compare</button>
+        <button class="secondary focus">Focused</button>
+        <button class="ghost">Cancel</button>
+      </div>
+      <div class="row" style="margin-top:12px"><input placeholder="Filter by environment"><span class="chip on">prod</span><span class="chip">staging</span></div>
+    </section>
+
+    <section class="panel">
+      <p class="label"><b>02</b>environments</p>
+      <table>
+        <tr><th>name</th><th>version</th><th>state</th></tr>
+        <tr><td>prod-eu</td><td><code>0.14.2</code></td><td class="s-success"><span class="dot d-success"></span>healthy</td></tr>
+        <tr class="selected"><td>prod-us</td><td><code>0.14.2</code></td><td class="s-warning"><span class="dot d-warning"></span>degraded</td></tr>
+        <tr class="hover"><td>staging</td><td><code>0.15.0-rc.1</code></td><td class="s-error"><span class="dot d-error"></span>failed</td></tr>
+        <tr><td>dev</td><td><code>0.15.0-dev</code></td><td class="muted"><span class="dot d-idle"></span>idle</td></tr>
+      </table>
+      <p class="muted" style="margin:10px 0 0;font-size:12px">selected row: signal-wash · hovered row: surface-2</p>
+    </section>
+
+    <div class="notice"><b>info</b> <span class="muted">Maintenance window on Saturday, 02:00–03:00 UTC.</span></div>
+
+    <pre><span class="p">$</span> <span class="t">steward rollout prod-us --to 0.14.2</span>
+<span class="s-success">✓</span> manifests rendered
+<span class="s-warning">!</span> 1 pod pending</pre>
+
+    <section class="panel">
+      <p class="label"><b>03</b>semantic colours · contrast on bg</p>
+      <div class="swatches"></div>
+    </section>
+  </template>
+  <div class="theme" data-theme="dark"></div>
+  <div class="theme" data-theme="light"></div>
+</div>
+<script>
+  const ROLES = ["bg", "surface", "surface-2", "line", "line-strong", "fg", "fg-muted", "fg-subtle",
+    "signal", "signal-fg", "on-signal", "signal-wash", "success", "warning", "error", "info", "mark-structure"];
+  const lum = (hex) => {
+    const c = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+      .map((x) => (x <= 0.04045 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4));
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  };
+  const ratio = (a, b) => { const [h, l] = [lum(a), lum(b)].sort((x, y) => y - x); return (h + 0.05) / (l + 0.05); };
+  const tpl = document.getElementById("tpl");
+  for (const el of document.querySelectorAll(".theme")) {
+    const name = el.dataset.theme;
+    el.append(tpl.content.cloneNode(true));
+    el.querySelector(".brand img").src = `../../brand/mark/metapatrol-mark-small-${name}.svg`;
+    el.querySelector(".theme-name").textContent = `${name} theme`;
+    const css = getComputedStyle(el);
+    const bg = css.getPropertyValue("--mp-bg").trim();
+    const grid = el.querySelector(".swatches");
+    for (const role of ROLES) {
+      const v = css.getPropertyValue(`--mp-${role}`).trim();
+      const c = v.length === 7 && role !== "bg" ? `${ratio(v, bg).toFixed(2)}:1` : "";
+      grid.insertAdjacentHTML("beforeend",
+        `<div class="sw"><i style="background:${v}"></i><div><span class="n">${role}</span><br><span class="v">${v}</span><br><span class="c">${c || "&nbsp;"}</span></div></div>`);
+    }
+  }
+</script>
+</body>
+</html>

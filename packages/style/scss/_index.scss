@@ -1,0 +1,59 @@
+// @metapatrol/style for Sass:
+//
+//   @use "@metapatrol/style/scss" as mp;
+//
+//   .thing { color: mp.color(fg-muted); @include mp.label; }
+//   .preview { @include mp.theme(light); }      // scope a theme to a container
+//
+// The CSS (tokens, fonts, base, patterns) still comes from
+// `@import "@metapatrol/style"` or the Tailwind entry; this module adds
+// compile-time access for Sass code.
+@use "sass:map";
+@forward "tokens";
+@use "tokens";
+
+/// A semantic colour role as a runtime variable, e.g. color(signal-fg).
+@function color($role) {
+  @if not map.has-key(map.get(tokens.$themes, "dark"), "#{$role}") {
+    @error "unknown colour role '#{$role}'";
+  }
+  @return var(--mp-#{$role});
+}
+
+/// The resolved value of a role in one theme, for places that cannot use
+/// variables (e.g. Sass colour functions).
+@function raw($role, $theme: "dark") {
+  $values: map.get(tokens.$themes, "#{$theme}");
+  @if not $values {
+    @error "unknown theme '#{$theme}'";
+  }
+  @return map.get($values, "#{$role}");
+}
+
+/// Emits the --mp-* colour variables of a theme on the current selector.
+@mixin theme($name) {
+  $values: map.get(tokens.$themes, "#{$name}");
+  @if not $values {
+    @error "unknown theme '#{$name}'";
+  }
+  color-scheme: #{$name};
+  @each $role, $value in $values {
+    --mp-#{$role}: #{$value};
+  }
+}
+
+/// The section label pattern (.mp-label).
+@mixin label {
+  font: 500 tokens.$font-size-xs / 1.4 tokens.$font-family-mono;
+  letter-spacing: tokens.$font-tracking-label;
+  text-transform: uppercase;
+  color: var(--mp-fg-muted);
+}
+
+/// The panel pattern (.mp-panel).
+@mixin panel {
+  background: var(--mp-surface);
+  border: 1px solid var(--mp-line);
+  border-radius: tokens.$radius-lg;
+  padding: 20px;
+}

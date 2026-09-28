@@ -1,0 +1,215 @@
+# Releases from main: the checks again, then versions and packages, then the
+# site and the assets.
+#
+#   verify ──> release ──> deploy
+#                  └─────> carry main back to develop
+#
+# release: Changesets rather than semantic-release, because the packages version
+# independently (ROADMAP.md, release flow). Pending changesets become versions,
+# changelogs and one commit on main; `changeset publish` then publishes every
+# version the registry does not have yet, so a failed publish is repaired by
+# the next run.
+#
+# deploy: the brand preview to the root of the `brand` bucket (a Garage website
+# bucket, served at brand.s3-web.metapatrol.local) and the assets to
+# /assets/<version>/ (immutable) and /assets/latest/.
+#
+# Credentials are bound to this repository (S3_ACCESS_KEY, S3_SECRET_KEY,
+# S3_ENDPOINT); AUTOMATION_TOKEN comes from the organisation and needs
+# write:package. A missing credential skips its step with a message instead of
+# failing: the repository is not broken, it is merely not publishing.
+#
+# `runs-on: docker` names a runner *label*, not an image.
+name: main
+
+on:
+  push:
+    branches: [main]
+
+env:
+  # The instance uses a private CA the runner may not carry.
+  GIT_SSL_NO_VERIFY: "true"
+  NODE_VERSION: "24"
+  BUCKET: brand
+
+jobs:
+  verify:
+    # The version commit this workflow pushes would start it again; that run has
+    # nothing to do.
+    if: ${{ !startsWith(github.event.head_commit.message, 'release:') }}
+    runs-on: docker
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+      - name: Generated assets are up to date
+        run: |
+          if [ -n "$(git status --porcelain -- packages/brand)" ]; then
+            git status --short -- packages/brand
+            echo "packages/brand is out of date: run 'npm run build' and commit the result"
+            exit 1
+          fi
+      - run: npm test
+
+  release:
+    needs: verify
+    runs-on: docker
+    outputs:
+      brand-version: ${{ steps.versions.outputs.brand }}
+    env:
+      AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
+      GIT_AUTHOR_NAME: automation
+      GIT_AUTHOR_EMAIL: automation@forge.metapatrol.com
+      GIT_COMMITTER_NAME: automation
+      GIT_COMMITTER_EMAIL: automation@forge.metapatrol.com
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: https://data.forgejo.org/actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci
+
+      - name: Git and npm credentials
+        run: |
+          if [ -z "${AUTOMATION_TOKEN:-}" ]; then
+            echo "AUTOMATION_TOKEN is not set - versions and packages are skipped"
+            exit 0
+          fi
+          cat > /tmp/git-askpass.sh << 'ASKPASS'
+          #!/bin/sh
+          case "$1" in
+            Username*) echo automation ;;
+            Password*) echo "$AUTOMATION_TOKEN" ;;
+          esac
+          ASKPASS
+          chmod +x /tmp/git-askpass.sh
+          echo "GIT_ASKPASS=/tmp/git-askpass.sh" >> "$GITHUB_ENV"
+          # The organisation's npm registry on this forge. Written here, never in a
+          # package.json, so moving to npmjs later is a change to this step only.
+          registry="${GITHUB_SERVER_URL}/api/packages/${GITHUB_REPOSITORY_OWNER}/npm/"
+          {
+            echo "@metapatrol:registry=${registry}"
+            echo "//${registry#*://}:_authToken=\${AUTOMATION_TOKEN}"
+            # The private CA again; see GIT_SSL_NO_VERIFY above.
+            echo "strict-ssl=false"
+          } > "$HOME/.npmrc"
+
+      - name: Versions from pending changesets
+        if: env.AUTOMATION_TOKEN != ''
+        run: |
+          if ! ls .changeset/*.md 2>/dev/null | grep -v README.md >/dev/null; then
+            echo "no pending changesets"
+            exit 0
+          fi
+          npx changeset version
+          # changeset does not touch the lockfile; the next `npm ci` would refuse it.
+          npm install --package-lock-only --no-audit --no-fund
+          git add -A
+          git commit -m "release: version packages"
+          git push origin HEAD:refs/heads/main
+
+      - name: Publish what the registry does not have
+        if: env.AUTOMATION_TOKEN != ''
+        run: |
+          npm run build
+          npx changeset publish
+          git push origin --tags
+
+      - id: versions
+        run: echo "brand=$(node -p "require('./packages/brand/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      # A fast-forward when possible, a merge when develop has moved on. Housekeeping
+      # either way, so a failure to sync does not fail the release.
+      - name: Carry the release commit back to develop
+        if: env.AUTOMATION_TOKEN != ''
+        continue-on-error: true
+        run: |
+          if [ -z "$(git ls-remote --heads origin develop)" ]; then
+            echo "no develop branch on the remote; nothing to carry"
+            exit 0
+          fi
+          git fetch origin \
+            "+refs/heads/main:refs/remotes/origin/main" \
+            "+refs/heads/develop:refs/remotes/origin/develop"
+          if git merge-base --is-ancestor origin/main origin/develop; then
+            echo "develop already contains main; nothing to carry"
+            exit 0
+          fi
+          if git merge-base --is-ancestor origin/develop origin/main; then
+            git push origin origin/main:refs/heads/develop
+            echo "develop fast-forwarded to $(git rev-parse --short origin/main)"
+            exit 0
+          fi
+          echo "develop has commits main does not; merging instead."
+          git checkout -q -B carry-to-develop origin/develop
+          if git merge --no-ff -m "chore: carry main into develop after the release" origin/main; then
+            git push origin HEAD:refs/heads/develop
+          else
+            git merge --abort
+            echo "the merge conflicts, so nothing was pushed."
+            echo "Open a pull request from main into develop and resolve it there."
+            exit 1
+          fi
+
+  deploy:
+    needs: release
+    runs-on: docker
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_KEY }}
+      S3_ENDPOINT: ${{ vars.S3_ENDPOINT }}
+      AWS_DEFAULT_REGION: garage
+      VERSION: ${{ needs.release.outputs.brand-version }}
+    steps:
+      # main as it is now, including the version commit the release job pushed
+      - uses: https://data.forgejo.org/actions/checkout@v6
+        with:
+          ref: main
+      - uses: https://data.forgejo.org/actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci
+      - run: npm run build
+
+      - name: Upload the site and the assets
+        run: |
+          set -eu
+          if [ -z "${S3_ENDPOINT:-}" ] || [ -z "${AWS_ACCESS_KEY_ID:-}" ] || [ -z "${AWS_SECRET_ACCESS_KEY:-}" ]; then
+            echo "S3_ENDPOINT, S3_ACCESS_KEY or S3_SECRET_KEY is not set - nothing is deployed"
+            exit 0
+          fi
+          : "${VERSION:?no brand version from the release job}"
+          command -v aws >/dev/null || (apt-get update -qq && apt-get install -y -qq awscli)
+          s3() { aws s3 "$@" --endpoint-url "$S3_ENDPOINT" --no-verify-ssl; }
+
+          # The preview at the root. --delete keeps it exact, --exclude keeps the
+          # asset tree out of that. Short cache: the page changes with every release.
+          s3 sync apps/preview/dist/preview/browser/ "s3://$BUCKET/" \
+            --delete --exclude "assets/*" \
+            --cache-control "public, max-age=300"
+
+          # Assets of a version never change once uploaded: a version that is
+          # already there is left alone, so a rerun cannot alter what others use.
+          if [ -n "$(s3 ls "s3://$BUCKET/assets/$VERSION/" 2>/dev/null)" ]; then
+            echo "assets/$VERSION/ exists; left unchanged"
+          else
+            for dir in mark wordmark lockup app construction; do
+              s3 sync "packages/brand/$dir/" "s3://$BUCKET/assets/$VERSION/$dir/" \
+                --cache-control "public, max-age=31536000, immutable"
+            done
+            s3 cp packages/brand/LICENSE.md "s3://$BUCKET/assets/$VERSION/LICENSE.md"
+          fi
+
+          # latest follows every release; for places that should update themselves.
+          for dir in mark wordmark lockup app construction; do
+            s3 sync "packages/brand/$dir/" "s3://$BUCKET/assets/latest/$dir/" \
+              --delete --cache-control "public, max-age=300"
+          done
+          s3 cp packages/brand/LICENSE.md "s3://$BUCKET/assets/latest/LICENSE.md"
+          echo "deployed the preview and assets $VERSION"

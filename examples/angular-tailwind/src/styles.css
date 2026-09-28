@@ -1,0 +1,2 @@
+/* The whole integration: replaces `@import 'tailwindcss';`. */
+@import '@metapatrol/style/tailwind.css';

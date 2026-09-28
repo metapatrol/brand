@@ -1,0 +1,3 @@
+/dist
+# copied from @metapatrol/brand by scripts/copy-brand.mjs
+/public/brand

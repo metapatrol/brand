@@ -1,0 +1,6 @@
+@use "pkg:@metapatrol/style" as mp;
+
+.label { @include mp.label; }
+.panel { @include mp.panel; color: mp.color(fg-muted); }
+.preview { @include mp.theme(light); }
+.raw { border-color: mp.raw(line, light); }

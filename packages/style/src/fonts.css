@@ -1,0 +1,11 @@
+/* Inter and JetBrains Mono, served with the application rather than from a
+   font service: works offline and under a CSP that allows fonts from self only.
+   Every subset is declared with a unicode-range; browsers fetch only what a
+   page uses. */
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/700.css";

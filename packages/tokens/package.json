@@ -1,0 +1,33 @@
+{
+  "name": "@metapatrol/tokens",
+  "version": "0.0.0",
+  "private": false,
+  "description": "metapatrol design tokens: DTCG source, light and dark themes, contrast rules, CSS/SCSS/JSON outputs and a resolver API.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "@metapatrol/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./tokens.css": "./dist/tokens.css",
+    "./tokens.scss": "./dist/_tokens.scss",
+    "./tokens.json": "./dist/tokens.json",
+    "./tokens/*": "./tokens/*"
+  },
+  "bin": {
+    "metapatrol-tokens": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "src",
+    "tokens"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node dist/cli.js emit dist",
+    "check": "node --experimental-strip-types --no-warnings=ExperimentalWarning src/cli.ts check",
+    "test": "node --experimental-strip-types --no-warnings=ExperimentalWarning --test test/*.test.ts",
+    "preview": "node --experimental-strip-types --no-warnings=ExperimentalWarning src/cli.ts css preview/tokens.css"
+  }
+}

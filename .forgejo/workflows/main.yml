@@ -11,7 +11,7 @@
 # the next run.
 #
 # deploy: the brand preview to the root of the `brand` bucket (a Garage website
-# bucket, served at brand.s3-web.metapatrol.local) and the assets to
+# bucket, served at https://brand.metapatrol.local) and the assets to
 # /assets/<version>/ (immutable) and /assets/latest/.
 #
 # Credentials are bound to this repository (S3_ACCESS_KEY, S3_SECRET_KEY,
@@ -35,25 +35,24 @@ env:
 jobs:
   verify:
     # The version commit this workflow pushes would start it again; that run has
-    # nothing to do.
-    if: ${{ !startsWith(github.event.head_commit.message, 'release:') }}
+    # nothing to do. Matched exactly, so a squash-merged pull request titled
+    # "release: ..." still releases.
+    if: "${{ !startsWith(github.event.head_commit.message, 'release: version packages') }}"
     runs-on: docker
     steps:
       - uses: https://data.forgejo.org/actions/checkout@v6
       - uses: https://data.forgejo.org/actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - run: npm ci
-      - run: npm run check
-      - run: npm run build
-      - name: Generated assets are up to date
-        run: |
-          if [ -n "$(git status --porcelain -- packages/brand)" ]; then
-            git status --short -- packages/brand
-            echo "packages/brand is out of date: run 'npm run build' and commit the result"
-            exit 1
-          fi
-      - run: npm test
+      # The same targets as `make ci`, one step each so a failure names its stage.
+      - run: make install
+      - name: Tokens resolve and meet the contrast rules
+        run: make check
+      - run: make build
+      # packages/brand is generated but committed so it can be reviewed; the build
+      # is byte-reproducible, so a difference means it was not regenerated.
+      - run: make assets-check
+      - run: make test
 
   release:
     needs: verify
@@ -73,7 +72,7 @@ jobs:
       - uses: https://data.forgejo.org/actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - run: npm ci
+      - run: make install
 
       - name: Git and npm credentials
         run: |
@@ -117,7 +116,7 @@ jobs:
       - name: Publish what the registry does not have
         if: env.AUTOMATION_TOKEN != ''
         run: |
-          npm run build
+          make build-packages
           npx changeset publish
           git push origin --tags
 
@@ -174,8 +173,8 @@ jobs:
       - uses: https://data.forgejo.org/actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - run: npm ci
-      - run: npm run build
+      - run: make install
+      - run: make build
 
       - name: Upload the site and the assets
         run: |

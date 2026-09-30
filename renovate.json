@@ -1,0 +1,54 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":prImmediately"
+  ],
+  "baseBranchPatterns": [
+    "develop"
+  ],
+  "automergeStrategy": "fast-forward",
+  "labels": [
+    "dependencies"
+  ],
+  "packageRules": [
+    {
+      "description": "Automerge patch updates",
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "Angular pins the toolchain it compiles with: @angular/build and @angular/compiler-cli 22 declare `typescript: >=6.0 <6.1` as a peer dependency, and the examples and the preview share the workspace's TypeScript. A major bump is not an upgrade until Angular moves; minor and patch updates still flow.",
+      "matchManagers": [
+        "npm"
+      ],
+      "matchPackageNames": [
+        "typescript"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "@types/node follows the oldest Node.js the packages support (engines: ^22.22.3), not the newest: types for a later Node would let code compile that fails on 22.",
+      "matchManagers": [
+        "npm"
+      ],
+      "matchPackageNames": [
+        "@types/node"
+      ],
+      "allowedVersions": "<23"
+    },
+    {
+      "description": "One pull request for Tailwind CSS: tailwindcss, @tailwindcss/postcss and @tailwindcss/vite are released together and the style package's tests compile with them.",
+      "matchPackageNames": [
+        "tailwindcss",
+        "@tailwindcss/**"
+      ],
+      "groupName": "tailwind css"
+    }
+  ]
+}

@@ -141,9 +141,10 @@ jobs:
           # The section semantic-release wrote for this version: from its heading
           # ("# [0.2.0](…)" for a minor, "## [0.2.1](…)" for a patch) to the next.
           # The heading's own version is compared exactly: its compare link names
-          # the previous version too.
+          # the previous version too. No interval expressions ({1,2}): the runner's
+          # awk is mawk, which does not support them and silently matches nothing.
           BODY=$(awk -v v="$VERSION" '
-            /^#{1,2} \[?[0-9]+\.[0-9]+\.[0-9]+/ {
+            /^##? \[?[0-9]+\.[0-9]+\.[0-9]+/ {
               if (found) exit
               h = $0; sub(/^#+ \[?/, "", h); sub(/[] (].*$/, "", h)
               if (h == v) { found = 1; next }

@@ -25,7 +25,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "node scripts/set-version.mjs ${nextRelease.version}",
+        "prepareCmd": "sed -i -E 's#https?://[^/)]+/metapatrol/brand/#https://forgejo.metapatrol.local/metapatrol/brand/#g' CHANGELOG.md && node scripts/set-version.mjs ${nextRelease.version}",
         "successCmd": "sh .forgejo/trigger-release.sh ${nextRelease.gitTag}"
       }
     ],

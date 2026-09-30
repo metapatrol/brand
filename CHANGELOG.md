@@ -1,9 +1,9 @@
-## [0.1.1](http://forgejo-http.forgejo.svc.cluster.local:3000/metapatrol/brand/compare/v0.1.0...v0.1.1) (2026-09-30)
+## [0.1.1](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.1.0...v0.1.1) (2026-09-30)
 
 
 ### Bug Fixes
 
-* **packages:** ship a README with tokens, brand-kit and brand ([86d446c](http://forgejo-http.forgejo.svc.cluster.local:3000/metapatrol/brand/commit/86d446c6cd960582064a819a5357f1bc12787a5d))
+* **packages:** ship a README with tokens, brand-kit and brand ([86d446c](https://forgejo.metapatrol.local/metapatrol/brand/commit/86d446c6cd960582064a819a5357f1bc12787a5d))
 
 # 0.1.0 (2026-09-28)
 

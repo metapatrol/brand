@@ -14,7 +14,8 @@
     "app",
     "construction",
     "LICENSE.md",
-    "TRADEMARKS.md"
+    "TRADEMARKS.md",
+    "README.md"
   ],
   "scripts": {
     "build": "node ../brand-kit/dist/cli.js build --out ."

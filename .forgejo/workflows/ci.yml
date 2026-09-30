@@ -34,18 +34,12 @@ jobs:
       - uses: https://data.forgejo.org/actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - run: npm ci
+      # The same targets as `make ci`, one step each so a failure names its stage.
+      - run: make install
       - name: Tokens resolve and meet the contrast rules
-        run: npm run check
-      - run: npm run build
-      # The assets in packages/brand are generated but committed, so they can be
-      # reviewed in pull requests. The build is byte-reproducible; any difference
-      # means the generator or the tokens changed without regenerating them.
-      - name: Generated assets are up to date
-        run: |
-          if [ -n "$(git status --porcelain -- packages/brand)" ]; then
-            git status --short -- packages/brand
-            echo "packages/brand is out of date: run 'npm run build' and commit the result"
-            exit 1
-          fi
-      - run: npm test
+        run: make check
+      - run: make build
+      # packages/brand is generated but committed so it can be reviewed; the build
+      # is byte-reproducible, so a difference means it was not regenerated.
+      - run: make assets-check
+      - run: make test

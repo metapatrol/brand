@@ -86,17 +86,19 @@ review; CI fails when it does not match what the generator writes.
 ## releases
 
 Work goes to `develop` through pull requests; `ci.yml` checks every pull request
-and every push to `develop`.
+and every push to `develop`. A pull request from `develop` to `main` releases, if
+its commits call for it:
 
-1. A change to a published package comes with a changeset: `make changeset`
-   (bump rules in [.changeset/README.md](.changeset/README.md)).
-2. A pull request from `develop` to `main` releases. `main.yml` runs the checks,
-   turns the pending changesets into versions and changelogs (one
-   `release: version packages` commit on `main`), publishes to the registry,
-   tags, carries `main` back to `develop`, and deploys the brand site and the
-   assets (`/assets/<version>/`, `/assets/latest/`) to the `brand` bucket.
+- **One version for all four packages**, from the conventional commits since the
+  last `vX.Y.Z` tag: `fix:` → patch, `feat:` → minor, breaking → minor while 0.x;
+  `chore:`, `ci:`, `build:`, `docs:` alone release nothing.
+- `main.yml` runs semantic-release: `CHANGELOG.md`, the versions, a
+  `chore: release vX.Y.Z` commit and the tag; then carries `main` back to `develop`.
+- `release.yml` publishes the tag: the npm packages, a Forgejo release with the
+  changelog section and `metapatrol-brand-X.Y.Z.zip`, and the brand site and assets
+  (`/assets/X.Y.Z/`, `/assets/latest/`).
 
-`make release-status` shows what the next release would version.
+How it works and what it needs: [.forgejo/README.md](.forgejo/README.md).
 
 ## licence
 

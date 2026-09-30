@@ -1,23 +1,13 @@
-# Releases from main: the checks again, then versions and packages, then the
-# site and the assets.
+# Pushes to main: the checks again, then semantic-release decides whether the
+# commits since the last tag warrant a version.
 #
-#   verify ──> release ──> deploy
-#                  └─────> carry main back to develop
+#   config, secret-scan ──> verify ──> semantic-release ──> carry to develop
 #
-# release: Changesets rather than semantic-release, because the packages version
-# independently (ROADMAP.md, release flow). Pending changesets become versions,
-# changelogs and one commit on main; `changeset publish` then publishes every
-# version the registry does not have yet, so a failed publish is repaired by
-# the next run.
-#
-# deploy: the brand preview to the root of the `brand` bucket (a Garage website
-# bucket, served at https://brand.metapatrol.local) and the assets to
-# /assets/<version>/ (immutable) and /assets/latest/.
-#
-# Credentials are bound to this repository (S3_ACCESS_KEY, S3_SECRET_KEY,
-# S3_ENDPOINT); AUTOMATION_TOKEN comes from the organisation and needs
-# write:package. A missing credential skips its step with a message instead of
-# failing: the repository is not broken, it is merely not publishing.
+# semantic-release writes CHANGELOG.md, sets the version on all four published
+# packages (scripts/set-version.mjs, one version for all), commits
+# `chore: release vX.Y.Z`, tags `vX.Y.Z` and dispatches release.yml, which
+# publishes. Publishing is not done here: a tag can be released again, or by
+# hand, without a push to main. See .forgejo/README.md.
 #
 # `runs-on: docker` names a runner *label*, not an image.
 name: main
@@ -27,59 +17,99 @@ on:
     branches: [main]
 
 env:
-  # The instance uses a private CA the runner may not carry.
   GIT_SSL_NO_VERIFY: "true"
   NODE_VERSION: "24"
-  BUCKET: brand
+  # From the runner, not hardcoded: the workflows are meant to be copied between
+  # repositories without an edit. Nothing here is called FORGEJO_TOKEN; see
+  # .forgejo/README.md.
+  FORGEJO_BASE_URL: ${{ github.server_url }}
+  FORGEJO_REPO: ${{ github.repository }}
 
 jobs:
+  # Whether this installation may release. Without AUTOMATION_TOKEN the repository
+  # is not broken, merely not set up to release, so the release is skipped rather
+  # than failed: a push that goes red for configuration nobody has got round to
+  # only teaches people to ignore red.
+  config:
+    # Nothing to do for semantic-release's own commit: it changes the changelog
+    # and the versions, and the tag it carries is release.yml's business.
+    if: "${{ !startsWith(github.event.head_commit.message, 'chore: release v') }}"
+    runs-on: docker
+    outputs:
+      release: ${{ steps.check.outputs.release }}
+    steps:
+      - id: check
+        env:
+          AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
+        run: |
+          release=false
+          if [ -n "$AUTOMATION_TOKEN" ]; then
+            release=true
+          else
+            echo "AUTOMATION_TOKEN is not set - skipping semantic-release"
+          fi
+          for out in "$GITHUB_OUTPUT" "$FORGEJO_OUTPUT"; do
+            [ -n "$out" ] || continue
+            echo "release=$release" >> "$out"
+          done
+          echo "release=$release"
+
+  secret-scan:
+    if: "${{ !startsWith(github.event.head_commit.message, 'chore: release v') }}"
+    runs-on: docker
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v6
+      - name: Scan for committed credentials
+        run: |
+          M=""
+          for t in curl tar make; do command -v $t >/dev/null || M="$M $t"; done
+          [ -z "$M" ] || (apt-get update -qq && apt-get install -y -qq $M)
+          make secret-scan
+
   verify:
-    # The version commit this workflow pushes would start it again; that run has
-    # nothing to do. Matched exactly, so a squash-merged pull request titled
-    # "release: ..." still releases.
-    if: "${{ !startsWith(github.event.head_commit.message, 'release: version packages') }}"
+    needs: secret-scan
     runs-on: docker
     steps:
       - uses: https://data.forgejo.org/actions/checkout@v6
       - uses: https://data.forgejo.org/actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      # The same targets as `make ci`, one step each so a failure names its stage.
       - run: make install
-      - name: Tokens resolve and meet the contrast rules
-        run: make check
+      - run: make check
       - run: make build
-      # packages/brand is generated but committed so it can be reviewed; the build
-      # is byte-reproducible, so a difference means it was not regenerated.
       - run: make assets-check
       - run: make test
 
-  release:
-    needs: verify
+  semantic-release:
+    needs: [verify, config]
+    if: needs.config.outputs.release == 'true'
     runs-on: docker
-    outputs:
-      brand-version: ${{ steps.versions.outputs.brand }}
     env:
       AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
-      GIT_AUTHOR_NAME: automation
-      GIT_AUTHOR_EMAIL: automation@forge.metapatrol.com
-      GIT_COMMITTER_NAME: automation
-      GIT_COMMITTER_EMAIL: automation@forge.metapatrol.com
     steps:
       - uses: https://data.forgejo.org/actions/checkout@v6
         with:
+          # semantic-release reads the whole history to work out what the
+          # commits since the last tag amount to.
           fetch-depth: 0
       - uses: https://data.forgejo.org/actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - run: make install
-
-      - name: Git and npm credentials
+      - name: Decide and tag a version
+        env:
+          GIT_AUTHOR_NAME: automation
+          GIT_AUTHOR_EMAIL: automation@forge.metapatrol.com
+          GIT_COMMITTER_NAME: automation
+          GIT_COMMITTER_EMAIL: automation@forge.metapatrol.com
+          NODE_TLS_REJECT_UNAUTHORIZED: "0"
         run: |
-          if [ -z "${AUTOMATION_TOKEN:-}" ]; then
-            echo "AUTOMATION_TOKEN is not set - versions and packages are skipped"
-            exit 0
-          fi
+          # scripts/set-version.mjs updates the lockfile, which needs the workspace installed
+          npm ci --no-audit --no-fund
+          npm install --no-save --no-audit --no-fund \
+            semantic-release \
+            @semantic-release/changelog \
+            @semantic-release/exec \
+            @semantic-release/git
           cat > /tmp/git-askpass.sh << 'ASKPASS'
           #!/bin/sh
           case "$1" in
@@ -88,47 +118,26 @@ jobs:
           esac
           ASKPASS
           chmod +x /tmp/git-askpass.sh
-          echo "GIT_ASKPASS=/tmp/git-askpass.sh" >> "$GITHUB_ENV"
-          # The organisation's npm registry on this forge. Written here, never in a
-          # package.json, so moving to npmjs later is a change to this step only.
-          registry="${GITHUB_SERVER_URL}/api/packages/${GITHUB_REPOSITORY_OWNER}/npm/"
-          {
-            echo "@metapatrol:registry=${registry}"
-            echo "//${registry#*://}:_authToken=\${AUTOMATION_TOKEN}"
-            # The private CA again; see GIT_SSL_NO_VERIFY above.
-            echo "strict-ssl=false"
-          } > "$HOME/.npmrc"
+          export GIT_ASKPASS=/tmp/git-askpass.sh
+          npx semantic-release
 
-      - name: Versions from pending changesets
-        if: env.AUTOMATION_TOKEN != ''
-        run: |
-          if ! ls .changeset/*.md 2>/dev/null | grep -v README.md >/dev/null; then
-            echo "no pending changesets"
-            exit 0
-          fi
-          npx changeset version
-          # changeset does not touch the lockfile; the next `npm ci` would refuse it.
-          npm install --package-lock-only --no-audit --no-fund
-          git add -A
-          git commit -m "release: version packages"
-          git push origin HEAD:refs/heads/main
-
-      - name: Publish what the registry does not have
-        if: env.AUTOMATION_TOKEN != ''
-        run: |
-          make build-packages
-          npx changeset publish
-          git push origin --tags
-
-      - id: versions
-        run: echo "brand=$(node -p "require('./packages/brand/package.json').version")" >> "$GITHUB_OUTPUT"
-
-      # A fast-forward when possible, a merge when develop has moved on. Housekeeping
-      # either way, so a failure to sync does not fail the release.
+      # semantic-release commits the changelog and the versions onto main and
+      # nowhere else. Work is bundled on develop, so without this every release
+      # leaves develop behind and the next release pull request opens with a
+      # conflict in exactly the lines a human has no business resolving.
+      #
+      # A fast-forward when possible, a merge when develop has moved on — the only
+      # move that keeps both sides and rewrites neither. Housekeeping either way,
+      # so a failure to sync does not fail the release.
       - name: Carry the release commit back to develop
-        if: env.AUTOMATION_TOKEN != ''
         continue-on-error: true
+        env:
+          GIT_AUTHOR_NAME: automation
+          GIT_AUTHOR_EMAIL: automation@forge.metapatrol.com
+          GIT_COMMITTER_NAME: automation
+          GIT_COMMITTER_EMAIL: automation@forge.metapatrol.com
         run: |
+          export GIT_ASKPASS=/tmp/git-askpass.sh
           if [ -z "$(git ls-remote --heads origin develop)" ]; then
             echo "no develop branch on the remote; nothing to carry"
             exit 0
@@ -149,66 +158,10 @@ jobs:
           git checkout -q -B carry-to-develop origin/develop
           if git merge --no-ff -m "chore: carry main into develop after the release" origin/main; then
             git push origin HEAD:refs/heads/develop
+            echo "develop merged with main at $(git rev-parse --short origin/main)"
           else
             git merge --abort
             echo "the merge conflicts, so nothing was pushed."
             echo "Open a pull request from main into develop and resolve it there."
             exit 1
           fi
-
-  deploy:
-    needs: release
-    runs-on: docker
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_KEY }}
-      S3_ENDPOINT: ${{ vars.S3_ENDPOINT }}
-      AWS_DEFAULT_REGION: garage
-      VERSION: ${{ needs.release.outputs.brand-version }}
-    steps:
-      # main as it is now, including the version commit the release job pushed
-      - uses: https://data.forgejo.org/actions/checkout@v6
-        with:
-          ref: main
-      - uses: https://data.forgejo.org/actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - run: make install
-      - run: make build
-
-      - name: Upload the site and the assets
-        run: |
-          set -eu
-          if [ -z "${S3_ENDPOINT:-}" ] || [ -z "${AWS_ACCESS_KEY_ID:-}" ] || [ -z "${AWS_SECRET_ACCESS_KEY:-}" ]; then
-            echo "S3_ENDPOINT, S3_ACCESS_KEY or S3_SECRET_KEY is not set - nothing is deployed"
-            exit 0
-          fi
-          : "${VERSION:?no brand version from the release job}"
-          command -v aws >/dev/null || (apt-get update -qq && apt-get install -y -qq awscli)
-          s3() { aws s3 "$@" --endpoint-url "$S3_ENDPOINT" --no-verify-ssl; }
-
-          # The preview at the root. --delete keeps it exact, --exclude keeps the
-          # asset tree out of that. Short cache: the page changes with every release.
-          s3 sync apps/preview/dist/preview/browser/ "s3://$BUCKET/" \
-            --delete --exclude "assets/*" \
-            --cache-control "public, max-age=300"
-
-          # Assets of a version never change once uploaded: a version that is
-          # already there is left alone, so a rerun cannot alter what others use.
-          if [ -n "$(s3 ls "s3://$BUCKET/assets/$VERSION/" 2>/dev/null)" ]; then
-            echo "assets/$VERSION/ exists; left unchanged"
-          else
-            for dir in mark wordmark lockup app construction; do
-              s3 sync "packages/brand/$dir/" "s3://$BUCKET/assets/$VERSION/$dir/" \
-                --cache-control "public, max-age=31536000, immutable"
-            done
-            s3 cp packages/brand/LICENSE.md "s3://$BUCKET/assets/$VERSION/LICENSE.md"
-          fi
-
-          # latest follows every release; for places that should update themselves.
-          for dir in mark wordmark lockup app construction; do
-            s3 sync "packages/brand/$dir/" "s3://$BUCKET/assets/latest/$dir/" \
-              --delete --cache-control "public, max-age=300"
-          done
-          s3 cp packages/brand/LICENSE.md "s3://$BUCKET/assets/latest/LICENSE.md"
-          echo "deployed the preview and assets $VERSION"

@@ -8,13 +8,16 @@
 # run on older Node, but a partial toolchain is not worth supporting.
 NODE_RANGE := ^22.22.3 || ^24.15.0 || >=26.0.0
 
+# Tool versions, the one place CI and local runs read them from.
+GITLEAKS_VERSION ?= v8.30.1
+
 WORKSPACES_LIB := @metapatrol/tokens @metapatrol/style @metapatrol/brand-kit @metapatrol/brand
 PREVIEW_OUT := apps/preview/dist/preview/browser
 
 .DEFAULT_GOAL := help
 .PHONY: help node-check install check build build-packages assets assets-check preview start-preview \
-        examples start-angular start-react test ci parity tokens-preview changeset release-status \
-        clean distclean
+        examples start-angular start-react test ci parity tokens-preview set-version \
+        secret-scan secret-scan-history clean distclean
 
 help: ## List the targets
 	@awk 'BEGIN { FS = ":.*## " } /^[a-zA-Z_-]+:.*## / { printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -68,7 +71,7 @@ start-react: ## Serve the React + Vite + Tailwind example
 test: ## Run the tests of every workspace (needs a build first)
 	npm test
 
-ci: install check build assets-check test ## Everything CI runs, in the same order
+ci: secret-scan install check build assets-check test ## Everything CI runs, in the same order
 
 parity: ## Compare the generated assets with a reference tree: make parity REF=dir
 	@test -n "$(REF)" || (echo "usage: make parity REF=<asset directory>" && exit 1)
@@ -77,11 +80,24 @@ parity: ## Compare the generated assets with a reference tree: make parity REF=d
 tokens-preview: ## Regenerate packages/tokens/preview/tokens.css (open index.html next to it)
 	npm run preview -w @metapatrol/tokens
 
-changeset: ## Describe a change for the next release
-	npx changeset
+# Versions come from semantic-release on main (.releaserc.json); this is what
+# it runs, exposed for a dry run on a scratch copy.
+set-version: ## Set one version on all published packages: make set-version VERSION=x.y.z
+	@test -n "$(VERSION)" || (echo "usage: make set-version VERSION=<semver>" && exit 1)
+	node scripts/set-version.mjs $(VERSION)
 
-release-status: ## Show what the next release would version
-	npx changeset status
+bin/gitleaks:
+	@mkdir -p bin
+	curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/$(GITLEAKS_VERSION)/gitleaks_$(GITLEAKS_VERSION:v%=%)_linux_x64.tar.gz" \
+	  | tar xz -C bin gitleaks
+
+secret-scan: bin/gitleaks ## Scan the working tree for committed credentials (what CI runs)
+	bin/gitleaks dir . --no-banner --redact
+
+# The whole history, for an audit. Deliberately not in CI: a leak in an old
+# commit would turn every run red until the history is rewritten.
+secret-scan-history: bin/gitleaks ## Scan the whole git history
+	bin/gitleaks git . --no-banner --redact
 
 clean: ## Remove build output and copied assets (keeps node_modules)
 	rm -rf packages/*/dist examples/*/dist apps/*/dist \

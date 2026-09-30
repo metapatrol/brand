@@ -14,6 +14,7 @@ Angular components.
 | React | not planned; supported through the framework-agnostic layers, components only when a React app exists |
 | source of truth | DTCG token files in `tokens/`; generator, styles and components all read from them |
 | package manager | npm workspaces (all metapatrol apps use npm) |
+| versions | one version for all published packages, from conventional commits (semantic-release), like the other platform repositories |
 | registry | Forgejo npm registry of the `metapatrol` org for now; npmjs (org `metapatrol` exists) later. The registry is never written into a `package.json`, so moving is a configuration change |
 | components | shadcn-style: headless primitives + Tailwind classes themed by our tokens (spartan/ui for Angular, shadcn/ui for React) |
 
@@ -55,7 +56,7 @@ brand/
 Every published package except `@metapatrol/brand` is Apache-2.0. The `repository`
 field is added once the public repository URL exists (the forge is internal).
 
-Tooling: npm workspaces, Changesets for versions and changelogs, `tsc`
+Tooling: npm workspaces, semantic-release for versions and the changelog, `tsc`
 (TypeScript 7) for plain TS packages, `node --test` running the TypeScript
 sources directly (type stripping, `@metapatrol/source` export condition), ng-packagr
 for the Angular library.
@@ -73,7 +74,7 @@ for the Angular library.
       size, weight, tracking, radius and the mark's construction parameters.
 - [x] Token source in `packages/tokens/tokens/` (DTCG): `primitives`, `base`, `theme.dark`, `theme.light`,
       and `contrast.json` with the WCAG rules both themes must meet (50 pairs, all pass).
-- [x] Monorepo: npm workspaces, Changesets (bump rules in `.changeset/README.md`),
+- [x] Monorepo: npm workspaces, Changesets at first (replaced by semantic-release after 0.1.0),
       Forgejo CI (`.forgejo/workflows/ci.yml`: install, contrast check, build, test).
       `@metapatrol/tokens` exists as a private package holding the check.
 - [x] Light theme and token names agreed (2026-09-28).
@@ -87,19 +88,13 @@ for the Angular library.
 
 Done when: the tokens are agreed and CI is green on the forge.
 
-Release flow — **in place** (`.forgejo/workflows/main.yml`): verify → release
-(Changesets version commit, publish to the Forgejo registry, tags, carry main to
-develop) → deploy (preview to the root of the `brand` Garage website bucket,
-assets to `/assets/<version>/` immutable and `/assets/latest/`). Credentials:
-`S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_ENDPOINT` on the repository,
-`AUTOMATION_TOKEN` (write:package) from the organisation. First release:
-`.changeset/first-release.md` takes the four library packages to 0.1.0.
-
-Original plan: branch model as in the
-platform repositories (`develop` → pull request → `main`). Versions come from
-Changesets rather than semantic-release, because the packages version
-independently: `main.yml` runs `changeset version`, commits with
-`AUTOMATION_TOKEN`, runs `changeset publish` and syncs `develop`.
+Release flow — **in place**, in the shape of platform/mcp-gateway (see
+`.forgejo/README.md`): semantic-release on main decides one version for all four
+packages from the conventional commits, commits changelog and versions, tags
+`vX.Y.Z` and dispatches `release.yml`, which publishes the packages, creates the
+Forgejo release with the assets as a zip, and deploys the brand site and the
+assets. Replaced the first flow (Changesets, per-package versions, everything in
+`main.yml`) after 0.1.0.
 
 ### registry
 

@@ -1,0 +1,228 @@
+# Publishes a version tag.
+#
+#   validate ──> test ──> publish ──> notes ──> deploy
+#
+# publish puts the four packages into the organisation's npm registry, notes
+# creates the Forgejo release with the changelog section and the assets as a zip,
+# deploy uploads the brand site and the assets to the `brand` bucket
+# (https://brand.metapatrol.local, /assets/<version>/ and /assets/latest/).
+#
+# Every job checks out the tag, not main, and every step is safe to run again:
+# a version already in the registry or in the bucket is left as it is, an
+# existing Forgejo release is reused. A failed release is repaired by
+# dispatching this workflow again for the same tag.
+#
+# Unlike main.yml, a missing credential fails here: asking for a release that
+# cannot be published should not pass quietly.
+#
+# `runs-on: docker` names a runner *label*, not an image.
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+  # The path that actually runs: semantic-release creates the tag with the
+  # automation token, and Forgejo raises no push event for such a tag. See
+  # .forgejo/trigger-release.sh.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The existing tag to publish, e.g. v0.2.0
+        required: true
+
+env:
+  GIT_SSL_NO_VERIFY: "true"
+  NODE_VERSION: "24"
+  # Nothing here is called FORGEJO_TOKEN; see .forgejo/README.md.
+  FORGEJO_BASE_URL: ${{ github.server_url }}
+  FORGEJO_REPO: ${{ github.repository }}
+  FORGEJO_ORG: ${{ github.repository_owner }}
+  TAG: ${{ inputs.tag || github.ref_name }}
+  BUCKET: brand
+
+jobs:
+  validate:
+    runs-on: docker
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
+      - name: The tag is a version, and every package carries it
+        run: |
+          set -eu
+          echo "Tag: $TAG"
+          echo "$TAG" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$' \
+            || (echo "ERROR: '$TAG' is not a version tag (vX.Y.Z)" && exit 1)
+          VERSION="${TAG#v}"
+          for p in tokens style brand-kit brand; do
+            v=$(node -p "require('./packages/$p/package.json').version")
+            [ "$v" = "$VERSION" ] || (echo "ERROR: packages/$p is $v, the tag is $TAG" && exit 1)
+          done
+          echo "all four packages are $VERSION"
+
+  test:
+    needs: validate
+    runs-on: docker
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
+      - uses: https://data.forgejo.org/actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: make install
+      - run: make check
+      - run: make build
+      - run: make assets-check
+      - run: make test
+
+  publish:
+    needs: test
+    runs-on: docker
+    env:
+      AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
+      - uses: https://data.forgejo.org/actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: make install
+      - run: make build-packages
+      - name: Publish what the registry does not have yet
+        run: |
+          set -eu
+          : "${AUTOMATION_TOKEN:?unset secret: AUTOMATION_TOKEN (needs write:package)}"
+          VERSION="${TAG#v}"
+          # The organisation's registry on this forge. Written here, never in a
+          # package.json, so moving to npmjs later changes this step only.
+          registry="${FORGEJO_BASE_URL}/api/packages/${FORGEJO_ORG}/npm/"
+          {
+            echo "@metapatrol:registry=${registry}"
+            echo "//${registry#*://}:_authToken=\${AUTOMATION_TOKEN}"
+            # The private CA again; see GIT_SSL_NO_VERIFY above.
+            echo "strict-ssl=false"
+          } > "$HOME/.npmrc"
+          # Dependency order, so a consumer never finds a package whose
+          # dependency is not there yet.
+          for p in tokens style brand-kit brand; do
+            name="@metapatrol/$p"
+            if npm view "$name@$VERSION" version >/dev/null 2>&1; then
+              echo "$name@$VERSION is already published"
+            else
+              npm publish -w "$name"
+            fi
+          done
+
+  notes:
+    needs: publish
+    runs-on: docker
+    env:
+      AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
+      - name: Create the release and attach the assets
+        run: |
+          set -eu
+          : "${AUTOMATION_TOKEN:?unset secret: AUTOMATION_TOKEN}"
+          : "${FORGEJO_BASE_URL:?not set - github.server_url resolved to nothing}"
+          : "${FORGEJO_REPO:?not set - github.repository resolved to nothing}"
+          M=""
+          for t in jq curl zip; do command -v $t >/dev/null || M="$M $t"; done
+          [ -z "$M" ] || (apt-get update -qq && apt-get install -y -qq $M)
+          VERSION="${TAG#v}"
+          API="$FORGEJO_BASE_URL/api/v1/repos/$FORGEJO_REPO"
+          AUTH="Authorization: token $AUTOMATION_TOKEN"
+
+          # The section semantic-release wrote for this version: from its heading
+          # ("# [0.2.0](…)" for a minor, "## [0.2.1](…)" for a patch) to the next.
+          # The heading's own version is compared exactly: its compare link names
+          # the previous version too.
+          BODY=$(awk -v v="$VERSION" '
+            /^#{1,2} \[?[0-9]+\.[0-9]+\.[0-9]+/ {
+              if (found) exit
+              h = $0; sub(/^#+ \[?/, "", h); sub(/[] (].*$/, "", h)
+              if (h == v) { found = 1; next }
+            }
+            found' CHANGELOG.md)
+          [ -n "$BODY" ] || BODY="Release $TAG"
+          PAYLOAD=$(jq -n --arg tag "$TAG" --arg body "$BODY" \
+            '{tag_name: $tag, name: $tag, body: $body, draft: false, prerelease: false}')
+          HTTP=$(curl -k -s -w "%{http_code}" -o /tmp/release.json -X POST \
+            -H "$AUTH" -H "Content-Type: application/json" -d "$PAYLOAD" "$API/releases")
+          echo "create: HTTP $HTTP"
+          # 409 is a re-run against a release that already exists.
+          case "$HTTP" in
+            200|201) ;;
+            409) curl -k -sf -H "$AUTH" "$API/releases/tags/$TAG" > /tmp/release.json ;;
+            *) cat /tmp/release.json; exit 1 ;;
+          esac
+          ID=$(jq -r .id /tmp/release.json)
+
+          ZIP="metapatrol-brand-$VERSION.zip"
+          if jq -e --arg n "$ZIP" '.assets[]? | select(.name == $n)' /tmp/release.json >/dev/null; then
+            echo "$ZIP is already attached"
+          else
+            (cd packages/brand && zip -qr "/tmp/$ZIP" mark wordmark lockup app construction LICENSE.md TRADEMARKS.md)
+            HTTP=$(curl -k -s -w "%{http_code}" -o /tmp/asset.json -X POST -H "$AUTH" \
+              -F "attachment=@/tmp/$ZIP" "$API/releases/$ID/assets?name=$ZIP")
+            echo "attach $ZIP: HTTP $HTTP"
+            echo "$HTTP" | grep -qE "^20[01]$" || (cat /tmp/asset.json && exit 1)
+          fi
+
+  deploy:
+    needs: notes
+    runs-on: docker
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_KEY }}
+      S3_ENDPOINT: ${{ vars.S3_ENDPOINT }}
+      AWS_DEFAULT_REGION: garage
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
+      - uses: https://data.forgejo.org/actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: make install
+      - run: make build
+      - name: Upload the site and the assets
+        run: |
+          set -eu
+          : "${S3_ENDPOINT:?unset variable: S3_ENDPOINT}"
+          [ -n "${AWS_ACCESS_KEY_ID:-}" ] || (echo "ERROR: unset secret: S3_ACCESS_KEY" && exit 1)
+          [ -n "${AWS_SECRET_ACCESS_KEY:-}" ] || (echo "ERROR: unset secret: S3_SECRET_KEY" && exit 1)
+          VERSION="${TAG#v}"
+          command -v aws >/dev/null || (apt-get update -qq && apt-get install -y -qq awscli)
+          s3() { aws s3 "$@" --endpoint-url "$S3_ENDPOINT" --no-verify-ssl; }
+
+          # The site at the root. --delete keeps it exact, --exclude keeps the
+          # asset tree out of that. Short cache: the page changes with every release.
+          s3 sync apps/preview/dist/preview/browser/ "s3://$BUCKET/" \
+            --delete --exclude "assets/*" \
+            --cache-control "public, max-age=300"
+
+          # Assets of a version never change once uploaded: a version that is
+          # already there is left alone, so a rerun cannot alter what others use.
+          if [ -n "$(s3 ls "s3://$BUCKET/assets/$VERSION/" 2>/dev/null)" ]; then
+            echo "assets/$VERSION/ exists; left unchanged"
+          else
+            for dir in mark wordmark lockup app construction; do
+              s3 sync "packages/brand/$dir/" "s3://$BUCKET/assets/$VERSION/$dir/" \
+                --cache-control "public, max-age=31536000, immutable"
+            done
+            s3 cp packages/brand/LICENSE.md "s3://$BUCKET/assets/$VERSION/LICENSE.md"
+          fi
+
+          # latest follows every release; for places that should update themselves.
+          for dir in mark wordmark lockup app construction; do
+            s3 sync "packages/brand/$dir/" "s3://$BUCKET/assets/latest/$dir/" \
+              --delete --cache-control "public, max-age=300"
+          done
+          s3 cp packages/brand/LICENSE.md "s3://$BUCKET/assets/latest/LICENSE.md"
+          echo "deployed the site and assets $VERSION"

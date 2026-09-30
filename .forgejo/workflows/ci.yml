@@ -1,20 +1,18 @@
 # Checks that run on every pull request, and on pushes to develop.
 #
-# Same shape as the platform repositories (mcp-gateway, oci-registry): ci.yml
-# gates pull requests, main.yml releases from main (added with the first
-# publishable package, see ROADMAP.md).
+# The cheap check gates the expensive one:
 #
-# Phase 0 of ROADMAP.md: the workspace installs, the design tokens resolve and
-# meet their contrast rules (tokens/contrast.json), and every package builds
-# and tests. Packages join through the workspace scripts; this file should not
-# need to change when they do.
+#   secret-scan ──> check (install, tokens, build, assets, tests)
+#
+# The steps are the targets of `make ci`, so a local run and this one cannot
+# drift apart. See .forgejo/README.md for the whole release flow.
 #
 # `runs-on: docker` names a runner *label*, not an image.
 name: ci
 
 # A ref is built once. Branch work is built through its pull request; develop
-# keeps a push trigger because it also receives direct pushes, and those reach
-# no pull request.
+# keeps a push trigger because it also receives direct pushes — the post-release
+# sync in main.yml is one — and those reach no pull request.
 on:
   push:
     branches: [develop]
@@ -27,14 +25,26 @@ env:
   NODE_VERSION: "24"
 
 jobs:
+  secret-scan:
+    runs-on: docker
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v6
+      - name: Scan for committed credentials
+        run: |
+          M=""
+          for t in curl tar make; do command -v $t >/dev/null || M="$M $t"; done
+          [ -z "$M" ] || (apt-get update -qq && apt-get install -y -qq $M)
+          make secret-scan
+
   check:
+    needs: secret-scan
     runs-on: docker
     steps:
       - uses: https://data.forgejo.org/actions/checkout@v6
       - uses: https://data.forgejo.org/actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      # The same targets as `make ci`, one step each so a failure names its stage.
+      # One step per target, so a failure names its stage.
       - run: make install
       - name: Tokens resolve and meet the contrast rules
         run: make check

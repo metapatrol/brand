@@ -21,7 +21,7 @@ import { MARKS, MarkSize } from './generated/marks';
     '[attr.aria-hidden]': 'label() ? null : "true"',
   },
   styles: `
-    :host { display: inline-block; flex: none; }
+    @layer components { :host { display: inline-block; flex: none; } }
     svg { display: block; width: 100%; height: 100%; }
   `,
   template: `<svg xmlns="http://www.w3.org/2000/svg" [attr.viewBox]="mark().viewBox" [innerHTML]="body()"></svg>`,

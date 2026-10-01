@@ -12,7 +12,7 @@ import { MpIcon } from './icon';
   imports: [MpIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
-    :host { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; vertical-align: baseline; }
+    @layer components { :host { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; vertical-align: baseline; } }
     code { font-size: 0.925em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     button {
       display: inline-grid; place-items: center; width: 20px; height: 20px; padding: 0; flex: none;

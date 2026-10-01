@@ -10,7 +10,7 @@ import { MpIcon } from './icon';
   imports: [MpIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
-    :host { display: block; position: relative; min-width: 0; }
+    @layer components { :host { display: block; position: relative; min-width: 0; } }
     pre { padding-right: 44px; font-variant-ligatures: none; }
     .prompt { color: var(--mp-signal-fg); user-select: none; }
     button {

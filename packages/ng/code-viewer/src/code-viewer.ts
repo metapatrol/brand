@@ -73,7 +73,7 @@ const languages: Record<CodeLanguage, () => Extension> = { json: () => json(), y
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'mp-code-viewer' },
   styles: `
-    :host { display: block; min-width: 0; overflow: hidden; background: var(--mp-bg); border: 1px solid var(--mp-line); border-radius: var(--mp-radius-md); }
+    @layer components { :host { display: block; min-width: 0; overflow: hidden; background: var(--mp-bg); border: 1px solid var(--mp-line); border-radius: var(--mp-radius-md); } }
     .host { overflow: auto; }
   `,
   template: `<div #host class="host" [style.max-height]="maxHeight()"></div>`,

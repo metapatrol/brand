@@ -7,9 +7,11 @@ export interface MetapatrolConfig {
   inheritedReasons: string[];
   /** How errors name the backend when it does not answer: "engram is not reachable". */
   serviceName: string;
+  /** What a 403 adds to "Your token may not read …", e.g. the scope the console needs. */
+  forbiddenHint: string;
 }
 
-const DEFAULTS: MetapatrolConfig = { storagePrefix: 'mp', inheritedReasons: [], serviceName: 'the service' };
+const DEFAULTS: MetapatrolConfig = { storagePrefix: 'mp', inheritedReasons: [], serviceName: 'the service', forbiddenHint: '' };
 
 export const MP_CONFIG = new InjectionToken<MetapatrolConfig>('MP_CONFIG', {
   providedIn: 'root',

@@ -27,6 +27,7 @@ export class App {
       label: 'deployments',
       items: [
         { path: '/overview', label: 'Overview', icon: 'info' },
+        { path: '/servers', label: 'Servers', icon: 'external-link' },
         { path: '/settings', label: 'Settings', icon: 'menu' },
       ],
     },

@@ -77,13 +77,22 @@ Part of metapatrol: infrastructure, developer tools and autonomous systems.
 `;
 }
 
-export function contributing({ name }: ProjectConfig): string {
+/** Whether the repository's Makefile has a `ci` target, so CONTRIBUTING can name it. */
+export function hasMakeCi(dir: string): boolean {
+  const makefile = join(dir, "Makefile");
+  return existsSync(makefile) && /^ci\s*:/m.test(readFileSync(makefile, "utf8"));
+}
+
+export function contributing({ name }: ProjectConfig, makeCi = false): string {
+  const checks = makeCi
+    ? "(`make ci` runs the same checks)"
+    : "(the README's *running it* section has the commands)";
   return `# contributing to ${name}
 
 - Work goes to \`develop\` through pull requests; \`main\` is what was released.
 - Commits follow [Conventional Commits](https://www.conventionalcommits.org/):
   \`feat:\` and \`fix:\` make a release, \`chore:\`, \`ci:\`, \`docs:\` and \`build:\` do not.
-- A pull request is ready when CI is green on it (\`make ci\` runs the same checks).
+- A pull request is ready when CI is green on it ${checks}.
 - Explain the why in the commit body when the diff does not.
 
 Brand assets in \`${ASSET_DIR}/\` are generated: \`npx @metapatrol/brand-kit init\` rewrites
@@ -112,6 +121,6 @@ export function init(dir: string, flags: Partial<ProjectConfig> = {}): InitResul
   write(CONFIG, `${JSON.stringify({ name: config.name, purpose: config.purpose }, null, 2)}\n`);
   for (const [rel, data] of projectFiles(config.name, config.purpose, ASSET_DIR)) write(`${ASSET_DIR}/${rel}`, data);
   once("README.md", readmeSkeleton(config));
-  once("CONTRIBUTING.md", contributing(config));
+  once("CONTRIBUTING.md", contributing(config, hasMakeCi(dir)));
   return { config, written, kept };
 }

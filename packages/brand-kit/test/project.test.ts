@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { init, resolveConfig } from "../src/init.ts";
+import { contributing, hasMakeCi, init, resolveConfig } from "../src/init.ts";
 import { assertName, projectFiles, projectLockup, readmeHeader, socialPreview, wrap } from "../src/project.ts";
 
 const pngSize = (b: Buffer) => [b.readUInt32BE(16), b.readUInt32BE(20)];
@@ -84,6 +84,21 @@ test("init writes the skeleton once and never overwrites hand-written files", ()
     assert.deepEqual(second.kept.sort(), ["CONTRIBUTING.md", "README.md"]);
     assert.equal(readFileSync(join(dir, "README.md"), "utf8"), "# mine\n");
     assert.equal(second.config.name, "demo", "name comes back from metapatrol.json");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("CONTRIBUTING names make ci only where the Makefile has it", () => {
+  const dir = tmp();
+  try {
+    assert.equal(hasMakeCi(dir), false);
+    writeFileSync(join(dir, "Makefile"), "build:\n\tgo build ./...\n\nci: lint test\n");
+    assert.equal(hasMakeCi(dir), true);
+    writeFileSync(join(dir, "Makefile"), "test:\n\tgo test ./...\n# not a ci: target\n");
+    assert.equal(hasMakeCi(dir), false);
+    assert.match(contributing({ name: "x", purpose: "p" }, true), /`make ci` runs the same checks/);
+    assert.doesNotMatch(contributing({ name: "x", purpose: "p" }, false), /make ci/);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

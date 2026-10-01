@@ -36,6 +36,13 @@ One line per project, in `.npmrc`:
 @metapatrol:registry=https://forgejo.metapatrol.local/api/packages/metapatrol/npm/
 ```
 
+The registry is not readable anonymously: installs authenticate with a token that
+has `read:package` (in CI, the automation user's `AUTOMATION_TOKEN`):
+
+```
+//forgejo.metapatrol.local/api/packages/metapatrol/npm/:_authToken=${AUTOMATION_TOKEN}
+```
+
 **Angular or any Tailwind CSS v4 app** — `npm install @metapatrol/style`, then in
 `src/styles.css` replace `@import "tailwindcss";` with
 

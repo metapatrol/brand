@@ -1,3 +1,10 @@
+# [0.2.0](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.1.1...v0.2.0) (2026-10-01)
+
+
+### Features
+
+* **brand-kit:** project blueprint with init and project ([c12b563](https://forgejo.metapatrol.local/metapatrol/brand/commit/c12b563a861d6e593351a3705a49d0d65699bf09))
+
 ## [0.1.1](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.1.0...v0.1.1) (2026-09-30)
 
 

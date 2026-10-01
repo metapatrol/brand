@@ -1,3 +1,10 @@
+## [0.2.1](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.2.0...v0.2.1) (2026-10-01)
+
+
+### Bug Fixes
+
+* **brand-kit:** CONTRIBUTING names make ci only where the Makefile has it ([ef8a6d2](https://forgejo.metapatrol.local/metapatrol/brand/commit/ef8a6d2dee7b6c2e5c3b4826560d9906afac9be9))
+
 # [0.2.0](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.1.1...v0.2.0) (2026-10-01)
 
 

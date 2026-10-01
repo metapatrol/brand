@@ -43,7 +43,7 @@ export function markdownPreview(source: string, max = 160): string {
   selector: 'mp-markdown',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'mp-markdown', '[innerHTML]': 'html()' },
-  styles: `:host { display: block; min-width: 0; }`,
+  styles: `@layer components { :host { display: block; min-width: 0; } }`,
   template: ``,
 })
 export class MpMarkdown {

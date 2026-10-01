@@ -22,7 +22,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(keydown.escape)': 'cancel()' },
   styles: `
-    :host { display: inline-flex; align-items: center; gap: 8px; }
+    @layer components { :host { display: inline-flex; align-items: center; gap: 8px; } }
     .question { font-size: var(--mp-font-size-sm); color: var(--mp-fg-muted); }
   `,
   template: `

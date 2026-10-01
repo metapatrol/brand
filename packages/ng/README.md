@@ -11,6 +11,10 @@ npm install @metapatrol/ng @metapatrol/style
 `src/styles.css`: `@import "@metapatrol/style/tailwind.css";` (or
 `@import "@metapatrol/style";` without Tailwind).
 
+The components' own defaults on their elements (display, an icon's 1em size)
+sit in the `components` layer, so utilities override them:
+`<mp-icon class="size-4" …>`, `<mp-notice class="hidden lg:block">`.
+
 ## the shell
 
 The frame of a console, as the engram console has it: a sidebar with the mark,
@@ -61,7 +65,7 @@ changes the prefix.
 | `<mp-panel index="01" title="…">` | a panel with head, body, `[mpPanelActions]` and `[mpPanelNote]` |
 | `<mp-status status="success">` | dot and text: `success`, `warning`, `error`, `info`, `active`, `idle` |
 | `<mp-pill tone="ok">` | a state as a pill: `ok`, `warn`, `bad`, `info`, `neutral` |
-| `<mp-notice tone="warn">` | what is wrong with the resource on this page, above everything else |
+| `<mp-notice tone="warn">` | what is wrong with the resource on this page, above everything else; tones `warn`, `bad`, `info`, `ok`, and `neutral` for a plain remark |
 | `<mp-confirm-button danger (confirmed)="…">` | a destructive action in two clicks, Escape takes it back |
 | `<mp-code-block [prompt]="true" code="…">` | code or commands with a copy button |
 | `<mp-id [value]="digest">` | an identifier shortened (`sha256:3f2a9c1e0b7d`), whole on hover, one click to copy |
@@ -79,7 +83,7 @@ What the engram and mcp-gateway consoles each had their own copy of:
 | `<mp-list-search [query]="q()" [shown]="…" [total]="…">` | the search above a list, bound to `?q=` |
 | `<mp-sort key="size" [sort]="sort()">` | a sortable column header through `?sort=`, with `aria-sort`; resets `cursor`/`page` |
 | `parseSort`, `formatSort`, `sortRows`, `searchRows` | numbers as numbers, text naturally (`agent-2` before `agent-10`), missing values last, stable |
-| `<mp-load-state [loading]="…" [error]="…" what="servers">` | a quiet line while loading, the API's own message when it fails, "No server named …" for a 404 |
+| `<mp-load-state [loading]="…" [error]="…" what="servers">` | a quiet line while loading, the API's own message when it fails, "No server named …" for a 404 (`back` links to the list), "Your token may not read …" for a 403, with `provideMetapatrol({ forbiddenHint })` saying what the token needs |
 | `describeError(err)`, `isNotFound(err)` | one line for an error; `provideMetapatrol({ serviceName })` names the backend when it does not answer |
 | `<mp-conditions [conditions]="status.conditions">`, `<mp-condition>` | Kubernetes conditions: True ok, Unknown neutral, False bad — or a warning when its reason only passes on a dependency's trouble (`provideMetapatrol({ inheritedReasons })`) |
 | `findCondition`, `conditionRank`, `healthy`, `firstProblem` | the same rules for code |

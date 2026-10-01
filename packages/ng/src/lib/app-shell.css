@@ -1,4 +1,4 @@
-:host { display: block; }
+@layer components { :host { display: block; } }
 
 .skip {
   position: absolute; left: -9999px; top: 8px; z-index: 50;

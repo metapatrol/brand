@@ -287,7 +287,8 @@
   .mp-pill[data-tone="info"] { --mp-tone: var(--mp-info); }
   .mp-pill[data-tone="neutral"] { --mp-tone: var(--mp-fg-muted); }
 
-  /* what is wrong, above everything else: <div class="mp-notice" data-tone="warn|bad|info"> */
+  /* what is wrong (or worth knowing), above everything else:
+     <div class="mp-notice" data-tone="warn|bad|info|ok|neutral"> */
   .mp-notice {
     --mp-tone: var(--mp-warning);
     padding: 10px 16px;
@@ -299,6 +300,13 @@
   }
   .mp-notice[data-tone="bad"] { --mp-tone: var(--mp-error); }
   .mp-notice[data-tone="info"] { --mp-tone: var(--mp-info); }
+  .mp-notice[data-tone="ok"] { --mp-tone: var(--mp-success); }
+  /* a remark rather than a state: muted text on the surface */
+  .mp-notice[data-tone="neutral"] {
+    color: var(--mp-fg-muted);
+    background: var(--mp-surface);
+    border-color: var(--mp-line);
+  }
   .mp-notice > :first-child { margin-top: 0; }
   .mp-notice > :last-child { margin-bottom: 0; }
 

@@ -1,3 +1,10 @@
+# [0.3.0](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.2.1...v0.3.0) (2026-10-01)
+
+
+### Features
+
+* **ng:** Angular components, starting with the app shell ([084eabd](https://forgejo.metapatrol.local/metapatrol/brand/commit/084eabdd03a0d5082c21bab7919cbcb8e70194d8))
+
 ## [0.2.1](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.2.0...v0.2.1) (2026-10-01)
 
 

@@ -83,9 +83,11 @@ in ways that read as a scope problem.
 - **The private CA.** git runs with `GIT_SSL_NO_VERIFY`, npm with `strict-ssl=false`
   and semantic-release with `NODE_TLS_REJECT_UNAUTHORIZED=0`, as in the other
   repositories. Once the runners carry the CA, these become `NODE_EXTRA_CA_CERTS`.
-- **Linking packages to this repository** cannot be automated here: the proxy in
-  front of Forgejo normalises `%2F` in `@metapatrol/…`, so the API's link endpoint
-  never sees a scoped name. Link new packages once in the UI (package → Settings).
+- **Linking packages to this repository** goes around the proxy: in front of
+  Forgejo it unescapes `%2F` in `@metapatrol/…` and redirects, so the API's link
+  endpoint never sees a scoped name through the public address. `release.publish`
+  links them through the address the runner cloned from (in-cluster), where `%2F`
+  arrives intact. If that ever fails, the step says so and the release goes on.
 
 ## Layout
 

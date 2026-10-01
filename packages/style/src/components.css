@@ -254,3 +254,76 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+/* Pills, notices and rendered Markdown, lifted from the engram and mcp-gateway
+   consoles. */
+@layer components {
+  /* a state as a pill: <span class="mp-pill" data-tone="ok|warn|bad|info|neutral"> */
+  .mp-pill {
+    --mp-tone: var(--mp-fg-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 8px;
+    font-size: var(--mp-font-size-xs);
+    font-weight: var(--mp-font-weight-medium);
+    line-height: 1.5;
+    white-space: nowrap;
+    color: var(--mp-tone);
+    background: color-mix(in srgb, var(--mp-tone) 12%, transparent);
+    border-radius: 999px;
+  }
+  .mp-pill::before {
+    content: "";
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .mp-pill[data-tone="ok"] { --mp-tone: var(--mp-success); }
+  .mp-pill[data-tone="warn"] { --mp-tone: var(--mp-warning); }
+  .mp-pill[data-tone="bad"] { --mp-tone: var(--mp-error); }
+  .mp-pill[data-tone="info"] { --mp-tone: var(--mp-info); }
+  .mp-pill[data-tone="neutral"] { --mp-tone: var(--mp-fg-muted); }
+
+  /* what is wrong, above everything else: <div class="mp-notice" data-tone="warn|bad|info"> */
+  .mp-notice {
+    --mp-tone: var(--mp-warning);
+    padding: 10px 16px;
+    font-size: var(--mp-font-size-sm);
+    color: var(--mp-tone);
+    background: color-mix(in srgb, var(--mp-tone) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--mp-tone) 40%, transparent);
+    border-radius: var(--mp-radius-lg);
+  }
+  .mp-notice[data-tone="bad"] { --mp-tone: var(--mp-error); }
+  .mp-notice[data-tone="info"] { --mp-tone: var(--mp-info); }
+  .mp-notice > :first-child { margin-top: 0; }
+  .mp-notice > :last-child { margin-bottom: 0; }
+
+  /* rendered Markdown: quiet, in the console's type */
+  .mp-markdown { font-size: var(--mp-font-size-md); line-height: 1.65; color: var(--mp-fg); }
+  .mp-markdown :is(p, ul, ol, blockquote, h1, h2, h3, h4) { max-width: 80ch; }
+  .mp-markdown > * + * { margin-top: 12px; }
+  .mp-markdown > :first-child { margin-top: 0; }
+  .mp-markdown :is(h1, h2, h3, h4) { margin: 20px 0 0; font-weight: var(--mp-font-weight-semibold); letter-spacing: -0.01em; }
+  .mp-markdown h1 { font-size: var(--mp-font-size-lg); }
+  .mp-markdown :is(h2, h3, h4) { font-size: var(--mp-font-size-md); }
+  .mp-markdown :is(ul, ol) { padding-left: 20px; }
+  .mp-markdown ul { list-style: disc; }
+  .mp-markdown ol { list-style: decimal; }
+  .mp-markdown li + li { margin-top: 4px; }
+  .mp-markdown blockquote { margin: 0; padding-left: 12px; color: var(--mp-fg-muted); border-left: 2px solid var(--mp-line-strong); }
+  /* programming ligatures turn ->> into arrows that are not in the text */
+  .mp-markdown :is(pre, code) { font-variant-ligatures: none; }
+  .mp-markdown :not(pre) > code {
+    padding: 1px 4px;
+    background: var(--mp-surface-2);
+    border-radius: var(--mp-radius-sm);
+  }
+  .mp-markdown table { width: 100%; border-collapse: collapse; font-size: var(--mp-font-size-sm); }
+  .mp-markdown :is(th, td) { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--mp-line); }
+  .mp-markdown hr { margin: 20px 0; }
+  .mp-markdown img { max-width: 100%; }
+}

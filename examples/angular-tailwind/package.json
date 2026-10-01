@@ -23,7 +23,16 @@
     "tslib": "^2.3.0",
     "@metapatrol/style": "*",
     "@metapatrol/brand": "*",
-    "@metapatrol/ng": "*"
+    "@metapatrol/ng": "*",
+    "markdown-it": "*",
+    "@codemirror/state": "*",
+    "@codemirror/view": "*",
+    "@codemirror/language": "*",
+    "@codemirror/commands": "*",
+    "@codemirror/search": "*",
+    "@codemirror/lang-json": "*",
+    "@codemirror/lang-yaml": "*",
+    "@lezer/highlight": "*"
   },
   "devDependencies": {
     "@angular/build": "^22.2.0",

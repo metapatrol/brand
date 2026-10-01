@@ -235,8 +235,16 @@ confirm button and utilities were in use there first.
       uses the mark, code blocks and panels, and shows the components.
 - [x] Released with the other packages in one version.
 - [ ] engram moves from its own shell to `mp-app-shell` (in engram).
-- [ ] Next components when a second app needs them: data table with sorting
-      (engram's `core/table`), toasts, empty state, form field wrapper.
+- [x] What engram and mcp-gateway each had a copy of, merged: `mpQueryParams`,
+      `mp-sort` and the sort/search functions, `mp-list-search`, `mp-time` and the time
+      formats, `mp-load-state` and `describeError`, `count`/`plural`/`bytes`.
+- [x] From mcp-gateway, for every operator console: `mp-conditions`/`mp-condition`
+      (with inherited reasons as warnings), `mp-pill`, `mp-notice`, `mp-id`,
+      `mp-detail-title`.
+- [x] Separate entry points with optional peers: `@metapatrol/ng/code-viewer`
+      (CodeMirror, JSON and YAML) and `@metapatrol/ng/markdown` (markdown-it).
+- [ ] engram and mcp-gateway replace their copies with the library (in those repositories).
+- [ ] Next when two apps need them: toasts, empty state, form field wrapper.
 
 Done when: one production Angular app uses `@metapatrol/ng` and the docs site is live.
 

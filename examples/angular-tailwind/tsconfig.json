@@ -14,6 +14,9 @@
     "paths": {
       "@metapatrol/ng": [
         "../../packages/ng/dist"
+      ],
+      "@metapatrol/ng/*": [
+        "../../packages/ng/dist/*"
       ]
     }
   },

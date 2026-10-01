@@ -12,7 +12,7 @@ let next = 0;
   selector: 'mp-list-search',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
-    :host { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+    @layer components { :host { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; } }
     form { flex: 1 1 16rem; max-width: 28rem; }
     .count { font-size: var(--mp-font-size-xs); color: var(--mp-fg-subtle); white-space: nowrap; }
     .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

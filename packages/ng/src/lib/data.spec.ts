@@ -87,7 +87,12 @@ describe('MpTime', () => {
 
 describe('MpLoadState', () => {
   function render(inputs: Record<string, unknown>) {
-    TestBed.configureTestingModule({ providers: [provideMetapatrol({ serviceName: 'engram' })] });
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        provideMetapatrol({ serviceName: 'engram', forbiddenHint: 'The console needs the engram:admin scope.' }),
+      ],
+    });
     const fixture = TestBed.createComponent(MpLoadState);
     for (const [k, v] of Object.entries(inputs)) fixture.componentRef.setInput(k, v);
     fixture.detectChanges();
@@ -107,6 +112,18 @@ describe('MpLoadState', () => {
   it('says plainly what does not exist', () => {
     const el = render({ what: 'server', name: 'grep', error: new HttpErrorResponse({ status: 404 }) });
     expect(el.textContent).toContain('No server named grep.');
+  });
+
+  it('says what is missing without a name, and leads back to the list', () => {
+    const el = render({ what: 'job', back: '/queue', error: new HttpErrorResponse({ status: 404 }) });
+    expect(el.textContent).toContain('No job found.');
+    expect(el.querySelector('a')?.getAttribute('href')).toBe('/queue');
+  });
+
+  it('says what the token lacks for a 403', () => {
+    const el = render({ what: 'memories', error: new HttpErrorResponse({ status: 403 }) });
+    expect(el.textContent).toContain('Your token may not read memories.');
+    expect(el.textContent).toContain('engram:admin');
   });
 
   it('shows nothing once loaded', () => {

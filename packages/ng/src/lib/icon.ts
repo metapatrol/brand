@@ -34,7 +34,7 @@ export function provideMpIcons(icons: IconSet): EnvironmentProviders {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'mp-icon', 'aria-hidden': 'true' },
   styles: `
-    :host { display: inline-block; flex: none; width: 1em; height: 1em; }
+    @layer components { :host { display: inline-block; flex: none; width: 1em; height: 1em; } }
     svg { display: block; width: 100%; height: 100%; }
   `,
   template: `<svg

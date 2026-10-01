@@ -56,7 +56,7 @@ export class MpCondition {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'mp-panel mp-panel-flush', role: 'region', 'aria-label': 'Conditions' },
   styles: `
-    :host { display: block; min-width: 0; }
+    @layer components { :host { display: block; min-width: 0; } }
     .scroll { overflow-x: auto; }
     .meta { font-size: var(--mp-font-size-xs); color: var(--mp-fg-subtle); }
     .muted { color: var(--mp-fg-muted); }

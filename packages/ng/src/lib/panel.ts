@@ -16,7 +16,7 @@ export class MpPanelNote {}
   selector: 'mp-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'mp-panel mp-panel-flush', role: 'region', '[attr.aria-label]': 'title() || null' },
-  styles: `:host { display: block; min-width: 0; }`,
+  styles: `@layer components { :host { display: block; min-width: 0; } }`,
   template: `
     @if (title()) {
       <div class="mp-panel-head">

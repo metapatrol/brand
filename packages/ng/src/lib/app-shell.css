@@ -64,12 +64,18 @@
 }
 
 @media (min-width: 64rem) {
-  .shell { display: grid; grid-template-columns: 14rem minmax(0, 1fr); }
-  .shell.collapsed { grid-template-columns: 3.5rem minmax(0, 1fr); }
+  /* The sidebar is as wide as its content needs — the namespace and the longest
+     label — between --mp-shell-sidebar-min and -max; only a name longer than
+     that is cut. */
+  .shell { display: grid; grid-template-columns: auto minmax(0, 1fr); }
   .sidebar {
     position: sticky; top: 0; height: 100dvh;
+    width: max-content;
+    min-width: var(--mp-shell-sidebar-min, 14rem);
+    max-width: var(--mp-shell-sidebar-max, 20rem);
     border-bottom: 0; border-right: 1px solid var(--mp-line);
   }
+  .shell.collapsed .sidebar { width: 3.5rem; min-width: 3.5rem; max-width: 3.5rem; }
   .handle { display: grid; }
   .account-phone { display: none; }
   .nav, .nav.open { display: flex; gap: 20px; padding: 8px; }

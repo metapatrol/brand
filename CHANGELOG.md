@@ -1,3 +1,10 @@
+# [0.4.0](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.3.1...v0.4.0) (2026-10-01)
+
+
+### Features
+
+* **ng:** lists, conditions, identifiers, time; code viewer and Markdown ([8e3f8b6](https://forgejo.metapatrol.local/metapatrol/brand/commit/8e3f8b6b72c4641bb6490cfe9c74f6c97c4df732))
+
 ## [0.3.1](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.3.0...v0.3.1) (2026-10-01)
 
 

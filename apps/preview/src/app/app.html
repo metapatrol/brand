@@ -1,8 +1,7 @@
 <header class="sticky top-0 z-10 border-b border-line bg-bg/90 backdrop-blur">
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
     <span class="mp-namespace flex items-center gap-3">
-      <img class="size-7 light:hidden" src="brand/mark/metapatrol-mark-small-dark.svg" alt="" />
-      <img class="hidden size-7 light:block" src="brand/mark/metapatrol-mark-small-light.svg" alt="" />
+      <mp-mark [size]="28" />
       <span><span class="mp-namespace-org">metapatrol / </span><span class="mp-namespace-project">brand</span></span>
     </span>
     <nav class="hidden gap-5 font-mono text-xs text-fg-muted md:flex">
@@ -12,6 +11,7 @@
       <a class="text-fg-muted no-underline hover:text-fg" href="#type">type</a>
       <a class="text-fg-muted no-underline hover:text-fg" href="#patterns">patterns</a>
       <a class="text-fg-muted no-underline hover:text-fg" href="#use">use</a>
+      <a class="text-fg-muted no-underline hover:text-fg" href="#angular">angular</a>
       <a class="text-fg-muted no-underline hover:text-fg" href="#downloads">downloads</a>
     </nav>
     <button
@@ -41,8 +41,7 @@
     <div class="mp-panel">
       <p class="mp-label"><span class="mp-label-index">01</span>brand mark</p>
       <div class="grid aspect-square place-items-center rounded-lg border border-line bg-bg">
-        <img class="w-3/5 light:hidden" src="brand/mark/metapatrol-mark-dark.svg" alt="metapatrol mark" />
-        <img class="hidden w-3/5 light:block" src="brand/mark/metapatrol-mark-light.svg" alt="metapatrol mark" />
+        <mp-mark class="w-3/5" [size]="240" label="the metapatrol mark" />
       </div>
       <p class="mt-3 text-sm text-fg-muted">
         Structure in steel (dark) or graphite (light), the signal panel in cyan. Every edge is vertical or at ±30° on an isometric lattice.
@@ -225,12 +224,15 @@
     <div class="mp-panel">
       <p class="mp-label"><span class="mp-label-index">08</span>controls</p>
       <div class="flex flex-wrap gap-2">
-        <button class="rounded-md bg-signal px-4 py-2 font-medium text-on-signal">Primary</button>
-        <button class="rounded-md border border-line-strong px-4 py-2 font-medium hover:bg-surface-2">Secondary</button>
-        <button class="rounded-md bg-error px-4 py-2 font-medium text-bg">Destructive</button>
-        <button class="rounded-md px-4 py-2 text-fg-muted hover:text-fg">Ghost</button>
+        <button class="mp-btn-primary">Primary</button>
+        <button class="mp-btn">Secondary</button>
+        <button class="mp-btn-danger">Destructive</button>
+        <button class="mp-btn-ghost">Ghost</button>
       </div>
-      <input class="mt-3 w-full rounded-md border border-line-strong bg-bg px-3 py-2" placeholder="Placeholder in fg-subtle" />
+      <label class="mt-3 block">
+        <span class="mp-field-label">field</span>
+        <input class="mp-input" placeholder="Placeholder in fg-subtle" />
+      </label>
       <div class="mt-3 rounded-md border border-line border-l-4 border-l-info bg-bg px-3 py-2 text-sm">
         <b class="font-semibold text-info">info </b><span class="text-fg-muted">Maintenance window on Saturday.</span>
       </div>
@@ -242,15 +244,46 @@
   <section id="use" class="mp-panel">
     <p class="mp-label"><span class="mp-label-index">09</span>use it</p>
     <div class="grid gap-3">
-      <div><p class="mb-2 font-mono text-xs text-fg-muted">angular + tailwind</p><pre>{{ snippets.angular }}</pre></div>
-      <div><p class="mb-2 font-mono text-xs text-fg-muted">react + vite + shadcn/ui</p><pre>{{ snippets.react }}</pre></div>
-      <div><p class="mb-2 font-mono text-xs text-fg-muted">sass</p><pre>{{ snippets.sass }}</pre></div>
+      <div><p class="mb-2 font-mono text-xs text-fg-muted">angular + tailwind</p><mp-code-block [code]="snippets.angular" /></div>
+      <div><p class="mb-2 font-mono text-xs text-fg-muted">react + vite + shadcn/ui</p><mp-code-block [code]="snippets.react" /></div>
+      <div><p class="mb-2 font-mono text-xs text-fg-muted">sass</p><mp-code-block [code]="snippets.sass" /></div>
     </div>
   </section>
 
   <!-- downloads -->
+  <section id="angular" class="grid gap-4 md:grid-cols-2">
+    <mp-panel index="10" title="angular components">
+      <p class="mb-4 text-sm text-fg-muted">
+        From <code>&#64;metapatrol/ng</code>, live on this page: the mark chooses its optical size from the
+        rendered size, the status and the two-step action are components, the code blocks above copy.
+      </p>
+      <div class="flex flex-wrap items-end gap-6">
+        @for (px of [16, 24, 40, 64]; track px) {
+          <figure class="m-0 grid justify-items-center gap-2">
+            <mp-mark [size]="px" />
+            <figcaption class="font-mono text-xs text-fg-muted">{{ px }}</figcaption>
+          </figure>
+        }
+      </div>
+      <div class="mt-4 flex flex-wrap gap-3">
+        <mp-status status="success">success</mp-status>
+        <mp-status status="warning">warning</mp-status>
+        <mp-status status="error">error</mp-status>
+        <mp-status status="active">active</mp-status>
+        <mp-status>idle</mp-status>
+      </div>
+      <p mpPanelNote><code>mp-app-shell</code> frames a whole console: see examples/angular-tailwind.</p>
+    </mp-panel>
+    <mp-panel index="11" title="two-step action">
+      <mp-confirm-button danger question="Delete the environment?" confirmLabel="Delete" (confirmed)="deleted.set(deleted() + 1)">
+        Delete environment
+      </mp-confirm-button>
+      <p class="mt-3 text-sm text-fg-muted">confirmed {{ deleted() }} times · Escape takes the question back</p>
+    </mp-panel>
+  </section>
+
   <section id="downloads" class="mp-panel">
-    <p class="mp-label"><span class="mp-label-index">10</span>downloads</p>
+    <p class="mp-label"><span class="mp-label-index">12</span>downloads</p>
     <p class="mb-4 text-sm text-fg-muted">
       Every file of <code>&#64;metapatrol/brand</code>. The marks are not open source: use them unchanged, see the <a href="brand/LICENSE.md">licence</a>.
     </p>

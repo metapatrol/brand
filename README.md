@@ -18,6 +18,7 @@ a static site with every file for download.
 | [`@metapatrol/style`](packages/style) | fonts, themes, element defaults, the `mp-*` patterns, the Tailwind CSS v4 theme (one import), the shadcn/spartan mapping, a Sass API |
 | [`@metapatrol/brand-kit`](packages/brand-kit) | the generator: mark, wordmark, lockups, app icons, favicons as SVG, PNG and ICO |
 | [`@metapatrol/brand`](packages/brand) | the generated assets (all rights reserved, see TRADEMARKS.md) |
+| [`@metapatrol/ng`](packages/ng) | Angular components: the app shell (sidebar, namespace, navigation, theme, account), the inline mark, panel, status, two-step action, code block, icons |
 
 Also here: [`examples/`](examples) (Angular + Tailwind, React + Vite + Tailwind)
 and [`apps/preview`](apps/preview), the brand site.
@@ -90,6 +91,7 @@ make             # every target
 | the mark's geometry | `packages/brand-kit/src/geometry.ts` | `make assets`, commit `packages/brand` |
 | wordmark, lockups, icons | `packages/brand-kit/src/compose.ts` | `make assets`, commit `packages/brand` |
 | styles, patterns, Tailwind theme | `packages/style/src/`, `scripts/build.mjs` | `make build test` |
+| Angular components | `packages/ng/src/lib/` | `make build test`, `make start-angular` |
 | the brand site | `apps/preview/src/app/` | `make start-preview` |
 
 `packages/brand` is generated but committed, so every asset change is visible in

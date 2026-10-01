@@ -93,3 +93,164 @@
     font-family: var(--mp-font-family-mono);
   }
 }
+
+/* Controls and page furniture, lifted from the engram console where they were
+   proven first. Plain CSS so they work with and without Tailwind; in a Tailwind
+   build they sit in the components layer, so utilities still override them. */
+@layer components {
+  /* the mark as inline SVG: <g class="mp-mark-structure"> and
+     <path class="mp-mark-signal">, coloured by the current theme */
+  .mp-mark-structure { fill: var(--mp-mark-structure); }
+  .mp-mark-signal { fill: var(--mp-mark-signal); }
+
+  /* buttons: default (outlined), primary (signal fill), danger, ghost */
+  .mp-btn,
+  .mp-btn-primary,
+  .mp-btn-danger,
+  .mp-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font: var(--mp-font-weight-medium) var(--mp-font-size-sm) / 1.4 var(--mp-font-family-sans);
+    color: var(--mp-fg);
+    background: transparent;
+    border: 1px solid var(--mp-line-strong);
+    border-radius: var(--mp-radius-md);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .mp-btn:hover { background: var(--mp-surface-2); }
+  .mp-btn-primary {
+    color: var(--mp-on-signal);
+    background: var(--mp-signal);
+    border-color: var(--mp-signal);
+  }
+  .mp-btn-primary:hover { filter: brightness(1.1); }
+  .mp-btn-danger {
+    color: var(--mp-error);
+    background: color-mix(in srgb, var(--mp-error) 10%, transparent);
+    border-color: color-mix(in srgb, var(--mp-error) 60%, transparent);
+  }
+  .mp-btn-danger:hover { background: color-mix(in srgb, var(--mp-error) 20%, transparent); }
+  .mp-btn-ghost {
+    padding: 4px 8px;
+    font-weight: var(--mp-font-weight-regular);
+    color: var(--mp-fg-muted);
+    border-color: transparent;
+  }
+  .mp-btn-ghost:hover { color: var(--mp-fg); background: var(--mp-surface-2); }
+  :is(.mp-btn, .mp-btn-primary, .mp-btn-danger, .mp-btn-ghost):disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    filter: none;
+  }
+
+  /* form fields */
+  .mp-input {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 6px 12px;
+    font: var(--mp-font-size-sm) / 1.5 var(--mp-font-family-sans);
+    color: var(--mp-fg);
+    background: var(--mp-bg);
+    border: 1px solid var(--mp-line-strong);
+    border-radius: var(--mp-radius-md);
+  }
+  .mp-input:focus { border-color: var(--mp-signal-fg); outline: none; }
+  .mp-input:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--mp-signal-fg) 40%, transparent); }
+  .mp-input[aria-invalid="true"] { border-color: var(--mp-error); }
+  .mp-input[aria-invalid="true"]:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--mp-error) 40%, transparent); }
+  .mp-field-label {
+    display: block;
+    margin-bottom: 4px;
+    font: var(--mp-font-size-xs) / 1.4 var(--mp-font-family-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--mp-fg-muted);
+  }
+  .mp-field-error {
+    display: block;
+    margin-top: 4px;
+    font-size: var(--mp-font-size-xs);
+    color: var(--mp-error);
+  }
+
+  /* a panel with a head and a note: <section class="mp-panel mp-panel-flush"> */
+  .mp-panel-flush { padding: 0; }
+  .mp-panel-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--mp-line);
+  }
+  .mp-panel-head > .mp-label { margin: 0; }
+  .mp-panel-body { padding: 16px; }
+  .mp-panel-note {
+    padding: 10px 16px;
+    font-size: var(--mp-font-size-sm);
+    color: var(--mp-fg-muted);
+    background: color-mix(in srgb, var(--mp-surface-2) 50%, transparent);
+    border-top: 1px solid var(--mp-line);
+    border-radius: 0 0 var(--mp-radius-lg) var(--mp-radius-lg);
+  }
+
+  .mp-page-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 8px;
+    min-width: 0;
+    margin: 0;
+    font-size: var(--mp-font-size-xl);
+    font-weight: var(--mp-font-weight-semibold);
+    letter-spacing: -0.01em;
+  }
+
+  /* a link that reads as an identifier: monospace, no underline until hovered */
+  .mp-link {
+    font: var(--mp-font-size-sm) var(--mp-font-family-mono);
+    color: var(--mp-signal-fg);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .mp-link:hover { text-decoration: underline; }
+
+  /* data tables: <table class="mp-table">, .mp-num for numbers, tr.mp-row-link */
+  .mp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--mp-font-size-sm);
+  }
+  .mp-table > thead > tr > th {
+    padding: 8px 12px;
+    text-align: left;
+    white-space: nowrap;
+    font: var(--mp-font-weight-medium) var(--mp-font-size-xs) / 1.4 var(--mp-font-family-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--mp-fg-muted);
+    border-bottom: 1px solid var(--mp-line);
+  }
+  .mp-table > tbody > tr > td {
+    padding: 8px 12px;
+    vertical-align: top;
+    overflow-wrap: break-word;
+    border-bottom: 1px solid var(--mp-line);
+  }
+  .mp-table > tbody > tr:last-child > td { border-bottom: 0; }
+  .mp-table > tbody > tr.mp-row-link { cursor: pointer; }
+  .mp-table > tbody > tr.mp-row-link:hover > td { background: var(--mp-surface-2); }
+  .mp-table :is(td, th).mp-num {
+    text-align: right;
+    white-space: nowrap;
+    font-family: var(--mp-font-family-mono);
+    font-variant-numeric: tabular-nums;
+  }
+}

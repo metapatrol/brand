@@ -11,7 +11,7 @@ NODE_RANGE := ^22.22.3 || ^24.15.0 || >=26.0.0
 # Tool versions, the one place CI and local runs read them from.
 GITLEAKS_VERSION ?= v8.30.1
 
-WORKSPACES_LIB := @metapatrol/tokens @metapatrol/style @metapatrol/brand-kit @metapatrol/brand
+WORKSPACES_LIB := @metapatrol/tokens @metapatrol/style @metapatrol/brand-kit @metapatrol/brand @metapatrol/ng
 PREVIEW_OUT := apps/preview/dist/preview/browser
 
 .DEFAULT_GOAL := help
@@ -34,7 +34,7 @@ check: ## Resolve the tokens and check every contrast rule
 build: node-check ## Build everything: packages, assets, examples, preview
 	npm run build
 
-build-packages: ## Build only the four library packages (and regenerate the assets)
+build-packages: ## Build only the five published packages (and regenerate the assets)
 	@for w in $(WORKSPACES_LIB); do npm run build -w $$w || exit 1; done
 
 assets: ## Regenerate packages/brand from the construction and the tokens

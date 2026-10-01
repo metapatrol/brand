@@ -75,6 +75,16 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "static": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/routing.ts",
+                  "with": "src/app/routing.static.ts"
+                }
+              ],
+              "outputPath": "dist/static",
+              "baseHref": "./"
             }
           },
           "defaultConfiguration": "production"

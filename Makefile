@@ -16,7 +16,7 @@ PREVIEW_OUT := apps/preview/dist/preview/browser
 
 .DEFAULT_GOAL := help
 .PHONY: help node-check install check build build-packages assets assets-check preview start-preview \
-        examples start-angular start-react test ci parity tokens-preview set-version \
+        examples shell-preview start-angular start-react test ci parity tokens-preview set-version \
         secret-scan secret-scan-history clean distclean
 
 help: ## List the targets
@@ -61,6 +61,10 @@ start-preview: node-check ## Serve the brand site with live reload
 examples: node-check ## Build both integration examples
 	npm run build -w @metapatrol/example-angular-tailwind
 	npm run build -w @metapatrol/example-react-tailwind
+
+shell-preview: node-check ## The Angular example as a static site (hash routing, relative base) for /shell/
+	npm run build:static -w @metapatrol/example-angular-tailwind
+	@echo "static shell preview: examples/angular-tailwind/dist/static/browser"
 
 start-angular: node-check ## Serve the Angular + Tailwind example
 	npm start -w @metapatrol/example-angular-tailwind

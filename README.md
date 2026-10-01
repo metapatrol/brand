@@ -6,6 +6,7 @@ application uses, and the generated assets — published as npm packages, and as
 a static site with every file for download.
 
 - **Brand site:** https://brand.metapatrol.local (deployed from `main`, behind the forge login)
+- **Shell preview:** https://brand.metapatrol.local/shell/ (`@metapatrol/ng`'s `mp-app-shell` in the Angular example)
 - **Identity:** [identity/brand-identity.md](identity/brand-identity.md)
 - **Plan and status:** [ROADMAP.md](ROADMAP.md)
 - **Using the name and marks:** [TRADEMARKS.md](TRADEMARKS.md)

@@ -116,29 +116,39 @@ jobs:
             fi
           done
 
-      # Forgejo does not link npm packages to a repository on publish, and the
-      # public address cannot do it for a scoped name: the proxy in front of
-      # Forgejo unescapes %2F in "@metapatrol%2Ftokens" and redirects, after
-      # which the name no longer fits the route. The runner reaches Forgejo
-      # directly through the address it cloned from, where %2F arrives intact.
-      # Housekeeping: a package that stays unlinked does not fail the release.
+      # Forgejo does not link npm packages to a repository on publish. Linking
+      # a package that is already linked answers 400 "invalid argument", so a 400
+      # is checked against the package itself before it counts as done.
+      # (The public address works since the lan Gateway keeps %2F unescaped,
+      # platform/kubernetes-platform#47.) Housekeeping: a package that stays
+      # unlinked does not fail the release.
       - name: Link the packages to this repository
         continue-on-error: true
         run: |
           set -eu
           : "${AUTOMATION_TOKEN:?unset secret: AUTOMATION_TOKEN}"
-          BASE=$(git remote get-url origin | sed -E 's#^(https?://[^/]+).*#\1#')
-          REPO_NAME="${FORGEJO_REPO#*/}"
-          echo "linking through $BASE"
+          VERSION="${TAG#v}"
+          API="$FORGEJO_BASE_URL/api/v1/packages/$FORGEJO_ORG/npm"
+          AUTH="Authorization: token $AUTOMATION_TOKEN"
           failed=0
           for p in tokens style brand-kit brand; do
-            HTTP=$(curl -k -s -o /tmp/link.out -w "%{http_code}" -X POST \
-              -H "Authorization: token $AUTOMATION_TOKEN" \
-              "$BASE/api/v1/packages/$FORGEJO_ORG/npm/%40metapatrol%2F$p/-/link/$REPO_NAME")
-            echo "@metapatrol/$p: HTTP $HTTP $(head -c 200 /tmp/link.out)"
-            case "$HTTP" in 2*) ;; *) failed=1 ;; esac
+            name="%40metapatrol%2F$p"
+            HTTP=$(curl -k -s -o /tmp/link.out -w "%{http_code}" -X POST -H "$AUTH" \
+              "$API/$name/-/link/${FORGEJO_REPO#*/}")
+            if [ "$HTTP" = 400 ]; then
+              linked=$(curl -k -s -H "$AUTH" "$API/$name/$VERSION" \
+                | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{console.log(JSON.parse(s).repository?.full_name??"")}catch{console.log("")}})')
+              if [ "$linked" = "$FORGEJO_REPO" ]; then
+                echo "@metapatrol/$p: already linked to $FORGEJO_REPO"
+                continue
+              fi
+            fi
+            case "$HTTP" in
+              2*) echo "@metapatrol/$p: linked to $FORGEJO_REPO" ;;
+              *) echo "@metapatrol/$p: HTTP $HTTP $(head -c 200 /tmp/link.out)"; failed=1 ;;
+            esac
           done
-          [ "$failed" = 0 ] || (echo "NOTE: not every package was linked; link it in the UI (package → Settings)" && exit 1)
+          [ "$failed" = 0 ] || (echo "NOTE: not every package is linked; link it in the UI (package → Settings)" && exit 1)
 
   notes:
     needs: publish

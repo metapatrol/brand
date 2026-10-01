@@ -1,3 +1,10 @@
+## [0.3.1](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.3.0...v0.3.1) (2026-10-01)
+
+
+### Bug Fixes
+
+* **ng:** the sidebar is as wide as the project name needs ([ec67b71](https://forgejo.metapatrol.local/metapatrol/brand/commit/ec67b715c3f01c31924bef0b268456d88ead726b))
+
 # [0.3.0](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.2.1...v0.3.0) (2026-10-01)
 
 

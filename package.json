@@ -8,6 +8,7 @@
     "packages/style",
     "packages/brand-kit",
     "packages/brand",
+    "packages/ng",
     "examples/*",
     "apps/*"
   ],

@@ -1,4 +1,5 @@
 import { Component, computed, effect, signal } from '@angular/core';
+import { MpCodeBlock, MpConfirmButton, MpMark, MpPanel, MpPanelNote, MpStatus } from '@metapatrol/ng';
 import tokens from '@metapatrol/tokens/tokens.json';
 
 type Theme = 'system' | 'dark' | 'light';
@@ -47,10 +48,12 @@ const roleOf = (key: string) => key.replace(/^color\./, '').replaceAll('.', '-')
 
 @Component({
   selector: 'app-root',
+  imports: [MpMark, MpCodeBlock, MpConfirmButton, MpPanel, MpPanelNote, MpStatus],
   templateUrl: './app.html',
 })
 export class App {
   /** system: no data-theme attribute, the tokens follow prefers-color-scheme */
+  protected readonly deleted = signal(0);
   protected readonly theme = signal<Theme>('system');
 
   /** Each tile sets its own theme, so it shows the right background in either page theme. */

@@ -8,7 +8,7 @@
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 
-export const PUBLISHED = ["tokens", "style", "brand-kit", "brand"];
+export const PUBLISHED = ["tokens", "style", "brand-kit", "brand", "ng"];
 
 const version = process.argv[2];
 if (!/^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/.test(version ?? "")) {

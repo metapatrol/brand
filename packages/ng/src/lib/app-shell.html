@@ -1,0 +1,80 @@
+<a class="skip" href="#mp-main" (click)="skipToContent($event)">Skip to content</a>
+<div class="shell" [class.collapsed]="collapsed()">
+  <aside class="sidebar">
+    <button
+      type="button"
+      class="handle"
+      (click)="toggleSidebar()"
+      [attr.aria-label]="toggleLabel()"
+      [title]="toggleLabel()"
+      [attr.aria-expanded]="expanded()"
+      aria-controls="mp-nav"
+    >
+      <mp-icon [name]="collapsed() ? 'chevron-right' : 'chevron-left'" />
+    </button>
+
+    <div class="top">
+      <!-- the mark folds the sidebar (on a phone: opens the menu) -->
+      <button
+        type="button"
+        class="mark"
+        (click)="toggleSidebar()"
+        [attr.aria-label]="toggleLabel()"
+        [title]="toggleLabel()"
+        [attr.aria-expanded]="expanded()"
+        aria-controls="mp-nav"
+      >
+        <mp-mark [size]="24" />
+      </button>
+      <a class="namespace" [routerLink]="home()" [title]="org() + ' / ' + project()"><mp-namespace [project]="project()" [org]="org()" /></a>
+      @if (account(); as a) {
+        <span class="account-phone"><ng-container [ngTemplateOutlet]="a.template" /></span>
+      }
+    </div>
+
+    <nav id="mp-nav" aria-label="Main" class="nav" [class.open]="navOpen()">
+      @for (group of nav(); track group.label) {
+        <div class="group">
+          <p class="mp-label group-label">{{ group.label }}</p>
+          <span class="group-rule" aria-hidden="true"></span>
+          @for (item of group.items; track item.path) {
+            <a
+              class="item"
+              [routerLink]="item.path"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: !!item.exact }"
+              [attr.title]="collapsed() ? item.label : null"
+              (click)="navOpen.set(false)"
+            >
+              @if (item.icon) {
+                <mp-icon [name]="item.icon" />
+              }
+              <span class="item-label">{{ item.label }}</span>
+            </a>
+          }
+        </div>
+      }
+    </nav>
+
+    <div class="foot" [class.open]="navOpen()">
+      @if (status(); as s) {
+        <div class="status"><ng-container [ngTemplateOutlet]="s.template" [ngTemplateOutletContext]="{ $implicit: collapsed() }" /></div>
+      }
+      <mp-theme-toggle />
+    </div>
+  </aside>
+
+  <div class="column">
+    <header class="bar">
+      @if (header(); as h) {
+        <div class="bar-content"><ng-container [ngTemplateOutlet]="h.template" /></div>
+      }
+      @if (account(); as a) {
+        <div class="account-desktop"><ng-container [ngTemplateOutlet]="a.template" /></div>
+      }
+    </header>
+    <main id="mp-main" tabindex="-1" class="main">
+      <ng-content />
+    </main>
+  </div>
+</div>

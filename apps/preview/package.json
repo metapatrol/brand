@@ -21,7 +21,8 @@
     "tslib": "^2.3.0",
     "@metapatrol/style": "*",
     "@metapatrol/brand": "*",
-    "@metapatrol/tokens": "*"
+    "@metapatrol/tokens": "*",
+    "@metapatrol/ng": "*"
   },
   "devDependencies": {
     "@angular/build": "^22.2.0",

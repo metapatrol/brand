@@ -219,7 +219,6 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_KEY }}
       S3_ENDPOINT: ${{ vars.S3_ENDPOINT }}
-      AWS_DEFAULT_REGION: garage
     steps:
       - uses: https://data.forgejo.org/actions/checkout@v6
         with:
@@ -229,38 +228,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: make install
       - run: make build
-      - name: Upload the site and the assets
-        run: |
-          set -eu
-          : "${S3_ENDPOINT:?unset variable: S3_ENDPOINT}"
-          [ -n "${AWS_ACCESS_KEY_ID:-}" ] || (echo "ERROR: unset secret: S3_ACCESS_KEY" && exit 1)
-          [ -n "${AWS_SECRET_ACCESS_KEY:-}" ] || (echo "ERROR: unset secret: S3_SECRET_KEY" && exit 1)
-          VERSION="${TAG#v}"
-          command -v aws >/dev/null || (apt-get update -qq && apt-get install -y -qq awscli)
-          s3() { aws s3 "$@" --endpoint-url "$S3_ENDPOINT" --no-verify-ssl; }
-
-          # The site at the root. --delete keeps it exact, --exclude keeps the
-          # asset tree out of that. Short cache: the page changes with every release.
-          s3 sync apps/preview/dist/preview/browser/ "s3://$BUCKET/" \
-            --delete --exclude "assets/*" \
-            --cache-control "public, max-age=300"
-
-          # Assets of a version never change once uploaded: a version that is
-          # already there is left alone, so a rerun cannot alter what others use.
-          if [ -n "$(s3 ls "s3://$BUCKET/assets/$VERSION/" 2>/dev/null)" ]; then
-            echo "assets/$VERSION/ exists; left unchanged"
-          else
-            for dir in mark wordmark lockup app construction; do
-              s3 sync "packages/brand/$dir/" "s3://$BUCKET/assets/$VERSION/$dir/" \
-                --cache-control "public, max-age=31536000, immutable"
-            done
-            s3 cp packages/brand/LICENSE.md "s3://$BUCKET/assets/$VERSION/LICENSE.md"
-          fi
-
-          # latest follows every release; for places that should update themselves.
-          for dir in mark wordmark lockup app construction; do
-            s3 sync "packages/brand/$dir/" "s3://$BUCKET/assets/latest/$dir/" \
-              --delete --cache-control "public, max-age=300"
-          done
-          s3 cp packages/brand/LICENSE.md "s3://$BUCKET/assets/latest/LICENSE.md"
-          echo "deployed the site and assets $VERSION"
+      - run: make shell-preview
+      # The site and the shell preview as of the tag, then the tag's assets.
+      # A missing credential fails here, unlike in main.yml: see the top.
+      - run: sh scripts/deploy.sh site
+      - run: sh scripts/deploy.sh assets "${TAG#v}"

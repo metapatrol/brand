@@ -7,7 +7,7 @@ the others.
 | workflow | runs on | does |
 |---|---|---|
 | `ci.yml` | pull requests, and pushes to develop | secret scan, then install, tokens and contrast, build, generated-asset drift, tests |
-| `main.yml` | pushes to main | the checks again, then semantic-release, then carries main back to develop |
+| `main.yml` | pushes to main | the checks again, then semantic-release (and carries main back to develop) and the brand site |
 | `release.yml` | a `v*` tag, and `workflow_dispatch` | validate the tag, test, the npm packages, the Forgejo release with the assets, the brand site and the asset tree |
 
 ## Ordering
@@ -16,7 +16,8 @@ A cheap check gates an expensive one:
 
     ci.yml       secret-scan ──> check
 
-    main.yml     config, secret-scan ──> verify ──> semantic-release ──> carry to develop
+    main.yml     config, secret-scan ──> verify ──┬─> semantic-release ──> carry to develop
+                                                 └─> site
 
     release.yml  validate ──> test ──> publish ──> notes ──> deploy
 
@@ -25,6 +26,19 @@ Forgejo release after the packages are in the registry, and `deploy` runs last.
 Every job checks out the tag and is safe to run again — published versions,
 uploaded asset versions and an existing release are left as they are — so a
 failed release is repaired by dispatching `release.yml` again for the same tag.
+
+## The brand site
+
+`scripts/deploy.sh` uploads to the `brand` bucket (https://brand.metapatrol.local):
+
+| command | what | run by |
+|---|---|---|
+| `deploy.sh site` | `apps/preview` at `/`, the Angular example's static build (`make shell-preview`: hash routing, relative base) at `/shell/` | `main.site` on every push to main, `release.deploy` for a tag |
+| `deploy.sh assets <version>` | `@metapatrol/brand` at `/assets/<version>/` (immutable, never overwritten) and `/assets/latest/` | `release.deploy` |
+
+The site follows main, so a change to it goes out with its merge even when no
+version is released. The bucket has no fallback to `index.html`, which is why the
+shell preview routes after the `#`.
 
 ## Versions
 
@@ -61,16 +75,16 @@ To publish a tag again: Actions → release → Run workflow, with the tag.
 | name | kind | where | needed by |
 |---|---|---|---|
 | `AUTOMATION_TOKEN` | secret | organisation | `main.semantic-release` (commit, tag, dispatch), `release.publish` (`write:package`), `release.notes` |
-| `S3_ACCESS_KEY` | secret | repository | `release.deploy` |
-| `S3_SECRET_KEY` | secret | repository | `release.deploy` |
-| `S3_ENDPOINT` | variable | repository | `release.deploy` |
+| `S3_ACCESS_KEY` | secret | repository | `main.site`, `release.deploy` |
+| `S3_SECRET_KEY` | secret | repository | `main.site`, `release.deploy` |
+| `S3_ENDPOINT` | variable | repository | `main.site`, `release.deploy` |
 
 `AUTOMATION_TOKEN` needs repository write (changelog commit, tag, release,
 assets), `write:package` for the npm registry, and the right to dispatch
 workflows.
 
-Without `AUTOMATION_TOKEN`, `main.yml` skips semantic-release rather than
-failing; `release.yml` fails on any missing value, because asking for a release
+Without `AUTOMATION_TOKEN` (or the S3 values), `main.yml` skips semantic-release
+(or the site) rather than failing; `release.yml` fails on any missing value, because asking for a release
 that cannot be published should not pass quietly.
 
 **Nothing may be called `FORGEJO_TOKEN`.** The runner injects a variable of that

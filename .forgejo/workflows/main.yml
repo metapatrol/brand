@@ -1,13 +1,17 @@
 # Pushes to main: the checks again, then semantic-release decides whether the
 # commits since the last tag warrant a version.
 #
-#   config, secret-scan ──> verify ──> semantic-release ──> carry to develop
+#   config, secret-scan ──> verify ──┬─> semantic-release ──> carry to develop
+#                                   └─> site
 #
 # semantic-release writes CHANGELOG.md, sets the version on all four published
 # packages (scripts/set-version.mjs, one version for all), commits
 # `chore: release vX.Y.Z`, tags `vX.Y.Z` and dispatches release.yml, which
 # publishes. Publishing is not done here: a tag can be released again, or by
 # hand, without a push to main. See .forgejo/README.md.
+#
+# site: the brand site and the shell preview follow main, so a change to them
+# goes out with its merge, whether or not it releases a version.
 #
 # `runs-on: docker` names a runner *label*, not an image.
 name: main
@@ -37,22 +41,33 @@ jobs:
     runs-on: docker
     outputs:
       release: ${{ steps.check.outputs.release }}
+      deploy: ${{ steps.check.outputs.deploy }}
     steps:
       - id: check
         env:
           AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
+          S3_ENDPOINT: ${{ vars.S3_ENDPOINT }}
+          S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+          S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
         run: |
           release=false
+          deploy=false
           if [ -n "$AUTOMATION_TOKEN" ]; then
             release=true
           else
             echo "AUTOMATION_TOKEN is not set - skipping semantic-release"
           fi
+          if [ -n "$S3_ENDPOINT" ] && [ -n "$S3_ACCESS_KEY" ] && [ -n "$S3_SECRET_KEY" ]; then
+            deploy=true
+          else
+            echo "S3_ENDPOINT, S3_ACCESS_KEY or S3_SECRET_KEY is not set - skipping the site"
+          fi
           for out in "$GITHUB_OUTPUT" "$FORGEJO_OUTPUT"; do
             [ -n "$out" ] || continue
             echo "release=$release" >> "$out"
+            echo "deploy=$deploy" >> "$out"
           done
-          echo "release=$release"
+          echo "release=$release deploy=$deploy"
 
   secret-scan:
     if: "${{ !startsWith(github.event.head_commit.message, 'chore: release v') }}"
@@ -79,6 +94,24 @@ jobs:
       - run: make build
       - run: make assets-check
       - run: make test
+
+  site:
+    needs: [verify, config]
+    if: needs.config.outputs.deploy == 'true'
+    runs-on: docker
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_KEY }}
+      S3_ENDPOINT: ${{ vars.S3_ENDPOINT }}
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: make install
+      - run: make build
+      - run: make shell-preview
+      - run: sh scripts/deploy.sh site
 
   semantic-release:
     needs: [verify, config]

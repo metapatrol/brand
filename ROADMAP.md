@@ -189,20 +189,26 @@ own look* below.
 
 ## phase 3 — project blueprint
 
-Per-project assets from the same generator:
+Per-project assets from the same generator (`@metapatrol/brand-kit`):
 
-- [ ] `npx @metapatrol/brand-kit project <name> --purpose "<one sentence>"` generates:
-  - project lockup `[mark] metapatrol / <name>` (Inter + JetBrains Mono), all colourways, SVG + PNG
-  - GitHub social preview 1280×640 PNG
-  - favicon set (adaptive SVG, ICO, apple-touch icon, web manifest icons)
-  - README header snippet (`<picture>` light/dark)
-- [ ] `npx @metapatrol/brand-kit init` in an existing repo: adds README skeleton
-      (purpose, architecture, scope and non-goals, build and test, licence),
-      CONTRIBUTING, brand assets and a `metapatrol.json` with name and purpose,
-      so later runs need no arguments.
-- [ ] Brand levels documented in the identity document:
-      level 0 repository, level 1 tool with UI, level 2 product with its own icon
-      (derived from the lattice, no new colours; only when a real case appears).
+- [x] `brand-kit project [--name] [--purpose] [--out]`:
+  - project lockup `[mark] metapatrol / <name>` (Inter + JetBrains Mono at 90 %), four
+    colourways, SVG + PNG
+  - social preview 1280×640: lockup, purpose (wrapped, at most three lines), the
+    lattice fading in from the right; long names shrink to fit
+  - favicon set: adaptive SVG, ICO, apple-touch icon, 192/512 icons (maskable), web manifest
+  - README header (`<picture>` light/dark, purpose)
+- [x] `brand-kit init [--dir]`: `metapatrol.json` (name and purpose; later runs need no
+      flags), the assets in `.metapatrol/`, README skeleton and CONTRIBUTING only where
+      none exist — hand-written files are never overwritten. Name from flags,
+      `metapatrol.json`, `package.json`, `go.mod` or the directory; validated.
+- [x] Brand levels in the identity document (section 3): 0 repository, 1 tool with a
+      UI, 2 product with its own icon (exception, derived from the lattice).
+- [x] Tried on copies of steward and mcp-gateway.
+- [ ] Two existing repositories use it (needs changes in those repositories).
+
+Open, found on the way: **mcp-gateway already has its own logo** (`docs/images/logo.svg`),
+and steward its own palette. Either is a level-2 decision or moves to the project lockup.
 
 Done when: two existing repositories use the generated assets and README structure.
 

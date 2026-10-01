@@ -46,6 +46,25 @@ For projects, use the brand as a namespace rather than giving every repository i
 
 The individual project name remains the technical identifier. The metapatrol mark acts as the common engineering label.
 
+### brand levels
+
+How much of the brand a project carries depends on what it is, not on how much
+someone likes it. Each level includes the one before.
+
+| level | for | carries |
+|---|---|---|
+| **0 — repository** | libraries, operators, small tools | `metapatrol.json`, README header with the project lockup `[mark] metapatrol / <name>`, the social preview, the README structure from section 10 — all from `npx @metapatrol/brand-kit init` |
+| **1 — tool with a UI** | consoles, dashboards, docs sites | the project's favicon set (the metapatrol mark), `@metapatrol/style`, the namespace `metapatrol / <name>` in the UI header (`mp-namespace`) |
+| **2 — product with its own icon** | something listed where a namespace cannot appear: an app store, a marketplace, a desktop dock | a product icon derived from the mark's lattice (same hexagon, same gap, no new colours), decided case by case |
+
+Level 2 is the exception and needs a reason. A project that only wants to look
+distinct is level 0 or 1: the name, set in JetBrains Mono next to the mark, is
+what distinguishes it.
+
+The project lockup sets `metapatrol /` in Inter Medium (secondary text colour) and
+the project name in JetBrains Mono (primary text colour), as the `mp-namespace`
+pattern does in interfaces.
+
 ## 4. brand mark
 
 The v3 mark is a modular, geometric systems glyph built from several independent structural segments around an inner active element.

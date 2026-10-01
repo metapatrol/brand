@@ -5,8 +5,8 @@ import { color, number, theme } from "@metapatrol/tokens";
 import { hexWidth, mark, PRIMARY, roundedPath, SMALL, toXY, type MarkSpec, type Polygon } from "./geometry.ts";
 import { Face } from "./type.ts";
 
-const dark = theme("dark");
-const light = theme("light");
+export const dark = theme("dark");
+export const light = theme("light");
 
 export const COLOURS = {
   signal: color(dark, "mark.signal"),
@@ -21,10 +21,10 @@ export const COLOURS = {
 };
 
 /** clear space and mark-to-wordmark gap: the signal panel's vertical edge */
-const X_UNIT = number(dark, "mark.clear-space");
+export const X_UNIT = number(dark, "mark.clear-space");
 /** wordmark size in horizontal lockups, relative to the hexagon height */
-const WORDMARK_SIZE = number(dark, "mark.wordmark-size");
-const CORNER = number(dark, "mark.corner-radius");
+export const WORDMARK_SIZE = number(dark, "mark.wordmark-size");
+export const CORNER = number(dark, "mark.corner-radius");
 
 export const COLOURWAYS = ["dark", "light", "mono-white", "mono-black"] as const;
 export type Colourway = (typeof COLOURWAYS)[number];
@@ -47,10 +47,10 @@ export const PALETTES: Record<Colourway, Palette> = {
 export const WORDMARK = "metapatrol";
 export const DESCRIPTOR = "infrastructure / developer tools / autonomous systems";
 
-const INTER = new Face("Inter-Medium.ttf");
-const MONO = new Face("JetBrainsMono-Regular.ttf");
-const WM_TRACK = -0.015;
-const DESC_TRACK = 0.02;
+export const INTER = new Face("Inter-Medium.ttf");
+export const MONO = new Face("JetBrainsMono-Regular.ttf");
+export const WM_TRACK = -0.015;
+export const DESC_TRACK = 0.02;
 
 const f2 = (x: number) => x.toFixed(2);
 
@@ -59,7 +59,7 @@ export function svg(w: number, h: number, body: string, label: string, backgroun
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${f2(w)} ${f2(h)}" role="img" aria-label="${label}">${bg}${body}</svg>\n`;
 }
 
-const markAt = (spec: MarkSpec, cx: number, cy: number, h: number, s: string, g: string, radius?: number, extraGap?: number) =>
+export const markAt = (spec: MarkSpec, cx: number, cy: number, h: number, s: string, g: string, radius?: number, extraGap?: number) =>
   mark(spec, cx, cy, h, s, g, { radius, cornerRadius: CORNER, extraGap });
 
 const wordmark = (size: number, x: number, baseline: number, fill: string) =>

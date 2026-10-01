@@ -22,6 +22,11 @@ a static site with every file for download.
 Also here: [`examples/`](examples) (Angular + Tailwind, React + Vite + Tailwind)
 and [`apps/preview`](apps/preview), the brand site.
 
+**For a project repository:** `npx @metapatrol/brand-kit init` writes
+`metapatrol.json`, the project lockup `metapatrol / <name>`, a social preview, the
+favicon set and a README header — and a README skeleton where there is none. See
+[packages/brand-kit](packages/brand-kit) and *brand levels* in the identity document.
+
 ## using them
 
 The packages are published to the organisation's npm registry on this forge.

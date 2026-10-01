@@ -1,3 +1,10 @@
+# [0.5.0](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.4.0...v0.5.0) (2026-10-01)
+
+
+### Features
+
+* **ng:** what the engram console needs from notices and load states ([a98c442](https://forgejo.metapatrol.local/metapatrol/brand/commit/a98c442c1310f019a58cba16dd8c9e3ac03f3700))
+
 # [0.4.0](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.3.1...v0.4.0) (2026-10-01)
 
 

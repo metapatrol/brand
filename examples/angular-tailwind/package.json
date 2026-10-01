@@ -20,7 +20,8 @@
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "@metapatrol/style": "*",
-    "@metapatrol/brand": "*"
+    "@metapatrol/brand": "*",
+    "@metapatrol/ng": "*"
   },
   "devDependencies": {
     "@angular/build": "^22.2.0",

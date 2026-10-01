@@ -41,6 +41,13 @@ test("font urls are rebased to files that exist", () => {
   for (const url of urls) assert.ok(existsSync(resolve(dirname(entry), url)), url);
 });
 
+test("controls, fields, tables and the inline mark are part of the build", () => {
+  for (const c of [".mp-btn-primary", ".mp-btn-danger", ".mp-input", ".mp-field-label", ".mp-panel-head", ".mp-table", ".mp-mark-structure"]) {
+    assert.ok(tailwind.includes(c), c);
+  }
+  assert.match(tailwind, /\.mp-mark-signal\s*\{\s*fill: var\(--mp-mark-signal\)/);
+});
+
 test("utilities use the semantic roles through the --mp variables", () => {
   assert.match(rule(".bg-surface"), /var\(--mp-surface\)/);
   assert.match(rule(".text-fg-muted"), /var\(--mp-fg-muted\)/);

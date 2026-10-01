@@ -214,22 +214,29 @@ Done when: two existing repositories use the generated assets and README structu
 
 ## phase 4 — `@metapatrol/ng`
 
-Angular library, standalone components, signals, OnPush, SSR-safe.
+Angular 22 library (ng-packagr, standalone, signals, OnPush), tested with Angular's
+Vitest runner. The engram console was the reference: its shell, theme service,
+confirm button and utilities were in use there first.
 
-- [ ] `mp-logo`: mark / lockup, picks the optical size (favicon / small / primary)
-      and colourway from size and theme.
-- [ ] `mp-app-shell`: header with `metapatrol / <project>`, navigation slot,
-      theme toggle.
-- [ ] metapatrol-specific components: panel with section label, status indicator,
-      key-value / metadata table, code and terminal block with copy button, empty state.
-- [ ] spartan/ui as the recommended set for generic components (button, dialog,
-      select, menu, …), themed through `style`; no own implementations of these.
-- [x] `apps/preview`: the brand as a static site built from the packages (Angular 22 +
-      Tailwind 4 + `@metapatrol/style`); replaced the static brand sheet. Relative base,
-      works from any path; tokens table and downloads are generated from the packages.
-      Becomes the component showcase once `@metapatrol/ng` exists.
-- [x] `examples/angular-tailwind` and `examples/react-tailwind` as workspaces, built by CI.
-- [ ] Rule: a component enters the library only when two apps need it.
+- [x] `mp-app-shell`: sidebar with mark, namespace and grouped navigation, folding to
+      icons on a desktop (remembered), opening below the top bar on a phone, theme
+      switch and status at its foot, account at the top, skip link; slots
+      `mpShellAccount`, `mpShellStatus`, `mpShellHeader`. Component styles on the
+      `--mp-*` variables, so it needs no Tailwind (which does not scan node_modules).
+- [x] `mp-mark`: the mark inline, coloured by the theme (`mp-mark-structure`/`-signal`),
+      optical size chosen from the rendered size; generated from `@metapatrol/brand`.
+- [x] `mp-namespace`, `mp-panel` (+ `mpPanelActions`, `mpPanelNote`), `mp-status`,
+      `mp-confirm-button`, `mp-code-block`, `mp-theme-toggle`, `ThemeService`,
+      `mp-icon` (built-in Lucide set, `provideMpIcons` for more), `provideMetapatrol`.
+- [x] `@metapatrol/style` gained the plain controls: `mp-btn` (+ primary, danger,
+      ghost), `mp-input`, `mp-field-label`, `mp-field-error`, `mp-panel-head`/`-body`/
+      `-note`, `mp-page-title`, `mp-link`, `mp-table`.
+- [x] `examples/angular-tailwind` is built on the shell (two routes); `apps/preview`
+      uses the mark, code blocks and panels, and shows the components.
+- [x] Released with the other packages in one version.
+- [ ] engram moves from its own shell to `mp-app-shell` (in engram).
+- [ ] Next components when a second app needs them: data table with sorting
+      (engram's `core/table`), toasts, empty state, form field wrapper.
 
 Done when: one production Angular app uses `@metapatrol/ng` and the docs site is live.
 

@@ -1,8 +1,8 @@
 // Compares the generated documents with a reference asset tree, pixel by pixel
-// and, for geometry files, coordinate by coordinate. Used in phase 1 to prove
-// that the TypeScript port reproduces the archived Python generator
-// (archive/python-generator, output in its out/ directory); useful whenever a
-// change should not alter the assets.
+// and, for geometry files, coordinate by coordinate. Proved in phase 1 that the
+// TypeScript port reproduces the Python generator it replaced; useful whenever
+// a change should not alter the assets — compare with an earlier release of
+// @metapatrol/brand.
 //
 //   npm run parity -w @metapatrol/brand-kit -- <reference dir>
 import { readdirSync, readFileSync } from "node:fs";
@@ -13,7 +13,7 @@ import { FONTS_DIR } from "../src/type.ts";
 
 const ref = process.argv[2];
 if (!ref) {
-  console.error("usage: parity <reference dir>   e.g. ../brand or ../../archive/python-generator/out");
+  console.error("usage: parity <reference dir>   e.g. ../brand or an unpacked @metapatrol/brand");
   process.exit(2);
 }
 

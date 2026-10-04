@@ -106,8 +106,7 @@ secret-scan-history: bin/gitleaks ## Scan the whole git history
 clean: ## Remove build output and copied assets (keeps node_modules)
 	rm -rf packages/*/dist examples/*/dist apps/*/dist \
 	       examples/*/.angular apps/*/.angular \
-	       examples/*/public/brand apps/*/public/brand \
-	       archive/python-generator/out
+	       examples/*/public/brand apps/*/public/brand
 
 distclean: clean ## clean, and node_modules too
 	rm -rf node_modules packages/*/node_modules examples/*/node_modules apps/*/node_modules

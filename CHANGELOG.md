@@ -1,3 +1,10 @@
+# [0.8.0](https://github.com/metapatrol/brand/compare/v0.7.0...v0.8.0) (2026-10-04)
+
+
+### Features
+
+* **brand-kit:** projects present themselves on GitHub ([b4d50f9](https://github.com/metapatrol/brand/commit/b4d50f9881a5217471939dcc16cfa8982620f57d))
+
 # [0.7.0](https://github.com/metapatrol/brand/compare/v0.6.1...v0.7.0) (2026-10-04)
 
 

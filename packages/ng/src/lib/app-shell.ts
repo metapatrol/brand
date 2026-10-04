@@ -16,6 +16,7 @@ import { MpIcon } from './icon';
 import { MpMark } from './mark';
 import { MpNamespace } from './namespace';
 import { MpThemeToggle } from './theme-toggle';
+import { MpTip } from './tip';
 
 export interface MpNavItem {
   path: string;
@@ -24,6 +25,18 @@ export interface MpNavItem {
   icon?: string;
   /** match the path exactly, e.g. for "/" */
   exact?: boolean;
+  /** A count beside the label, e.g. of what is not ready; 0 or absent shows nothing. */
+  badge?: MpNavBadge;
+}
+
+export interface MpNavBadge {
+  count: number;
+  /** bad when one of them is at fault itself, warn when they only pass trouble on */
+  tone?: 'bad' | 'warn' | 'info' | 'neutral';
+  /** What the count stands for, on hover and focus: which ones, and why. */
+  tip?: string;
+  /** For screen readers after the number, e.g. "not ready". */
+  label?: string;
 }
 
 export interface MpNavGroup {
@@ -65,7 +78,7 @@ const DESKTOP = '(min-width: 64rem)';
  */
 @Component({
   selector: 'mp-app-shell',
-  imports: [RouterLink, RouterLinkActive, NgTemplateOutlet, MpIcon, MpMark, MpNamespace, MpThemeToggle],
+  imports: [RouterLink, RouterLinkActive, NgTemplateOutlet, MpIcon, MpMark, MpNamespace, MpThemeToggle, MpTip],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:keydown.escape)': 'navOpen.set(false)' },
   templateUrl: './app-shell.html',

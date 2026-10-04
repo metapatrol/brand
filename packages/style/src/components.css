@@ -310,6 +310,22 @@
   .mp-notice > :first-child { margin-top: 0; }
   .mp-notice > :last-child { margin-bottom: 0; }
 
+  /* a tooltip, placed on the page by the component that shows it */
+  .mp-tip {
+    position: fixed;
+    z-index: 50;
+    max-width: 24rem;
+    padding: 6px 10px;
+    font: var(--mp-font-size-xs) / 1.45 var(--mp-font-family-sans);
+    color: var(--mp-fg);
+    white-space: pre-line;
+    pointer-events: none;
+    background: var(--mp-surface);
+    border: 1px solid var(--mp-line-strong);
+    border-radius: var(--mp-radius-md);
+    box-shadow: 0 6px 20px rgb(0 0 0 / 0.18);
+  }
+
   /* rendered Markdown: quiet, in the console's type */
   .mp-markdown { font-size: var(--mp-font-size-md); line-height: 1.65; color: var(--mp-fg); }
   .mp-markdown :is(p, ul, ol, blockquote, h1, h2, h3, h4) { max-width: 80ch; }

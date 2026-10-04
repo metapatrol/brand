@@ -10,7 +10,7 @@ export interface Condition {
 
 export type ConditionTone = 'ok' | 'warn' | 'bad' | 'neutral';
 
-export function findCondition(conditions: readonly Condition[] | null | undefined, type: string): Condition | undefined {
+export function findCondition<C extends Condition>(conditions: readonly C[] | null | undefined, type: string): C | undefined {
   return conditions?.find((c) => c.type === type);
 }
 
@@ -37,7 +37,7 @@ export function healthy(conditions: readonly Condition[] | null | undefined, typ
 }
 
 /** The first listed condition that is not True: the one worth showing. */
-export function firstProblem(conditions: readonly Condition[] | null | undefined, types: readonly string[]): Condition | undefined {
+export function firstProblem<C extends Condition>(conditions: readonly C[] | null | undefined, types: readonly string[]): C | undefined {
   for (const t of types) {
     const c = findCondition(conditions, t);
     if (c && c.status !== 'True') return c;

@@ -50,6 +50,11 @@
                 <mp-icon [name]="item.icon" />
               }
               <span class="item-label">{{ item.label }}</span>
+              @if (item.badge?.count; as count) {
+                <span class="badge" [attr.data-tone]="item.badge?.tone ?? 'warn'" [mpTip]="item.badge?.tip"
+                  >{{ count }}@if (item.badge?.label) {<span class="sr-only"> {{ item.badge?.label }}</span>}</span
+                >
+              }
             </a>
           }
         </div>

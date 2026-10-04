@@ -16,7 +16,7 @@ import { MpAppShell, MpNavGroup, MpShellAccount, MpShellStatus } from './app-she
 class Host {
   nav: MpNavGroup[] = [
     { label: 'Memory', items: [{ path: '/overview', label: 'Overview', icon: 'info' }, { path: '/recall', label: 'Recall' }] },
-    { label: 'Operations', items: [{ path: '/system', label: 'System' }] },
+    { label: 'Operations', items: [{ path: '/system', label: 'System', badge: { count: 2, tone: 'bad', tip: 'grep · Unreachable', label: 'not ready' } }] },
   ];
 }
 
@@ -77,6 +77,14 @@ describe('MpAppShell', () => {
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     await fixture.whenStable();
     expect(el.querySelector('nav')?.classList).not.toContain('open');
+  });
+
+  it('counts what needs attention beside an item, and says what', async () => {
+    const el: HTMLElement = (await render()).nativeElement;
+    const badges = el.querySelectorAll<HTMLElement>('nav .badge');
+    expect(badges.length).toBe(1);
+    expect(badges[0].getAttribute('data-tone')).toBe('bad');
+    expect(badges[0].textContent?.replace(/\s+/g, ' ').trim()).toBe('2 not ready');
   });
 
   it('has a skip link to the main content', async () => {

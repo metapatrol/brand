@@ -51,6 +51,11 @@ export class App {
 | `<ng-template mpShellHeader>` | the top bar, left of the account (search, breadcrumbs) |
 | content | the page, inside `<main id="mp-main">` |
 
+An item's `badge` counts what needs attention beside its label, e.g. what is
+not ready: `{ count: 2, tone: 'bad', tip: 'grep · Unreachable', label: 'not ready' }`
+(`tone` `bad`, `warn` by default, `info`, `neutral`; folded, it is a dot on the
+icon). Give items an `icon` when the sidebar may fold.
+
 What the shell and the theme remember (folded sidebar, chosen theme) goes to
 `localStorage` under `mp.*`; `provideMetapatrol({ storagePrefix: 'engram' })`
 changes the prefix.
@@ -64,7 +69,8 @@ changes the prefix.
 | `<mp-detail-title section="servers" link="/servers" [name]="…">` | where the page is and what it is, in one line |
 | `<mp-panel index="01" title="…">` | a panel with head, body, `[mpPanelActions]` and `[mpPanelNote]` |
 | `<mp-status status="success">` | dot and text: `success`, `warning`, `error`, `info`, `active`, `idle` |
-| `<mp-pill tone="ok">` | a state as a pill: `ok`, `warn`, `bad`, `info`, `neutral` |
+| `<mp-pill tone="ok" [tip]="…">` | a state as a pill: `ok`, `warn`, `bad`, `info`, `neutral`; the tip on hover and focus |
+| `[mpTip]="text"` | a tooltip on any element, on hover and keyboard focus (`focusable` for elements that are not), line breaks kept, never clipped by a scroll container |
 | `<mp-notice tone="warn">` | what is wrong with the resource on this page, above everything else; tones `warn`, `bad`, `info`, `ok`, and `neutral` for a plain remark |
 | `<mp-confirm-button danger (confirmed)="…">` | a destructive action in two clicks, Escape takes it back |
 | `<mp-code-block [prompt]="true" code="…">` | code or commands with a copy button |

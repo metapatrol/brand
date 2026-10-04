@@ -95,6 +95,7 @@ describe('errors', () => {
     expect(describeError(new HttpErrorResponse({ status: 422, error: { message: 'invalid name' } }))).toBe('422 · invalid name');
     expect(describeError(new HttpErrorResponse({ status: 500, statusText: 'Internal Server Error' }))).toBe('500 · Internal Server Error');
     expect(describeError(new HttpErrorResponse({ status: 0 }), 'engram')).toBe('engram is not reachable');
+    expect(describeError(new HttpErrorResponse({ status: 404, error: { title: 'Not Found', detail: 'no MCPServer grep' } }))).toBe('404 · Not Found: no MCPServer grep');
     expect(describeError(new Error('boom'))).toBe('boom');
     expect(isNotFound(new HttpErrorResponse({ status: 404 }))).toBe(true);
   });

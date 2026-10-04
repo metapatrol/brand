@@ -1,3 +1,10 @@
+# [0.7.0](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.6.1...v0.7.0) (2026-10-04)
+
+
+### Features
+
+* **ng:** mp-page-header, the top of a page ([2f04ac5](https://forgejo.metapatrol.local/metapatrol/brand/commit/2f04ac52fa874351bfe84eba467155284bd76e3c))
+
 ## [0.6.1](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.6.0...v0.6.1) (2026-10-04)
 
 

@@ -46,21 +46,21 @@ dependencies, and a new version of the brand reaches it as a version bump.
 
 ```mermaid
 flowchart LR
-  tokens["@metapatrol/tokens<br/>palette · themes · type · contrast rules"]
-  style["@metapatrol/style<br/>CSS · Tailwind theme · mp-* patterns"]
-  kit["@metapatrol/brand-kit<br/>generator · project blueprint"]
-  brand["@metapatrol/brand<br/>marks · lockups · icons"]
-  ng["@metapatrol/ng<br/>Angular shell and components"]
+  pkgTokens["@metapatrol/tokens<br/>palette · themes · type · contrast rules"]
+  pkgStyle["@metapatrol/style<br/>CSS · Tailwind theme · mp-* patterns"]
+  pkgKit["@metapatrol/brand-kit<br/>generator · project blueprint"]
+  pkgBrand["@metapatrol/brand<br/>marks · lockups · icons"]
+  pkgNg["@metapatrol/ng<br/>Angular shell and components"]
 
-  tokens --> style
-  tokens --> kit
-  kit --> brand
-  style --> ng
-  brand --> ng
+  pkgTokens --> pkgStyle
+  pkgTokens --> pkgKit
+  pkgKit --> pkgBrand
+  pkgStyle --> pkgNg
+  pkgBrand --> pkgNg
 
-  ng --> consoles(["consoles<br/>engram · mcp-gateway"])
-  style --> apps(["any Tailwind or plain-CSS app"])
-  kit -- "brand-kit init" --> repos(["project repositories<br/>README · lockup · favicons"])
+  pkgNg --> consoles(["consoles<br/>engram · mcp-gateway"])
+  pkgStyle --> apps(["any Tailwind or plain-CSS app"])
+  pkgKit -- "brand-kit init" --> repos(["project repositories<br/>README · lockup · favicons"])
 ```
 
 - **One version for all five packages**, released together from conventional

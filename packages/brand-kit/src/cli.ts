@@ -4,21 +4,24 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { build } from "./build.ts";
-import { ASSET_DIR, init, PLACEHOLDER, resolveConfig } from "./init.ts";
+import { ASSET_DIR, headerLinks, init, PLACEHOLDER, resolveConfig } from "./init.ts";
 import { projectFiles } from "./project.ts";
 
 const USAGE = `usage: brand-kit <command> [options]
 
   init      bring a repository into the metapatrol shape: metapatrol.json, the
-            project assets in ${ASSET_DIR}/, and a README skeleton and
-            CONTRIBUTING.md where none exist (never overwrites them)
+            project assets in ${ASSET_DIR}/, and a README skeleton,
+            CONTRIBUTING.md and SECURITY.md where none exist (never overwrites
+            them), written for the project's GitHub mirror
               --name     project name   (default: metapatrol.json, package.json, go.mod, directory)
               --purpose  one sentence   (default: metapatrol.json, package.json description)
+              --github   owner/name on GitHub (default: metapatrol.json, else metapatrol/<name>)
+              --license  SPDX identifier for the badge (default: metapatrol.json, package.json, LICENSE)
               --dir      repository     (default: .)
 
   project   only the project assets: lockup "metapatrol / <name>", social
             preview 1280x640, favicon set, README header
-              --name, --purpose as above
+              --name, --purpose, --github, --license as above
               --out      target directory (default: ./${ASSET_DIR})
 
   build     the metapatrol brand assets themselves (SVG, PNG, ICO)
@@ -31,12 +34,14 @@ const { positionals, values } = parseArgs({
     dir: { type: "string", default: "." },
     name: { type: "string" },
     purpose: { type: "string" },
+    github: { type: "string" },
+    license: { type: "string" },
     help: { type: "boolean", short: "h" },
   },
 });
 
 const [command] = positionals;
-const flags = { name: values.name, purpose: values.purpose };
+const flags = { name: values.name, purpose: values.purpose, github: values.github, license: values.license };
 
 try {
   if (values.help || !command) {
@@ -47,9 +52,9 @@ try {
     const files = build(out, (msg) => console.log(msg));
     console.log(`wrote ${files.length} files to ${out}`);
   } else if (command === "project") {
-    const { name, purpose, source } = resolveConfig(values.dir, flags);
+    const { name, purpose, source, github, license } = resolveConfig(values.dir, flags);
     const out = resolve(values.dir, values.out ?? ASSET_DIR);
-    const files = projectFiles(name, purpose);
+    const files = projectFiles(name, purpose, ASSET_DIR, { github, license, links: headerLinks(values.dir) });
     for (const [rel, data] of files) {
       mkdirSync(dirname(join(out, rel)), { recursive: true });
       writeFileSync(join(out, rel), data);
@@ -59,7 +64,8 @@ try {
     const { config, written, kept } = init(resolve(values.dir), flags);
     console.log(`${config.name} (name from ${config.source})`);
     console.log(`  purpose: ${config.purpose}`);
-    console.log(`  wrote ${written.length} files (${ASSET_DIR}/, metapatrol.json${written.includes("README.md") ? ", README.md" : ""}${written.includes("CONTRIBUTING.md") ? ", CONTRIBUTING.md" : ""})`);
+    const docs = ["README.md", "CONTRIBUTING.md", "SECURITY.md"].filter((f) => written.includes(f));
+    console.log(`  wrote ${written.length} files (${[`${ASSET_DIR}/`, "metapatrol.json", ...docs].join(", ")})`);
     for (const k of kept) console.log(`  kept ${k} as it is`);
     if (kept.includes("README.md")) console.log(`  the README header to paste: ${ASSET_DIR}/README-header.md`);
     if (config.purpose === PLACEHOLDER) {

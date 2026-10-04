@@ -36,4 +36,4 @@ contrastReport().filter((r) => r.ratio < r.min); // [] — every rule holds
 `npx metapatrol-tokens check` runs the contrast rules; `emit <dir>` writes the
 CSS, SCSS and JSON files.
 
-Apache-2.0. Part of [metapatrol/brand](https://forgejo.metapatrol.local/metapatrol/brand).
+Apache-2.0. Part of [metapatrol/brand](https://github.com/metapatrol/brand).

@@ -184,8 +184,36 @@ export function webManifest(name: string): string {
   )}\n`;
 }
 
-/** README header for GitHub and Forgejo: the lockup that follows the reader's theme, then the purpose. */
-export function readmeHeader(name: string, purpose: string, dir = ".metapatrol"): string {
+/** What the README header shows besides the lockup and the purpose. */
+export interface HeaderOptions {
+  /** Where the project's assets are, relative to the README. */
+  dir?: string;
+  /** The GitHub repository the project is mirrored to, "owner/name": the release badge. */
+  github?: string;
+  /** The SPDX identifier of the licence: the licence badge, linked to LICENSE. */
+  license?: string;
+  /** The line of links under the badges: [label, relative path]. */
+  links?: [string, string][];
+}
+
+/** A shields.io static badge's text: dashes and underscores doubled, spaces as underscores. */
+const badgeText = (s: string) => encodeURIComponent(s.replace(/-/g, "--").replace(/_/g, "__").replace(/ /g, "_"));
+
+/**
+ * README header, the way the metapatrol projects present themselves on GitHub:
+ * the lockup that follows the reader's theme, the purpose in bold, a release
+ * and a licence badge, and a line of links into the repository.
+ */
+export function readmeHeader(name: string, purpose: string, opts: HeaderOptions = {}): string {
+  const dir = opts.dir ?? ".metapatrol";
+  const github = opts.github ?? `metapatrol/${name}`;
+  const badges = [
+    `  <a href="https://github.com/${github}/releases"><img alt="Release" src="https://img.shields.io/github/v/release/${github}?sort=semver"></a>`,
+  ];
+  if (opts.license) {
+    badges.push(`  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-${badgeText(opts.license)}-blue"></a>`);
+  }
+  const links = (opts.links ?? []).map(([label, href]) => `  <a href="${href}">${label}</a>`);
   return `<p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="${dir}/${name}-lockup-dark.png">
@@ -193,12 +221,25 @@ export function readmeHeader(name: string, purpose: string, dir = ".metapatrol")
   </picture>
 </p>
 
-<p align="center">${purpose}</p>
+<p align="center">
+  <strong>${purpose}</strong>
+</p>
+
+<p align="center">
+${badges.join("\n")}
+</p>
+${links.length ? `\n<p align="center">\n${links.join(" ·\n")}\n</p>\n` : ""}
+---
 `;
 }
 
 /** Relative path -> file content for a project's asset directory. */
-export function projectFiles(name: string, purpose: string, dir = ".metapatrol"): Map<string, string | Buffer> {
+export function projectFiles(
+  name: string,
+  purpose: string,
+  dir = ".metapatrol",
+  header: Omit<HeaderOptions, "dir"> = {},
+): Map<string, string | Buffer> {
   assertName(name);
   const files = new Map<string, string | Buffer>();
   for (const cw of ["dark", "light", "mono-white", "mono-black"] as const) {
@@ -228,6 +269,6 @@ export function projectFiles(name: string, purpose: string, dir = ".metapatrol")
   files.set("favicon/icon-512.png", png(square, 512));
   files.set("favicon/site.webmanifest", webManifest(name));
 
-  files.set("README-header.md", readmeHeader(name, purpose, dir));
+  files.set("README-header.md", readmeHeader(name, purpose, { ...header, dir }));
   return files;
 }

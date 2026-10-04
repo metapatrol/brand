@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { contributing, hasMakeCi, init, resolveConfig } from "../src/init.ts";
+import { contributing, hasMakeCi, headerLinks, init, licenseOf, readmeSkeleton, resolveConfig, security } from "../src/init.ts";
 import { assertName, projectFiles, projectLockup, readmeHeader, socialPreview, wrap } from "../src/project.ts";
 
 const pngSize = (b: Buffer) => [b.readUInt32BE(16), b.readUInt32BE(20)];
@@ -49,8 +49,28 @@ test("project files: lockups, preview, favicon set, header", () => {
   assert.match(files.get("README-header.md") as string, /prefers-color-scheme: dark/);
 });
 
-test("readme header points at the asset directory", () => {
-  assert.match(readmeHeader("x", "p", ".metapatrol"), /srcset="\.metapatrol\/x-lockup-dark\.png"/);
+test("readme header: lockup, purpose, badges for GitHub, links into the repository", () => {
+  const h = readmeHeader("x", "Does one thing.", {
+    dir: ".metapatrol",
+    license: "Apache-2.0",
+    links: [["Contributing", "CONTRIBUTING.md"], ["Security", "SECURITY.md"]],
+  });
+  assert.match(h, /srcset="\.metapatrol\/x-lockup-dark\.png"/);
+  assert.match(h, /<strong>Does one thing\.<\/strong>/);
+  assert.match(h, /href="https:\/\/github\.com\/metapatrol\/x\/releases"/);
+  assert.match(h, /img\.shields\.io\/badge\/license-Apache--2\.0-blue/);
+  assert.match(h, /<a href="CONTRIBUTING\.md">Contributing<\/a> ·\n  <a href="SECURITY\.md">Security<\/a>/);
+  assert.match(readmeHeader("x", "p", { github: "acme/y" }), /github\/v\/release\/acme\/y/);
+  assert.doesNotMatch(readmeHeader("x", "p"), /license|<a href="(?!https)/);
+});
+
+test("what init writes addresses GitHub, never the private network", () => {
+  const config = { name: "x", purpose: "p", license: "MIT" };
+  for (const text of [readmeSkeleton(config), contributing(config, true), security(config)]) {
+    assert.doesNotMatch(text, /metapatrol\.local|forgejo\./);
+  }
+  assert.match(contributing(config), /forgejo-github-bridge/);
+  assert.match(security(config), /github\.com\/metapatrol\/x\/security\/advisories\/new/);
 });
 
 test("config: flags, then metapatrol.json, then package.json, go.mod, directory", () => {
@@ -75,13 +95,14 @@ test("init writes the skeleton once and never overwrites hand-written files", ()
   const dir = tmp();
   try {
     const first = init(dir, { name: "demo", purpose: "A demo." });
-    assert.ok(first.written.includes("README.md") && first.written.includes("CONTRIBUTING.md"));
+    for (const f of ["README.md", "CONTRIBUTING.md", "SECURITY.md"]) assert.ok(first.written.includes(f), f);
+    assert.match(readFileSync(join(dir, "README.md"), "utf8"), /<a href="CONTRIBUTING\.md">Contributing<\/a>/);
     assert.ok(first.written.includes(".metapatrol/social-preview.png"));
     assert.deepEqual(JSON.parse(readFileSync(join(dir, "metapatrol.json"), "utf8")), { name: "demo", purpose: "A demo." });
 
     writeFileSync(join(dir, "README.md"), "# mine\n");
     const second = init(dir);
-    assert.deepEqual(second.kept.sort(), ["CONTRIBUTING.md", "README.md"]);
+    assert.deepEqual(second.kept.sort(), ["CONTRIBUTING.md", "README.md", "SECURITY.md"]);
     assert.equal(readFileSync(join(dir, "README.md"), "utf8"), "# mine\n");
     assert.equal(second.config.name, "demo", "name comes back from metapatrol.json");
   } finally {
@@ -97,8 +118,27 @@ test("CONTRIBUTING names make ci only where the Makefile has it", () => {
     assert.equal(hasMakeCi(dir), true);
     writeFileSync(join(dir, "Makefile"), "test:\n\tgo test ./...\n# not a ci: target\n");
     assert.equal(hasMakeCi(dir), false);
-    assert.match(contributing({ name: "x", purpose: "p" }, true), /`make ci` runs the same checks/);
+    assert.match(contributing({ name: "x", purpose: "p" }, true), /`make ci` runs what CI runs/);
     assert.doesNotMatch(contributing({ name: "x", purpose: "p" }, false), /make ci/);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("licence and links come from the repository", () => {
+  const dir = tmp();
+  try {
+    assert.equal(licenseOf(dir), undefined);
+    writeFileSync(join(dir, "LICENSE"), "\n                                 Apache License\n                           Version 2.0, January 2004\n");
+    assert.equal(licenseOf(dir), "Apache-2.0");
+    assert.equal(resolveConfig(dir, { name: "x" }).license, "Apache-2.0");
+    writeFileSync(join(dir, "package.json"), JSON.stringify({ name: "x", license: "MIT" }));
+    assert.equal(resolveConfig(dir).license, "MIT", "package.json before LICENSE");
+    assert.deepEqual(headerLinks(dir), []);
+    mkdirSync(join(dir, "docs"));
+    writeFileSync(join(dir, "docs", "README.md"), "# docs\n");
+    writeFileSync(join(dir, "SECURITY.md"), "# s\n");
+    assert.deepEqual(headerLinks(dir), [["Documentation", "docs/README.md"], ["Security", "SECURITY.md"]]);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

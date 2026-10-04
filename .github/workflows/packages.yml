@@ -11,6 +11,8 @@
 # Forgejo reads .forgejo/workflows and ignores this directory.
 #
 #   @metapatrol/{tokens,style,brand-kit,brand,ng}   from a release tag
+#   a GitHub release with the changelog section and
+#   metapatrol-brand-X.Y.Z.zip (the assets)          from a release tag
 #
 # The packages carry this repository in `repository`, which links them to it:
 # they are as visible as the repository is. GitHub's npm registry wants a token
@@ -32,7 +34,7 @@ on:
         required: true
 
 permissions:
-  contents: read
+  contents: write   # the GitHub release
   packages: write
 
 concurrency:
@@ -90,3 +92,31 @@ jobs:
               npm publish -w "$name"
             fi
           done
+
+      # The same release Forgejo has: this version's section of the changelog
+      # semantic-release wrote, and the assets as a zip. After the packages: a
+      # release whose packages do not exist is worse than none.
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eu
+          VERSION="${TAG#v}"
+          # From the version's heading ("# [0.2.0](…)" for a minor, "## [0.2.1](…)"
+          # for a patch) to the next; compared exactly, as its compare link names
+          # the previous version too. No interval expressions: mawk lacks them.
+          awk -v v="$VERSION" '
+            /^##? \[?[0-9]+\.[0-9]+\.[0-9]+/ {
+              if (found) exit
+              h = $0; sub(/^#+ \[?/, "", h); sub(/[] (].*$/, "", h)
+              if (h == v) { found = 1; next }
+            }
+            found' CHANGELOG.md > "$RUNNER_TEMP/notes.md"
+          [ -s "$RUNNER_TEMP/notes.md" ] || echo "Release $TAG" > "$RUNNER_TEMP/notes.md"
+          ZIP="$RUNNER_TEMP/metapatrol-brand-$VERSION.zip"
+          (cd packages/brand && zip -qr "$ZIP" mark wordmark lockup app construction LICENSE.md TRADEMARKS.md)
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$ZIP" --clobber
+          else
+            gh release create "$TAG" --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md" "$ZIP"
+          fi

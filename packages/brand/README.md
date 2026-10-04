@@ -17,9 +17,10 @@ ones (graphite). Keep a clear space of a quarter of the mark's height around it.
 <link rel="icon" href="node_modules/@metapatrol/brand/app/favicon.svg" type="image/svg+xml">
 ```
 
-Without a package: the same files are served at
-`https://brand.metapatrol.local/assets/<version>/…` and `/assets/latest/…`
-(inside the forge, behind its login).
+Without a package: every release's files are in its GitHub release as
+`metapatrol-brand-X.Y.Z.zip`. Inside the metapatrol network they are also served
+at `https://brand.metapatrol.local/assets/<version>/…` and `/assets/latest/…`
+(behind the forge's login, not reachable from outside).
 
 **Not open source.** All rights reserved; use the files unchanged, as described
 in `TRADEMARKS.md` and `LICENSE.md` in this package.

@@ -28,3 +28,4 @@ export * from './lib/sort';
 export * from './lib/table';
 export * from './lib/time';
 export * from './lib/time-component';
+export * from './lib/tip';

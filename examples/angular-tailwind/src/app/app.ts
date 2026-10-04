@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { MpAppShell, MpNavGroup, MpShellAccount, MpShellStatus, MpStatus } from '@metapatrol/ng';
+import { conditionTone, firstProblem, MpAppShell, MpNavBadge, MpNavGroup, MpShellAccount, MpShellStatus, MpStatus } from '@metapatrol/ng';
+import { SERVERS } from './pages/servers-data';
 
 /** The whole frame is one component from @metapatrol/ng; the pages are routes. */
 @Component({
@@ -27,9 +28,21 @@ export class App {
       label: 'deployments',
       items: [
         { path: '/overview', label: 'Overview', icon: 'info' },
-        { path: '/servers', label: 'Servers', icon: 'external-link' },
+        { path: '/servers', label: 'Servers', icon: 'external-link', badge: notReady() },
         { path: '/settings', label: 'Settings', icon: 'menu' },
       ],
     },
   ];
+}
+
+/** How many servers are not Valid and Ready: bad when one is at fault itself, warn when all only pass trouble on. */
+function notReady(): MpNavBadge {
+  const inherited = ['ServerUnavailable'];
+  const found = SERVERS.map((s) => ({ name: s.name, c: firstProblem(s.conditions, ['Valid', 'Ready']) })).filter((x) => x.c);
+  return {
+    count: found.length,
+    tone: found.some((x) => conditionTone(x.c, inherited) === 'bad') ? 'bad' : 'warn',
+    tip: found.map((x) => `${x.name} · ${x.c?.reason}`).join('\n'),
+    label: 'not ready',
+  };
 }

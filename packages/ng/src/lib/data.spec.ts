@@ -1,4 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { vi } from 'vitest';
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
@@ -141,7 +142,22 @@ describe('MpCondition and MpConditions', () => {
     expect(el.getAttribute('data-tone')).toBe('warn');
     expect(el.classList).toContain('mp-pill');
     expect(el.textContent?.replace(/\s+/g, ' ').trim()).toBe('Ready ServerUnavailable');
-    expect(el.getAttribute('title')).toContain('grep is down');
+    expect(el.getAttribute('tabindex')).toBe('0');
+
+    // the message shows as a tooltip on focus, after a moment, and goes with it
+    vi.useFakeTimers();
+    try {
+      el.dispatchEvent(new FocusEvent('focusin'));
+      vi.advanceTimersByTime(300);
+      fixture.detectChanges();
+      const tip = document.querySelector<HTMLElement>('.mp-tip[role=tooltip]');
+      expect(tip?.textContent).toContain('grep is down');
+      expect(el.getAttribute('aria-describedby')).toBe(tip?.id);
+      el.dispatchEvent(new FocusEvent('focusout'));
+      expect(document.querySelector('.mp-tip')).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('lists conditions with their age, or says none were reported', async () => {

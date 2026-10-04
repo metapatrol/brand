@@ -3,17 +3,24 @@ import { MP_CONFIG } from './config';
 import { Condition, ConditionTone, conditionTone } from './conditions';
 import { ago } from './time';
 import { MpTime } from './time-component';
+import { MpTip } from './tip';
 
-/** A state as a pill (mp-pill): a dot and a word, in the tone's colour; the tip on hover. */
+/** A state as a pill (mp-pill): a dot and a word, in the tone's colour; the tip on hover and focus. */
 @Component({
   selector: 'mp-pill',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'mp-pill', '[attr.data-tone]': 'tone()', '[attr.title]': 'tip() || null' },
+  hostDirectives: [MpTip],
+  host: { class: 'mp-pill', '[attr.data-tone]': 'tone()' },
   template: `<ng-content />`,
 })
 export class MpPill {
   readonly tone = input<ConditionTone | 'info'>('neutral');
+  /** What is behind the pill, on hover and focus. */
   readonly tip = input<string | undefined>();
+
+  constructor() {
+    inject(MpTip).from(() => this.tip(), { focusable: true });
+  }
 }
 
 /**
@@ -24,7 +31,8 @@ export class MpPill {
 @Component({
   selector: 'mp-condition',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'mp-pill', '[attr.data-tone]': 'tone()', '[attr.title]': 'tip()' },
+  hostDirectives: [MpTip],
+  host: { class: 'mp-pill', '[attr.data-tone]': 'tone()' },
   styles: `.reason { font-weight: var(--mp-font-weight-regular); opacity: 0.85; }`,
   template: `
     @if (!bare()) {
@@ -41,12 +49,17 @@ export class MpCondition {
   readonly bare = input(false, { transform: booleanAttribute });
   private readonly inherited = inject(MP_CONFIG).inheritedReasons;
   protected readonly tone = computed(() => conditionTone(this.condition(), this.inherited));
-  protected readonly tip = computed(() => {
+  /** The message and age, as the tooltip shows them. */
+  readonly tip = computed(() => {
     const c = this.condition();
     if (!c) return 'Not reported yet.';
     const since = c.lastTransitionTime ? ` since ${ago(c.lastTransitionTime)}` : '';
     return `${c.message ? c.message + '\n' : ''}${c.type} ${c.status}${since}`;
   });
+
+  constructor() {
+    inject(MpTip).from(() => this.tip(), { focusable: true });
+  }
 }
 
 /** A resource's conditions as a panel: type, status, message, since; and the observed generation. */

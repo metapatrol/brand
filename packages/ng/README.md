@@ -115,6 +115,6 @@ viewer and Markdown are a 459 kB chunk that the first page does not need.
 Buttons, form fields and tables are plain classes from `@metapatrol/style`
 (`mp-btn`, `mp-btn-primary`, `mp-input`, `mp-field-label`, `mp-table`, …), usable
 in any template. A working application: `examples/angular-tailwind` in
-[metapatrol/brand](https://forgejo.metapatrol.local/metapatrol/brand).
+[metapatrol/brand](https://github.com/metapatrol/brand).
 
 Icons: [Lucide](https://lucide.dev), ISC license. Code: Apache-2.0.

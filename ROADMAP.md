@@ -111,9 +111,12 @@ Now: the Forgejo npm registry of the `metapatrol` organisation,
 - Private CA: trust it with `NODE_EXTRA_CA_CERTS` (or npm's `cafile`), not with
   `NODE_TLS_REJECT_UNAUTHORIZED=0`, which switches TLS verification off for the
   whole process.
-- Not GitHub Packages: its npm registry requires a token even to install public
-  packages, the scope must match a GitHub owner, and publishing from Forgejo would
-  need a GitHub token in the forge.
+- Also GitHub Packages, since 0.6.1: the GitHub mirror publishes every release
+  tag that reaches it (`.github/workflows/packages.yml`), so the forge holds no
+  GitHub token. For builds outside the network — the consoles' GitHub mirrors,
+  which read the packages with their `GITHUB_TOKEN` once the package grants them
+  Actions access. Its npm registry still wants a token even for reading, which is
+  what npmjs would remove.
 
 Later, npmjs: the same package names and versions; `main.yml` gets `NPM_TOKEN`
 instead of the Forgejo registry, and each consumer drops its `.npmrc` line. The

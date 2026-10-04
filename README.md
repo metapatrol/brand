@@ -1,52 +1,104 @@
-# metapatrol brand
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="packages/brand/lockup/metapatrol-lockup-descriptor-dark.png">
+    <img alt="metapatrol — infrastructure / developer tools / autonomous systems" src="packages/brand/lockup/metapatrol-lockup-descriptor-light.png" width="480">
+  </picture>
+</p>
 
-The metapatrol identity as code: the mark constructed on an isometric lattice,
-the colour tokens with a light and a dark theme, the styles every metapatrol
-application uses, and the generated assets — published as npm packages, and as
-a static site with every file for download.
+<p align="center">
+  <strong>The metapatrol identity as code: one look for every project, from a version bump.</strong>
+</p>
 
-- **Brand site:** https://brand.metapatrol.local (deployed from `main`, behind the forge login)
-- **Shell preview:** https://brand.metapatrol.local/shell/ (`@metapatrol/ng`'s `mp-app-shell` in the Angular example)
-- **Identity:** [identity/brand-identity.md](identity/brand-identity.md)
-- **Plan and status:** [ROADMAP.md](ROADMAP.md)
-- **Using the name and marks:** [TRADEMARKS.md](TRADEMARKS.md)
+<p align="center">
+  <a href="https://github.com/metapatrol/brand/releases"><img alt="Release" src="https://img.shields.io/github/v/release/metapatrol/brand?sort=semver"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
+  <a href="https://github.com/orgs/metapatrol/packages?repo_name=brand"><img alt="npm packages" src="https://img.shields.io/badge/npm-GitHub_Packages-cb3837"></a>
+  <img alt="Angular" src="https://img.shields.io/badge/angular-22-dd0031">
+  <img alt="Tailwind CSS" src="https://img.shields.io/badge/tailwind_css-4-38bdf8">
+</p>
 
-## packages
+<p align="center">
+  <a href="identity/brand-identity.md">Identity</a> ·
+  <a href="#packages">Packages</a> ·
+  <a href="examples">Examples</a> ·
+  <a href="ROADMAP.md">Roadmap</a> ·
+  <a href="CONTRIBUTING.md">Contributing</a> ·
+  <a href="SECURITY.md">Security</a> ·
+  <a href="TRADEMARKS.md">Trademarks</a>
+</p>
+
+---
+
+## Why
+
+metapatrol is a family of projects — infrastructure, developer tools,
+autonomous systems — and each of them has a console, a README and a place on
+GitHub. Copying a logo, a palette and a sidebar into every one of them gives
+as many slightly different looks, and every change to the brand becomes a
+change in every repository.
+
+This repository is the brand as code instead. The mark is constructed, not
+drawn; the colours are tokens whose contrast is checked in CI; styles,
+components and the generated assets are packages. A project takes them as
+dependencies, and a new version of the brand reaches it as a version bump.
+
+## How it works
+
+```mermaid
+flowchart LR
+  tokens["@metapatrol/tokens<br/>palette · themes · type · contrast rules"]
+  style["@metapatrol/style<br/>CSS · Tailwind theme · mp-* patterns"]
+  kit["@metapatrol/brand-kit<br/>generator · project blueprint"]
+  brand["@metapatrol/brand<br/>marks · lockups · icons"]
+  ng["@metapatrol/ng<br/>Angular shell and components"]
+
+  tokens --> style
+  tokens --> kit
+  kit --> brand
+  style --> ng
+  brand --> ng
+
+  ng --> consoles(["consoles<br/>engram · mcp-gateway"])
+  style --> apps(["any Tailwind or plain-CSS app"])
+  kit -- "brand-kit init" --> repos(["project repositories<br/>README · lockup · favicons"])
+```
+
+- **One version for all five packages**, released together from conventional
+  commits, so a project never mixes a style of one release with components of
+  another.
+- **Generated, then committed.** The assets in `packages/brand` are written by
+  the generator and committed, so every change to a mark is visible in review;
+  CI fails when they do not match what the generator writes.
+- **Checked, not trusted.** Both themes are held to WCAG contrast rules
+  (`packages/tokens/tokens/contrast.json`) before anything is built.
+
+## Packages
 
 | package | what it is |
 |---|---|
 | [`@metapatrol/tokens`](packages/tokens) | design tokens (DTCG): palette, both themes, type, radii, the mark's construction; the WCAG contrast rules both themes must meet; CSS, SCSS and JSON outputs |
 | [`@metapatrol/style`](packages/style) | fonts, themes, element defaults, the `mp-*` patterns, the Tailwind CSS v4 theme (one import), the shadcn/spartan mapping, a Sass API |
-| [`@metapatrol/brand-kit`](packages/brand-kit) | the generator: mark, wordmark, lockups, app icons, favicons as SVG, PNG and ICO |
-| [`@metapatrol/brand`](packages/brand) | the generated assets (all rights reserved, see TRADEMARKS.md) |
-| [`@metapatrol/ng`](packages/ng) | Angular components: the app shell (sidebar, namespace, navigation, theme, account), the inline mark, panel, status, two-step action, code block, icons |
+| [`@metapatrol/brand-kit`](packages/brand-kit) | the generator — mark, wordmark, lockups, app icons, favicons as SVG, PNG and ICO — and `init`, the blueprint for a project repository |
+| [`@metapatrol/brand`](packages/brand) | the generated assets (all rights reserved, see [TRADEMARKS.md](TRADEMARKS.md)) |
+| [`@metapatrol/ng`](packages/ng) | Angular components: the app shell (sidebar with counts, namespace, navigation, theme, account), page header, tables with sort and search, conditions, notices, load states, tooltips, code viewer, Markdown |
 
 Also here: [`examples/`](examples) (Angular + Tailwind, React + Vite + Tailwind)
 and [`apps/preview`](apps/preview), the brand site.
 
-**For a project repository:** `npx @metapatrol/brand-kit init` writes
-`metapatrol.json`, the project lockup `metapatrol / <name>`, a social preview, the
-favicon set and a README header — and a README skeleton where there is none. See
-[packages/brand-kit](packages/brand-kit) and *brand levels* in the identity document.
+## Quick start
 
-## using them
-
-The packages are published to the organisation's npm registry on this forge.
-One line per project, in `.npmrc`:
+The packages are published to GitHub Packages. Its npm registry wants a token
+even for reading — a personal access token with `read:packages`, or a
+workflow's `GITHUB_TOKEN` — and one line per project points the `@metapatrol`
+scope at it, in `.npmrc`:
 
 ```
-@metapatrol:registry=https://forgejo.metapatrol.local/api/packages/metapatrol/npm/
+@metapatrol:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${NPM_TOKEN}
 ```
 
-The registry is not readable anonymously: installs authenticate with a token that
-has `read:package` (in CI, the automation user's `AUTOMATION_TOKEN`):
-
-```
-//forgejo.metapatrol.local/api/packages/metapatrol/npm/:_authToken=${AUTOMATION_TOKEN}
-```
-
-**Angular or any Tailwind CSS v4 app** — `npm install @metapatrol/style`, then in
-`src/styles.css` replace `@import "tailwindcss";` with
+**Angular or any Tailwind CSS v4 app** — `npm install @metapatrol/style`, then
+in `src/styles.css` replace `@import "tailwindcss";` with
 
 ```css
 @import "@metapatrol/style/tailwind.css";
@@ -56,23 +108,40 @@ Utilities are named after the tokens (`bg-surface`, `text-fg-muted`,
 `border-line-strong`, `bg-signal text-on-signal`); the default Tailwind palette
 is removed. Themes follow the system, or `data-theme="dark|light"` on any
 element. React with shadcn/ui adds `@import "@metapatrol/style/shadcn.css";`.
-Details: [packages/style/README.md](packages/style/README.md), working code:
-[examples/](examples).
 
-**Assets without a package** — every file of `@metapatrol/brand` is served from
-the brand bucket, for READMEs, docs and tools without a build:
+**An Angular console** — `npm install @metapatrol/ng`, and the frame is one
+component:
 
+```html
+<mp-app-shell project="engram" [nav]="nav" home="/overview">
+  <router-outlet />
+</mp-app-shell>
 ```
-https://brand.metapatrol.local/assets/<version>/mark/metapatrol-mark-dark.svg   never changes
-https://brand.metapatrol.local/assets/latest/app/favicon.svg                     follows releases
-```
 
-These URLs are internal and behind the forge login (OIDC): they work in the
-browser of anyone signed in to the forge — READMEs and docs on the forge, internal
-tools — but not for anonymous clients. READMEs on GitHub cannot load them; keep a
-PNG in the repository there.
+Details: [packages/style](packages/style/README.md),
+[packages/ng](packages/ng/README.md); working code: [examples/](examples).
 
-## working on it
+**A project repository** — `npx @metapatrol/brand-kit init` writes
+`metapatrol.json`, the project lockup `metapatrol / <name>`, a social preview,
+the favicon set and a README header, and — where there are none — a README
+skeleton, `CONTRIBUTING.md` and `SECURITY.md`, all written for the project's
+GitHub mirror. See [packages/brand-kit](packages/brand-kit/README.md) and
+*brand levels* in the [identity document](identity/brand-identity.md).
+
+**Without a package** — every release has its assets as
+`metapatrol-brand-X.Y.Z.zip` on the [releases page](https://github.com/metapatrol/brand/releases).
+
+### Inside the metapatrol network
+
+The same packages come from the forge's own npm registry
+(`https://forgejo.metapatrol.local/api/packages/metapatrol/npm/`, with a token
+that has `read:package`). The brand site with every file for download, and the
+shell preview, are at `https://brand.metapatrol.local` and
+`https://brand.metapatrol.local/shell/`; the assets are served at
+`/assets/<version>/…` (never changes) and `/assets/latest/…` (follows releases).
+All of these sit behind the forge's login and are not reachable from outside.
+
+## Working on it
 
 Requirements: Node.js `^22.22.3 || ^24.15.0 || >=26` (`nvm use` reads `.nvmrc`)
 and `make`.
@@ -93,29 +162,30 @@ make             # every target
 | wordmark, lockups, icons | `packages/brand-kit/src/compose.ts` | `make assets`, commit `packages/brand` |
 | styles, patterns, Tailwind theme | `packages/style/src/`, `scripts/build.mjs` | `make build test` |
 | Angular components | `packages/ng/src/lib/` | `make build test`, `make start-angular` |
+| the project blueprint | `packages/brand-kit/src/init.ts`, `project.ts` | `make test` |
 | the brand site | `apps/preview/src/app/` | `make start-preview` |
 
-`packages/brand` is generated but committed, so every asset change is visible in
-review; CI fails when it does not match what the generator writes.
+## Releases
 
-## releases
+The repository is developed in a private Forgejo and push-mirrored here. A
+release is cut there, from the conventional commits since the last tag:
+`fix:` → patch, `feat:` → minor, breaking → minor while 0.x; `chore:`, `ci:`,
+`build:` and `docs:` alone release nothing. One version for all five packages.
 
-Work goes to `develop` through pull requests; `ci.yml` checks every pull request
-and every push to `develop`. A pull request from `develop` to `main` releases, if
-its commits call for it:
+The tag reaches GitHub with the mirror, and
+[`packages.yml`](.github/workflows/packages.yml) publishes that version to
+GitHub Packages and creates the GitHub release. On Forgejo, the same tag
+publishes to its own registry and deploys the brand site
+([.forgejo/README.md](.forgejo/README.md)). The changes are in
+[CHANGELOG.md](CHANGELOG.md).
 
-- **One version for all four packages**, from the conventional commits since the
-  last `vX.Y.Z` tag: `fix:` → patch, `feat:` → minor, breaking → minor while 0.x;
-  `chore:`, `ci:`, `build:`, `docs:` alone release nothing.
-- `main.yml` runs semantic-release: `CHANGELOG.md`, the versions, a
-  `chore: release vX.Y.Z` commit and the tag; then carries `main` back to `develop`.
-- `release.yml` publishes the tag: the npm packages, a Forgejo release with the
-  changelog section and `metapatrol-brand-X.Y.Z.zip`, and the brand site and assets
-  (`/assets/X.Y.Z/`, `/assets/latest/`).
+## Contributing
 
-How it works and what it needs: [.forgejo/README.md](.forgejo/README.md).
+Issues and pull requests are welcome here on GitHub: see
+[CONTRIBUTING.md](CONTRIBUTING.md). Security problems go through
+[SECURITY.md](SECURITY.md).
 
-## licence
+## Licence
 
 The code — tokens, styles, generator, components, examples — is licensed under
 the [Apache License 2.0](LICENSE). The metapatrol name, mark, wordmark and

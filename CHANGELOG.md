@@ -1,3 +1,10 @@
+# [0.6.0](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.5.0...v0.6.0) (2026-10-04)
+
+
+### Features
+
+* **ng:** tooltips, nav counts and problem details for the gateway console ([e2c5372](https://forgejo.metapatrol.local/metapatrol/brand/commit/e2c537256de4d6c6678d03c72e68dd2f716cd27c))
+
 # [0.5.0](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.4.0...v0.5.0) (2026-10-01)
 
 

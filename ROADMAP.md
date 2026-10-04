@@ -8,7 +8,7 @@ Angular components.
 
 | topic | decision |
 |---|---|
-| generator | Node.js / TypeScript, run with `npx`; replaced the Python generator (`archive/python-generator/`) |
+| generator | Node.js / TypeScript, run with `npx`; replaced the Python generator (in the Git history up to v0.8.0) |
 | styles package | `@metapatrol/style` (not `css`) |
 | primary stack | Angular + Tailwind CSS; every package must work in that stack first |
 | React | not planned; supported through the framework-agnostic layers, components only when a React app exists |
@@ -50,7 +50,6 @@ brand/
   apps/
     preview/       the brand as a static site (Angular + Tailwind), replaced the brand sheet
   identity/        brand identity document
-  archive/         v1 icon, v3 drafts, static brand sheet, python generator
 ```
 
 Every published package except `@metapatrol/brand` is Apache-2.0. The `repository`
@@ -147,8 +146,10 @@ Port of the Python generator, with no system dependencies:
 - [x] `@metapatrol/brand` (`packages/brand/`) holds the generated, committed assets,
       `LICENSE.md`, `TRADEMARKS.md` and `"license": "SEE LICENSE IN LICENSE.md"`.
       CI fails when they are out of date.
-- [x] Python generator in `archive/python-generator/` (still runnable, writes to `out/`);
-      repository moved to the target layout (`identity/`, `archive/`).
+- [x] Python generator kept in `archive/python-generator/` until the port matched it;
+      repository moved to the target layout (`identity/`). The archive — v1 icon, v3
+      drafts, the static brand sheet, the Python generator — went after 0.8.0: the
+      identity is v3.1, the brand site replaced the sheet, and Git keeps the rest.
 - [x] Tests: lattice rules (every edge vertical or ±30°, points inside the hexagon,
       signal panel proportions), inset, determinism, ICO structure, complete build.
 - [x] Release flow for `brand-kit` and `brand` (`main.yml`); first publish happens with the first merge to main.

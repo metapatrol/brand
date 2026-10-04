@@ -7,6 +7,7 @@ import {
   MpId,
   MpListSearch,
   MpLoadState,
+  MpPageHeader,
   MpPanel,
   MpSort,
   MpTime,
@@ -19,10 +20,11 @@ import { SERVERS } from './servers-data';
 /** A list as the mcp-gateway console has them: search and sort in the URL. */
 @Component({
   selector: 'app-servers',
-  imports: [MpPanel, MpListSearch, MpSort, MpCondition, MpId, MpTime, MpLoadState],
+  imports: [MpPageHeader, MpPanel, MpListSearch, MpSort, MpCondition, MpId, MpTime, MpLoadState],
   template: `
     <div class="mx-auto grid max-w-5xl gap-4">
-      <h1 class="mp-page-title">servers</h1>
+      <!-- the grid spaces the page, so the header's own margin goes (mb-0) -->
+      <mp-page-header class="mb-0" title="servers" note="MCPServer" />
       <mp-load-state [loading]="loading()" what="servers" />
       @if (!loading()) {
         <mp-list-search [query]="q()" [shown]="rows().length" [total]="servers.length" placeholder="Filter servers" (submitted)="openFirst()" />

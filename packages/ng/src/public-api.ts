@@ -9,6 +9,7 @@ export * from './lib/confirm-button';
 export * from './lib/icon';
 export * from './lib/mark';
 export * from './lib/namespace';
+export * from './lib/page-header';
 export * from './lib/panel';
 export * from './lib/status';
 export * from './lib/theme';

@@ -66,7 +66,8 @@ changes the prefix.
 |---|---|
 | `<mp-mark [size]="24">` | the mark, inline; colours follow the theme, the optical size follows `size` (favicon ≤ 16, small ≤ 40, primary above); `label` makes it an image |
 | `<mp-namespace project="…">` | `metapatrol / <project>` |
-| `<mp-detail-title section="servers" link="/servers" [name]="…">` | where the page is and what it is, in one line |
+| `<mp-page-header title="Memories" note="1 204">…actions…</mp-page-header>` | the top of a page: the title (after its `section`, linked to `link`, for a page inside one; `mono` for an identifier), a short note beside it, the page's actions on the right |
+| `<mp-detail-title section="servers" link="/servers" [name]="…">` | only the title line of a detail page, for a header laid out by the page |
 | `<mp-panel index="01" title="…">` | a panel with head, body, `[mpPanelActions]` and `[mpPanelNote]` |
 | `<mp-status status="success">` | dot and text: `success`, `warning`, `error`, `info`, `active`, `idle` |
 | `<mp-pill tone="ok" [tip]="…">` | a state as a pill: `ok`, `warn`, `bad`, `info`, `neutral`; the tip on hover and focus |

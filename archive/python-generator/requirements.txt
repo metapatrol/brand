@@ -1,2 +1,0 @@
-uharfbuzz>=0.39
-fonttools>=4.29

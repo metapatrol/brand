@@ -4,6 +4,11 @@
   "private": false,
   "description": "Generates the metapatrol brand assets from their construction: npx @metapatrol/brand-kit build.",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/metapatrol/brand.git",
+    "directory": "packages/brand-kit"
+  },
   "type": "module",
   "exports": {
     ".": {

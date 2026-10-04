@@ -4,6 +4,11 @@
   "private": false,
   "description": "metapatrol styles: fonts, light and dark themes, element defaults, patterns, Tailwind CSS v4 theme, shadcn/spartan mapping, Sass API.",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/metapatrol/brand.git",
+    "directory": "packages/style"
+  },
   "type": "module",
   "exports": {
     ".": {

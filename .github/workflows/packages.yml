@@ -1,0 +1,92 @@
+# Packages for the GitHub mirror, published to GitHub Packages
+# (npm.pkg.github.com).
+#
+# The repository lives on Forgejo, which tests, versions and releases it and
+# publishes the packages to the forge's own npm registry (.forgejo/workflows).
+# GitHub gets a push mirror of it: tags arrive as pushes, and this workflow
+# publishes the same packages from them for builds outside that network — the
+# GitHub mirrors of the consoles that use them. It decides nothing: versions
+# are semantic-release's, on Forgejo; a tag arriving here is only published.
+#
+# Forgejo reads .forgejo/workflows and ignores this directory.
+#
+#   @metapatrol/{tokens,style,brand-kit,brand,ng}   from a release tag
+#
+# The packages carry this repository in `repository`, which links them to it:
+# they are as visible as the repository is. GitHub's npm registry wants a token
+# even for a public package; a workflow elsewhere reads them with its own
+# GITHUB_TOKEN (permissions: packages: read).
+#
+# A release tagged before this workflow existed is published by running it by
+# hand with that tag. Every run is safe to repeat: a version already published
+# is left as it is.
+name: packages
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to publish, e.g. v0.6.0
+        required: true
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: packages-${{ inputs.tag || github.ref }}
+  cancel-in-progress: false
+
+env:
+  TAG: ${{ inputs.tag || github.ref_name }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://npm.pkg.github.com
+          scope: "@metapatrol"
+
+      - name: The tag is a version, and every package carries it
+        run: |
+          set -eu
+          echo "$TAG" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$' \
+            || (echo "ERROR: '$TAG' is not a version tag (vX.Y.Z)" && exit 1)
+          VERSION="${TAG#v}"
+          for p in tokens style brand-kit brand ng; do
+            v=$(node -p "require('./packages/$p/package.json').version")
+            [ "$v" = "$VERSION" ] || (echo "ERROR: packages/$p is $v, the tag is $TAG" && exit 1)
+          done
+          echo "all five packages are $VERSION"
+
+      - run: make install
+      - run: make build-packages
+
+      # Dependency order, so a consumer never finds a package whose dependency
+      # is not there yet. The Angular library is published from its
+      # ng-packagr output, not from its source directory.
+      - name: Publish what the registry does not have yet
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eu
+          VERSION="${TAG#v}"
+          for p in tokens style brand-kit brand ng; do
+            name="@metapatrol/$p"
+            if npm view "$name@$VERSION" version >/dev/null 2>&1; then
+              echo "$name@$VERSION is already published"
+            elif [ "$p" = ng ]; then
+              npm publish packages/ng/dist
+            else
+              npm publish -w "$name"
+            fi
+          done

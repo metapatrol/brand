@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { MpCodeBlock } from './code-block';
 import { MpConfirmButton } from './confirm-button';
 import { MpPanel, MpPanelActions, MpPanelNote } from './panel';
+import { MpPageHeader } from './page-header';
 import { MpStatus } from './status';
 
 describe('MpConfirmButton', () => {
@@ -74,5 +76,32 @@ describe('MpPanel and MpStatus', () => {
     expect(el.querySelector('mp-panel > .note')?.classList).toContain('mp-panel-note');
     expect(el.querySelector('.act')?.classList).toContain('mp-panel-actions');
     expect(el.querySelector('mp-panel')?.getAttribute('aria-label')).toBe('environments');
+  });
+});
+
+@Component({
+  imports: [MpPageHeader],
+  template: `
+    <mp-page-header class="list" title="Memories" note="1 204" />
+    <mp-page-header class="detail" section="Memories" link="/memories" title="01j9zk" mono>
+      <button type="button">Delete</button>
+    </mp-page-header>
+  `,
+})
+class PageHeaderHost {}
+
+describe('MpPageHeader', () => {
+  it('names the page, its section and a note, with its actions beside', async () => {
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    const fixture = TestBed.createComponent(PageHeaderHost);
+    await fixture.whenStable();
+    const el: HTMLElement = fixture.nativeElement;
+    const list = el.querySelector('.list')!;
+    expect(list.querySelector('h1')?.textContent?.replace(/\s+/g, ' ').trim()).toBe('Memories 1 204');
+    expect(list.querySelector('a')).toBeNull();
+    const detail = el.querySelector('.detail')!;
+    expect(detail.querySelector('h1 a')?.getAttribute('href')).toBe('/memories');
+    expect(detail.querySelector('.title')?.classList).toContain('mono');
+    expect(detail.querySelector('.actions button')?.textContent).toBe('Delete');
   });
 });

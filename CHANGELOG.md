@@ -1,3 +1,10 @@
+## [0.6.1](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.6.0...v0.6.1) (2026-10-04)
+
+
+### Bug Fixes
+
+* **packages:** name their public repository, and publish them on GitHub ([9ccc53f](https://forgejo.metapatrol.local/metapatrol/brand/commit/9ccc53fa41c1057ffb9a74d1664ecef31c37e04d))
+
 # [0.6.0](https://forgejo.metapatrol.local/metapatrol/brand/compare/v0.5.0...v0.6.0) (2026-10-04)
 
 

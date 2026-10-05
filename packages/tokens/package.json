@@ -1,6 +1,6 @@
 {
   "name": "@metapatrol/tokens",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "private": false,
   "description": "metapatrol design tokens: DTCG source, light and dark themes, contrast rules, CSS/SCSS/JSON outputs and a resolver API.",
   "license": "Apache-2.0",

@@ -1,3 +1,10 @@
+## [0.8.1](https://github.com/metapatrol/brand/compare/v0.8.0...v0.8.1) (2026-10-05)
+
+
+### Bug Fixes
+
+* **style:** a label anywhere in a panel head loses its margin ([e443438](https://github.com/metapatrol/brand/commit/e443438bb8950d76c514cbfce15042db2ce25d52)), closes [#53](https://github.com/metapatrol/brand/issues/53)
+
 # [0.8.0](https://github.com/metapatrol/brand/compare/v0.7.0...v0.8.0) (2026-10-04)
 
 

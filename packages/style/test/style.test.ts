@@ -48,6 +48,13 @@ test("controls, fields, tables and the inline mark are part of the build", () =>
   assert.match(tailwind, /\.mp-mark-signal\s*\{\s*fill: var\(--mp-mark-signal\)/);
 });
 
+// metapatrol/brand#53: a label wrapped with an info icon kept its 14px margin
+// and made its panel head taller than the others.
+test("a label anywhere in a panel head loses its margin", () => {
+  assert.match(tailwind, /\.mp-panel-head \.mp-label\s*\{\s*margin: 0;?\s*\}/);
+  assert.doesNotMatch(tailwind, /\.mp-panel-head > \.mp-label/);
+});
+
 test("utilities use the semantic roles through the --mp variables", () => {
   assert.match(rule(".bg-surface"), /var\(--mp-surface\)/);
   assert.match(rule(".text-fg-muted"), /var\(--mp-fg-muted\)/);

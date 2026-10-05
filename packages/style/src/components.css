@@ -190,7 +190,8 @@
     padding: 10px 16px;
     border-bottom: 1px solid var(--mp-line);
   }
-  .mp-panel-head > .mp-label { margin: 0; }
+  /* any label in the head, also one wrapped together with an icon beside it */
+  .mp-panel-head .mp-label { margin: 0; }
   .mp-panel-body { padding: 16px; }
   .mp-panel-note {
     padding: 10px 16px;

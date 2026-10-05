@@ -10,8 +10,8 @@ const pngSize = (b: Buffer) => [b.readUInt32BE(16), b.readUInt32BE(20)];
 const tmp = () => mkdtempSync(join(tmpdir(), "brand-kit-project-"));
 
 test("project names are technical identifiers", () => {
-  for (const ok of ["steward", "mcp-gateway", "oci-registry2"]) assert.doesNotThrow(() => assertName(ok));
-  for (const bad of ["Steward", "mcp_gateway", "-x", "a--b", "", "a b"]) assert.throws(() => assertName(bad), bad);
+  for (const ok of ["engram", "mcp-gateway", "oci-registry2"]) assert.doesNotThrow(() => assertName(ok));
+  for (const bad of ["Engram", "mcp_gateway", "-x", "a--b", "", "a b"]) assert.throws(() => assertName(bad), bad);
 });
 
 test("wrap keeps lines within the width and ends cut text with an ellipsis", () => {
@@ -36,15 +36,15 @@ test("the social preview is 1280x640 and fits long names", () => {
 });
 
 test("project files: lockups, preview, favicon set, header", () => {
-  const files = projectFiles("steward", "Keeps a site whose CCU it is the only thing to talk to.");
+  const files = projectFiles("engram", "Persistent, searchable memory for AI agents.");
   for (const cw of ["dark", "light", "mono-white", "mono-black"]) {
-    assert.ok(files.has(`steward-lockup-${cw}.svg`) && files.has(`steward-lockup-${cw}.png`), cw);
+    assert.ok(files.has(`engram-lockup-${cw}.svg`) && files.has(`engram-lockup-${cw}.png`), cw);
   }
   assert.deepEqual(pngSize(files.get("social-preview.png") as Buffer), [1280, 640]);
   assert.deepEqual(pngSize(files.get("favicon/apple-touch-icon.png") as Buffer), [180, 180]);
   assert.deepEqual(pngSize(files.get("favicon/icon-512.png") as Buffer), [512, 512]);
   const manifest = JSON.parse(files.get("favicon/site.webmanifest") as string) as { name: string; icons: unknown[] };
-  assert.equal(manifest.name, "metapatrol / steward");
+  assert.equal(manifest.name, "metapatrol / engram");
   assert.equal(manifest.icons.length, 2);
   assert.match(files.get("README-header.md") as string, /prefers-color-scheme: dark/);
 });

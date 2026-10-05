@@ -83,7 +83,7 @@ describe('format', () => {
   it('shortens identifiers so they stay recognisable', () => {
     expect(shortId('sha256:3f2a9c1e0b7d55aa66bb77cc')).toBe('sha256:3f2a9c1e0b7d');
     expect(shortId('3f2a9c1e0b7d55aa66bb')).toBe('3f2a9c1e0b7d');
-    expect(shortId('registry.example/metapatrol/steward:0.14.2')).toBe('registry.exa…eward:0.14.2');
+    expect(shortId('registry.example/metapatrol/engram:0.14.2')).toBe('registry.exa…ngram:0.14.2');
     expect(shortId('short-id')).toBe('short-id');
     expect(shortId(undefined)).toBe('—');
   });

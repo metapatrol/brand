@@ -73,7 +73,7 @@ Plain classes, with or without Tailwind:
   <span class="mp-status" data-status="success">healthy</span>
   <button class="mp-chip" aria-pressed="true">prod</button>
 </section>
-<span class="mp-namespace"><span class="mp-namespace-org">metapatrol / </span><span class="mp-namespace-project">steward</span></span>
+<span class="mp-namespace"><span class="mp-namespace-org">metapatrol / </span><span class="mp-namespace-project">engram</span></span>
 ```
 
 `data-status`: `success`, `warning`, `error`, `info`, `active`; none means idle.

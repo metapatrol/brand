@@ -181,15 +181,14 @@ published package) is done.
 - [x] Tests compile real Tailwind (through `@tailwindcss/postcss`, as Angular does) and
       Sass against the built package: utilities, palette removal, variants, shadcn names,
       font URLs resolving to files, Sass API.
-- [x] Checked on a copy of steward/ui (Angular 22, Tailwind 4.3): one dependency, one
+- [x] Checked on an existing Angular 22 + Tailwind 4 application: one dependency, one
       changed import, the build bundles fonts, tokens and patterns.
-- [x] No Tailwind v3 preset: every Tailwind app already uses v4.
+- [x] No Tailwind v3 preset: the portfolio's Tailwind apps use v4.
 
 Done when: an existing Angular + Tailwind app switches to metapatrol look by
 adding one dependency and one import. **Done for the integration.** The visual
 switch of an existing app still means replacing its own colour variables in its
-components (steward keeps its brass palette until then); see *products with their
-own look* below.
+components, as engram and mcp-gateway did; see *products with their own look* below.
 
 ## phase 3 — project blueprint
 
@@ -213,14 +212,13 @@ Per-project assets from the same generator (`@metapatrol/brand-kit`):
       `github` and `license` in `metapatrol.json`. Nothing links into the private network.
 - [x] Brand levels in the identity document (section 3): 0 repository, 1 tool with a
       UI, 2 product with its own icon (exception, derived from the lattice).
-- [x] Tried on copies of steward and mcp-gateway.
+- [x] Tried on a copy of mcp-gateway.
 - [x] Two existing repositories use it: engram, and forgejo-github-bridge (which gave
       up its own logo for the project lockup). forge-operator followed, in its
       `develop` until its next release.
 
 Still open: mcp-gateway's README is not on the blueprint yet (its console is; it has no
-logo of its own any more), and steward keeps its own palette — a level-2 decision, or
-it moves to the project lockup.
+logo of its own any more).
 
 **Done**: engram and forgejo-github-bridge use the generated assets and README structure.
 
@@ -289,10 +287,9 @@ the shadcn mapping and `@metapatrol/brand`.
 |---|---|
 | public npmjs or Forgejo registry (or both) | **answered**: Forgejo, and GitHub Packages from the GitHub mirror since 0.6.1; npmjs later; see *registry* in phase 0 |
 | are the org's Forgejo packages readable without a token? | **answered**: no (401 without one); consumers read with a token, CI with `AUTOMATION_TOKEN` |
-| Tailwind v3 still in use anywhere? | **answered**: no. steward and timemachine-go use Tailwind 4.3; eventstore-ui and timemachine-ui use none. v4 only |
-| Angular version range to support | Angular 22 (steward, timemachine-go) and 19 (eventstore-ui, timemachine-ui) are in use. Default: 22 and later; the 19 apps get `style` without `ng` until they upgrade |
-| Angular Material | used by timemachine-ui (Angular 19). Default: no Material mapping; revisit if that app adopts the brand |
-| products with their own look | mcp-gateway gave up its own (IBM Plex, blue) for the metapatrol look in 1.10.0. steward keeps its palette (brass accent, Archivo/Spectral) until decided: a product accent, or signal cyan |
+| Tailwind v3 still in use anywhere? | **answered**: no; the portfolio's consoles (engram, mcp-gateway) use Tailwind 4. v4 only |
+| Angular version range to support | **answered**: Angular 22 and later, as the portfolio's consoles use |
+| products with their own look | **answered**: none left in the portfolio; mcp-gateway gave up its own (IBM Plex, blue) for the metapatrol look in 1.10.0. Projects outside the metapatrol portfolio are out of scope |
 | light theme's subtle text at 4.5:1 | open: `fg-subtle` meets the 3:1 the tokens require; engram overrides it to 4.5:1 (`#5f6b78`) for small text. Raise the token, or keep the rule |
 | exact light-theme values | **answered**: agreed 2026-09-28, see `tokens/` |
 | docs site hosting | **answered**: the Garage bucket `brand` at https://brand.metapatrol.local (behind the forge's login), with the shell preview at `/shell/` and the assets at `/assets/<version>/` |

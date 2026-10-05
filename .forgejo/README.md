@@ -42,8 +42,8 @@ shell preview routes after the `#`.
 
 ## Versions
 
-One version for all four published packages (`@metapatrol/tokens`, `style`,
-`brand-kit`, `brand`), decided by semantic-release from the conventional commits
+One version for all five published packages (`@metapatrol/tokens`, `style`,
+`brand-kit`, `brand`, `ng`), decided by semantic-release from the conventional commits
 on main since the last `vX.Y.Z` tag:
 
 | commits since the last tag | release |
@@ -53,7 +53,7 @@ on main since the last `vX.Y.Z` tag:
 | a breaking change (`feat!:`, `BREAKING CHANGE:`) | minor while the version is 0.x (`.releaserc.json`) |
 | only `chore:`, `ci:`, `build:`, `docs:`, … | none |
 
-`scripts/set-version.mjs` sets the version on the four packages and on the ranges
+`scripts/set-version.mjs` sets the version on the five packages and on the ranges
 they use for each other, and updates the lockfile. semantic-release commits that
 with `CHANGELOG.md` as `chore: release vX.Y.Z`; `main.yml` skips its own run for
 that commit.
@@ -69,6 +69,22 @@ semantic-release's `successCmd`, which dispatches `release.yml` directly.
 `on: push: tags` stays for tags pushed by hand, which do raise the event.
 
 To publish a tag again: Actions → release → Run workflow, with the tag.
+
+## The GitHub mirror
+
+The repository is push-mirrored to github.com/metapatrol/brand (`main`,
+`develop` and the tags). There, `.github/workflows/packages.yml` publishes each
+release tag that arrives to GitHub Packages (`npm.pkg.github.com`) and creates
+the GitHub release with the changelog section and the assets zip — for builds
+outside the network, such as the consoles' own GitHub mirrors. Forgejo ignores
+`.github/`, GitHub ignores `.forgejo/`; the forge holds no GitHub token.
+
+The mirror does not sync on every commit: after a release, sync it (repository
+settings → Mirror settings → Synchronize now) or wait for its interval. Tags
+from before 0.6.1 carry no `packages.yml` and so are not on GitHub Packages.
+A repository that reads the packages there with its `GITHUB_TOKEN` needs read
+access under each package's *Manage Actions access* — a setting GitHub has no
+API for.
 
 ## Secrets and variables
 
@@ -109,6 +125,8 @@ in ways that read as a scope problem.
       README.md             this file
       trigger-release.sh    starts release.yml for the tag semantic-release made
       workflows/            ci.yml, main.yml, release.yml
+    .github/workflows/
+      packages.yml          on the GitHub mirror: GitHub Packages and the GitHub release
     .releaserc.json         semantic-release
     scripts/set-version.mjs one version for all published packages
 

@@ -2,7 +2,7 @@
 #
 #   validate ──> test ──> publish ──> notes ──> deploy
 #
-# publish puts the four packages into the organisation's npm registry, notes
+# publish puts the five packages into the organisation's npm registry, notes
 # creates the Forgejo release with the changelog section and the assets as a zip,
 # deploy uploads the brand site and the assets to the `brand` bucket
 # (https://brand.metapatrol.local, /assets/<version>/ and /assets/latest/).

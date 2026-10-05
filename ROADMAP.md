@@ -88,7 +88,7 @@ for the Angular library.
 Done when: the tokens are agreed and CI is green on the forge.
 
 Release flow — **in place**, in the shape of platform/mcp-gateway (see
-`.forgejo/README.md`): semantic-release on main decides one version for all four
+`.forgejo/README.md`): semantic-release on main decides one version for all five
 packages from the conventional commits, commits changelog and versions, tags
 `vX.Y.Z` and dispatches `release.yml`, which publishes the packages, creates the
 Forgejo release with the assets as a zip, and deploys the brand site and the
@@ -206,15 +206,23 @@ Per-project assets from the same generator (`@metapatrol/brand-kit`):
       flags), the assets in `.metapatrol/`, README skeleton and CONTRIBUTING only where
       none exist — hand-written files are never overwritten. Name from flags,
       `metapatrol.json`, `package.json`, `go.mod` or the directory; validated.
+- [x] Written for the GitHub mirror (0.8.0), the way forgejo-github-bridge presents
+      itself: the header with the purpose in bold, release and licence badges and a
+      line of links; the skeleton why · how it works · features · quick start ·
+      contributing · licence; CONTRIBUTING (Forgejo, mirror, bridge) and SECURITY.md;
+      `github` and `license` in `metapatrol.json`. Nothing links into the private network.
 - [x] Brand levels in the identity document (section 3): 0 repository, 1 tool with a
       UI, 2 product with its own icon (exception, derived from the lattice).
 - [x] Tried on copies of steward and mcp-gateway.
-- [ ] Two existing repositories use it (needs changes in those repositories).
+- [x] Two existing repositories use it: engram, and forgejo-github-bridge (which gave
+      up its own logo for the project lockup). forge-operator followed, in its
+      `develop` until its next release.
 
-Open, found on the way: **mcp-gateway already has its own logo** (`docs/images/logo.svg`),
-and steward its own palette. Either is a level-2 decision or moves to the project lockup.
+Still open: mcp-gateway's README is not on the blueprint yet (its console is; it has no
+logo of its own any more), and steward keeps its own palette — a level-2 decision, or
+it moves to the project lockup.
 
-Done when: two existing repositories use the generated assets and README structure.
+**Done**: engram and forgejo-github-bridge use the generated assets and README structure.
 
 ## phase 4 — `@metapatrol/ng`
 
@@ -235,10 +243,10 @@ confirm button and utilities were in use there first.
 - [x] `@metapatrol/style` gained the plain controls: `mp-btn` (+ primary, danger,
       ghost), `mp-input`, `mp-field-label`, `mp-field-error`, `mp-panel-head`/`-body`/
       `-note`, `mp-page-title`, `mp-link`, `mp-table`.
-- [x] `examples/angular-tailwind` is built on the shell (two routes); `apps/preview`
+- [x] `examples/angular-tailwind` is built on the shell (overview, a list, a detail page, settings); `apps/preview`
       uses the mark, code blocks and panels, and shows the components.
 - [x] Released with the other packages in one version.
-- [ ] engram moves from its own shell to `mp-app-shell` (in engram).
+- [x] engram moves from its own shell to `mp-app-shell` (engram 1.5.0).
 - [x] What engram and mcp-gateway each had a copy of, merged: `mpQueryParams`,
       `mp-sort` and the sort/search functions, `mp-list-search`, `mp-time` and the time
       formats, `mp-load-state` and `describeError`, `count`/`plural`/`bytes`.
@@ -247,10 +255,19 @@ confirm button and utilities were in use there first.
       `mp-detail-title`.
 - [x] Separate entry points with optional peers: `@metapatrol/ng/code-viewer`
       (CodeMirror, JSON and YAML) and `@metapatrol/ng/markdown` (markdown-it).
-- [ ] engram and mcp-gateway replace their copies with the library (in those repositories).
+- [x] engram and mcp-gateway replace their copies with the library (engram 1.5.0,
+      mcp-gateway 1.10.0, which also moved to the metapatrol look). What the move showed
+      went back into the library:
+  - 0.5.0: component defaults in the `components` layer, so utilities on the element
+    win; `mp-notice` tones `ok` and `neutral`; `mp-load-state` for a 403
+    (`forbiddenHint`), a 404 without a name, and a way back
+  - 0.6.0: `mpTip` (pills and conditions explain themselves on keyboard focus too),
+    counts on navigation items, RFC 9457 problem details in `describeError`, condition
+    helpers that keep the caller's type
+  - 0.7.0: `mp-page-header`, the top of a page, from engram
 - [ ] Next when two apps need them: toasts, empty state, form field wrapper.
 
-Done when: one production Angular app uses `@metapatrol/ng` and the docs site is live.
+**Done**: engram and mcp-gateway run on `@metapatrol/ng`, and the brand site is live.
 
 ## phase 5 — React (on demand)
 
@@ -270,11 +287,12 @@ the shadcn mapping and `@metapatrol/brand`.
 
 | question | status |
 |---|---|
-| public npmjs or Forgejo registry (or both) | **answered**: Forgejo now, npmjs later; see *registry* in phase 0 |
-| are the org's Forgejo packages readable without a token? | open; decides whether consumers need a read token in CI |
+| public npmjs or Forgejo registry (or both) | **answered**: Forgejo, and GitHub Packages from the GitHub mirror since 0.6.1; npmjs later; see *registry* in phase 0 |
+| are the org's Forgejo packages readable without a token? | **answered**: no (401 without one); consumers read with a token, CI with `AUTOMATION_TOKEN` |
 | Tailwind v3 still in use anywhere? | **answered**: no. steward and timemachine-go use Tailwind 4.3; eventstore-ui and timemachine-ui use none. v4 only |
 | Angular version range to support | Angular 22 (steward, timemachine-go) and 19 (eventstore-ui, timemachine-ui) are in use. Default: 22 and later; the 19 apps get `style` without `ng` until they upgrade |
 | Angular Material | used by timemachine-ui (Angular 19). Default: no Material mapping; revisit if that app adopts the brand |
-| products with their own look | steward has its own palette (brass accent, Archivo/Spectral). Decide before phase 3 whether products may keep a product accent or move to signal cyan |
+| products with their own look | mcp-gateway gave up its own (IBM Plex, blue) for the metapatrol look in 1.10.0. steward keeps its palette (brass accent, Archivo/Spectral) until decided: a product accent, or signal cyan |
+| light theme's subtle text at 4.5:1 | open: `fg-subtle` meets the 3:1 the tokens require; engram overrides it to 4.5:1 (`#5f6b78`) for small text. Raise the token, or keep the rule |
 | exact light-theme values | **answered**: agreed 2026-09-28, see `tokens/` |
-| docs site hosting | static build on the existing forge pages / CDN |
+| docs site hosting | **answered**: the Garage bucket `brand` at https://brand.metapatrol.local (behind the forge's login), with the shell preview at `/shell/` and the assets at `/assets/<version>/` |

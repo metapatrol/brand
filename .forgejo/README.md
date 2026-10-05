@@ -79,9 +79,9 @@ the GitHub release with the changelog section and the assets zip — for builds
 outside the network, such as the consoles' own GitHub mirrors. Forgejo ignores
 `.github/`, GitHub ignores `.forgejo/`; the forge holds no GitHub token.
 
-The mirror does not sync on every commit: after a release, sync it (repository
-settings → Mirror settings → Synchronize now) or wait for its interval. Tags
-from before 0.6.1 carry no `packages.yml` and so are not on GitHub Packages.
+The mirror is declared with the platform's configuration, not made by hand
+here, and pushes on every commit, so a release tag reaches GitHub on its own.
+Tags from before 0.6.1 carry no `packages.yml` and so are not on GitHub Packages.
 A repository that reads the packages there with its `GITHUB_TOKEN` needs read
 access under each package's *Manage Actions access* — a setting GitHub has no
 API for.

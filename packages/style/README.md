@@ -78,6 +78,27 @@ Plain classes, with or without Tailwind:
 
 `data-status`: `success`, `warning`, `error`, `info`, `active`; none means idle.
 
+All of them, in the `components` layer, so Tailwind utilities override them:
+
+| class | for |
+|---|---|
+| `mp-panel`, `mp-panel-flush`, `mp-panel-head`, `mp-panel-body`, `mp-panel-note` | the basic surface; flush with a head, a body and a note at the foot |
+| `mp-label`, `mp-label-index` | section labels, "01  DEPLOYMENT" |
+| `mp-page-title` | a page's `<h1>` |
+| `mp-kv` | key–value lists (`<dl>`) |
+| `mp-status` | a coloured dot and its text (`data-status`) |
+| `mp-pill` | a state as a pill (`data-tone`: `ok`, `warn`, `bad`, `info`, `neutral`) |
+| `mp-notice` | what is wrong or worth knowing, above the rest (`data-tone`: `warn`, `bad`, `info`, `ok`, `neutral`) |
+| `mp-chip`, `mp-chip-active` | filters and tags; `aria-pressed="true"` fills it |
+| `mp-btn`, `mp-btn-primary`, `mp-btn-danger`, `mp-btn-ghost` | buttons |
+| `mp-input`, `mp-field-label`, `mp-field-error` | form fields (`aria-invalid="true"` marks an error) |
+| `mp-link` | a link that reads as an identifier |
+| `mp-table`, `mp-num`, `mp-row-link` | data tables, numeric cells, clickable rows |
+| `mp-markdown` | rendered Markdown in the console's type |
+| `mp-tip` | a tooltip placed on the page (what `@metapatrol/ng`'s `mpTip` renders) |
+| `mp-namespace`, `mp-namespace-org`, `mp-namespace-project` | "metapatrol / project" |
+| `mp-mark-structure`, `mp-mark-signal` | the parts of an inline mark, coloured by the theme |
+
 ## spartan/ui (Angular) and shadcn/ui (React)
 
 ```css

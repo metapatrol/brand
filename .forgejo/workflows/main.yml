@@ -4,7 +4,7 @@
 #   config, secret-scan ──> verify ──┬─> semantic-release ──> carry to develop
 #                                   └─> site
 #
-# semantic-release writes CHANGELOG.md, sets the version on all four published
+# semantic-release writes CHANGELOG.md, sets the version on all five published
 # packages (scripts/set-version.mjs, one version for all), commits
 # `chore: release vX.Y.Z`, tags `vX.Y.Z` and dispatches release.yml, which
 # publishes. Publishing is not done here: a tag can be released again, or by

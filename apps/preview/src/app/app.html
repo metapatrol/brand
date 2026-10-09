@@ -12,6 +12,7 @@
       <a class="text-fg-muted no-underline hover:text-fg" href="#patterns">patterns</a>
       <a class="text-fg-muted no-underline hover:text-fg" href="#use">use</a>
       <a class="text-fg-muted no-underline hover:text-fg" href="#angular">angular</a>
+      <a class="text-fg-muted no-underline hover:text-fg" href="#console">console</a>
       <a class="text-fg-muted no-underline hover:text-fg" href="shell/">shell ↗</a>
       <a class="text-fg-muted no-underline hover:text-fg" href="#downloads">downloads</a>
     </nav>
@@ -273,7 +274,7 @@
         <mp-status status="active">active</mp-status>
         <mp-status>idle</mp-status>
       </div>
-      <p mpPanelNote><code>mp-app-shell</code> frames a whole console: <a href="shell/">try the shell preview</a> (fold it, switch the theme, narrow the window).</p>
+      <p mpPanelNote><code>mp-app-shell</code> frames a whole console: <a href="shell/">try the shell preview</a> (fold it, switch the theme, narrow the window, sign out from the account).</p>
     </mp-panel>
     <mp-panel index="11" title="two-step action">
       <mp-confirm-button danger question="Delete the environment?" confirmLabel="Delete" (confirmed)="deleted.set(deleted() + 1)">
@@ -283,8 +284,43 @@
     </mp-panel>
   </section>
 
+  <!-- console parts -->
+  <section id="console" class="grid gap-4 md:grid-cols-2">
+    <mp-panel index="12" title="states">
+      <p class="mb-3 text-sm text-fg-muted">Pills say what a thing is in; the tip is on hover and on keyboard focus.</p>
+      <div class="flex flex-wrap gap-2">
+        <mp-pill tone="ok" tip="Ready since 2m">Serving</mp-pill>
+        <mp-pill tone="warn" tip="Only passes on trouble: the backend engram does not answer">ServerUnavailable</mp-pill>
+        <mp-pill tone="bad" tip="The image is not in the allowed registries">InvalidImage</mp-pill>
+        <mp-pill tone="info">Reconciling</mp-pill>
+        <mp-pill tone="neutral" tip="Not reported yet">Unknown</mp-pill>
+      </div>
+      <p class="mt-5 mb-3 text-sm text-fg-muted">Notices say what is wrong, above everything else on a page.</p>
+      <div class="grid gap-2">
+        <mp-notice tone="bad">The gateway does not answer: 503 · upstream connect error.</mp-notice>
+        <mp-notice tone="warn">2 servers are not ready.</mp-notice>
+        <mp-notice tone="info">Discovery runs every minute.</mp-notice>
+        <mp-notice tone="ok">Saved.</mp-notice>
+        <mp-notice tone="neutral">Signed out.</mp-notice>
+      </div>
+    </mp-panel>
+    <mp-panel index="13" title="page parts">
+      <p class="mb-3 text-sm text-fg-muted">The top of a page: its title, a note beside it, its actions.</p>
+      <div class="rounded-md border border-line p-4">
+        <mp-page-header class="mb-0" title="Memories" note="1 204">
+          <button type="button" class="mp-btn">Find similar</button>
+        </mp-page-header>
+      </div>
+      <p mpPanelNote>
+        In the shell preview: <a href="shell/#/servers">a list</a> with search and sort in the URL, conditions and
+        navigation counts with their tips; <a href="shell/#/servers/memory-engram">a detail page</a> with the code
+        viewer and Markdown; <a href="shell/#/sign-in">the sign-in page</a>, without the shell.
+      </p>
+    </mp-panel>
+  </section>
+
   <section id="downloads" class="mp-panel">
-    <p class="mp-label"><span class="mp-label-index">12</span>downloads</p>
+    <p class="mp-label"><span class="mp-label-index">14</span>downloads</p>
     <p class="mb-4 text-sm text-fg-muted">
       Every file of <code>&#64;metapatrol/brand</code>. The marks are not open source: use them unchanged, see the <a href="brand/LICENSE.md">licence</a>.
     </p>

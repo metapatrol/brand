@@ -1,1 +1,6 @@
 @import '@metapatrol/style/tailwind.css';
+
+/* the sticky header covers the top of a section jumped to from its nav */
+html {
+  scroll-padding-top: 4.5rem;
+}

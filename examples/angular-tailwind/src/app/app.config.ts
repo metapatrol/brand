@@ -18,6 +18,8 @@ export const appConfig: ApplicationConfig = {
         // loaded when it is opened, not with the application
         { path: 'servers/:name', loadComponent: () => import('./pages/server').then((m) => m.ServerPage), title: 'server' },
         { path: 'settings', component: Settings, title: 'settings' },
+        // stands alone, without the shell: see App
+        { path: 'sign-in', loadComponent: () => import('./pages/sign-in').then((m) => m.SignInPage), title: 'sign in', data: { bare: true } },
       ],
       ...routingFeatures,
     ),

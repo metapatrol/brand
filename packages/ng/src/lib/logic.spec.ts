@@ -1,3 +1,4 @@
+import { isRoute, safeReturnTo } from './return-to';
 import { HttpErrorResponse } from '@angular/common/http';
 import { conditionRank, conditionTone, firstProblem, healthy } from './conditions';
 import { describeError, isNotFound } from './errors';
@@ -118,5 +119,26 @@ describe('conditions', () => {
     expect(healthy(cs, ['Valid', 'Ready'])).toBe(false);
     expect(healthy(cs, ['Missing'])).toBe(false);
     expect(firstProblem(cs, ['Valid', 'Ready'])?.reason).toBe('NoBackend');
+  });
+});
+
+describe('safeReturnTo', () => {
+  it('keeps a route of the console, with its query', () => {
+    expect(safeReturnTo('skills/go')).toBe('skills/go');
+    expect(safeReturnTo('/personas/architect/edit?x=1#y')).toBe('personas/architect/edit?x=1#y');
+  });
+
+  it('falls back for nothing, other origins and the sign-in pages', () => {
+    for (const bad of [null, '', '/', '//evil.example/x', 'https://evil.example', 'javascript:alert(1)', '/\\evil.example', 'sign-in', '/sign-in?returnTo=x', 'callback?code=1']) {
+      expect(safeReturnTo(bad)).toBe('overview');
+    }
+  });
+
+  it('takes another fallback and other pages to leave out', () => {
+    expect(safeReturnTo(null, { fallback: 'memories' })).toBe('memories');
+    expect(safeReturnTo('login/x', { exclude: ['login'] })).toBe('overview');
+    expect(safeReturnTo('sign-in', { exclude: ['login'] })).toBe('sign-in');
+    expect(isRoute('sign-in/oidc?x=1', 'sign-in')).toBe(true);
+    expect(isRoute('sign-inside', 'sign-in')).toBe(false);
   });
 });

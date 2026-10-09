@@ -32,6 +32,9 @@ const ICONS = [
   "copy",
   "check",
   "log-out",
+  "log-in",
+  "eye",
+  "eye-off",
   "info",
   "external-link",
 ];

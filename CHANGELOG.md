@@ -1,3 +1,10 @@
+# [0.9.0](https://github.com/metapatrol/brand/compare/v0.8.1...v0.9.0) (2026-10-09)
+
+
+### Features
+
+* **ng:** the sign-in page, from soulforge ([54ced20](https://github.com/metapatrol/brand/commit/54ced209b50d42f8a4b884e4cba45b1f2bd37289))
+
 ## [0.8.1](https://github.com/metapatrol/brand/compare/v0.8.0...v0.8.1) (2026-10-05)
 
 

@@ -1,5 +1,5 @@
 import { Component, computed, effect, signal } from '@angular/core';
-import { MpCodeBlock, MpConfirmButton, MpMark, MpPanel, MpPanelNote, MpStatus } from '@metapatrol/ng';
+import { MpCodeBlock, MpConfirmButton, MpMark, MpNotice, MpPageHeader, MpPanel, MpPanelNote, MpPill, MpStatus } from '@metapatrol/ng';
 import tokens from '@metapatrol/tokens/tokens.json';
 
 type Theme = 'system' | 'dark' | 'light';
@@ -48,7 +48,7 @@ const roleOf = (key: string) => key.replace(/^color\./, '').replaceAll('.', '-')
 
 @Component({
   selector: 'app-root',
-  imports: [MpMark, MpCodeBlock, MpConfirmButton, MpPanel, MpPanelNote, MpStatus],
+  imports: [MpMark, MpCodeBlock, MpConfirmButton, MpNotice, MpPageHeader, MpPanel, MpPanelNote, MpPill, MpStatus],
   templateUrl: './app.html',
 })
 export class App {

@@ -60,6 +60,32 @@ What the shell and the theme remember (folded sidebar, chosen theme) goes to
 `localStorage` under `mp.*`; `provideMetapatrol({ storagePrefix: 'engram' })`
 changes the prefix.
 
+## the sign-in page
+
+A console's sign-in stands alone, without the shell: give its route
+`data: { bare: true }` and let the root component render a bare
+`<router-outlet />` for such routes instead of `mp-app-shell` (the Angular
+example does). The page brings the frame; how the console signs in stays its own.
+
+```html
+<mp-sign-in project="soulforge" subtitle="Sign in to the library">
+  <button class="mp-btn-primary w-full" (click)="sso()"><mp-icon name="log-in" /> Sign in with SSO</button>
+  <mp-sign-in-divider />
+  <form (submit)="$event.preventDefault(); submit()">
+    <label class="mp-field-label" for="token">Token</label>
+    <mp-secret-input inputId="token" [(value)]="token" [invalid]="!!error()" describedBy="token-error" />
+  </form>
+  <ng-template mpSignInFooter><a class="mp-link" routerLink="/overview">Continue without signing in</a></ng-template>
+</mp-sign-in>
+```
+
+| part | |
+|---|---|
+| `<mp-sign-in project subtitle>` | the page: theme switch, mark, `metapatrol / <project>`, a line under it, the content in a panel, `mpSignInFooter` under the panel |
+| `<mp-sign-in-divider>` | the "or" between two ways of signing in |
+| `<mp-secret-input inputId [(value)]>` | a token or key, hidden as it is typed, with a button to show it (`what` names it for that button) |
+| `safeReturnTo(raw, { fallback, exclude })` | the `?returnTo=` to go on to afterwards: a route of the console only — no other origin, no scheme, not the sign-in pages |
+
 ## components
 
 | component | |

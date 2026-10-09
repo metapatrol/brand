@@ -1,28 +1,54 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { filter, map } from 'rxjs';
 import { conditionTone, firstProblem, MpAppShell, MpNavBadge, MpNavGroup, MpShellAccount, MpShellStatus, MpStatus } from '@metapatrol/ng';
 import { SERVERS } from './pages/servers-data';
 
 /** The whole frame is one component from @metapatrol/ng; the pages are routes. */
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MpAppShell, MpShellAccount, MpShellStatus, MpStatus],
+  imports: [RouterOutlet, RouterLink, MpAppShell, MpShellAccount, MpShellStatus, MpStatus],
   template: `
+    <!-- a page with route data bare (the sign-in) stands alone, without the shell -->
+    @if (bare()) {
+      <router-outlet />
+    } @else {
     <mp-app-shell project="angular-tailwind" [nav]="nav" home="/overview">
       <ng-template mpShellAccount>
-        <span class="flex items-center gap-2 rounded-full border border-line bg-surface py-0.5 pr-3 pl-0.5 text-sm">
+        <a
+          routerLink="/sign-in"
+          [queryParams]="{ signedOut: 1 }"
+          title="Sign out"
+          class="flex items-center gap-2 rounded-full border border-line bg-surface py-0.5 pr-3 pl-0.5 text-sm text-fg no-underline hover:border-line-strong"
+        >
           <span class="grid size-7 place-items-center rounded-full bg-signal-wash font-mono text-xs text-signal-fg">D</span>
           denis
-        </span>
+        </a>
       </ng-template>
       <ng-template mpShellStatus let-collapsed>
         <mp-status status="success">{{ collapsed ? '' : 'healthy' }}</mp-status>
       </ng-template>
       <router-outlet />
     </mp-app-shell>
+    }
   `,
 })
 export class App {
+  private readonly route = inject(ActivatedRoute);
+  /** Whether the page on screen asks to stand alone (route data bare). */
+  protected readonly bare = toSignal(
+    inject(Router).events.pipe(
+      filter((e) => e instanceof NavigationEnd),
+      map(() => {
+        let r = this.route.snapshot;
+        while (r.firstChild) r = r.firstChild;
+        return !!r.data['bare'];
+      }),
+    ),
+    { initialValue: false },
+  );
+
   protected readonly nav: MpNavGroup[] = [
     {
       label: 'deployments',

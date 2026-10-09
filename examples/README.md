@@ -6,7 +6,7 @@ cannot drift from the packages.
 
 | example | stack | shows |
 |---|---|---|
-| [`angular-tailwind`](angular-tailwind) | Angular 22, Tailwind CSS 4 (`@tailwindcss/postcss`, set up by `ng new --style=tailwind`), `@metapatrol/ng` | a console the way engram and mcp-gateway are built: `mp-app-shell` with navigation counts, a page header, a list with search and sort in the URL, conditions, notices, a detail page with the code viewer and Markdown, a two-step action — and the one-import Tailwind integration underneath. Its static build is the shell preview on the brand site (`make shell-preview`) |
+| [`angular-tailwind`](angular-tailwind) | Angular 22, Tailwind CSS 4 (`@tailwindcss/postcss`, set up by `ng new --style=tailwind`), `@metapatrol/ng` | a console the way engram and mcp-gateway are built: `mp-app-shell` with navigation counts, a page header, a list with search and sort in the URL, conditions, notices, a detail page with the code viewer and Markdown, a two-step action, a sign-in page without the shell (the account pill signs out) — and the one-import Tailwind integration underneath. Its static build is the shell preview on the brand site (`make shell-preview`) |
 | [`react-tailwind`](react-tailwind) | React 19, Vite 8, Tailwind CSS 4 (`@tailwindcss/vite`) | the same, plus the shadcn/ui mapping: a button written with shadcn's variable names renders in the metapatrol look |
 
 ```sh

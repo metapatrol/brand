@@ -45,7 +45,7 @@ jobs:
   validate:
     runs-on: docker
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/checkout@v7
         with:
           ref: ${{ inputs.tag || github.ref_name }}
       - name: The tag is a version, and every package carries it
@@ -65,7 +65,7 @@ jobs:
     needs: validate
     runs-on: docker
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/checkout@v7
         with:
           ref: ${{ inputs.tag || github.ref_name }}
       - uses: https://data.forgejo.org/actions/setup-node@v4
@@ -83,7 +83,7 @@ jobs:
     env:
       AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/checkout@v7
         with:
           ref: ${{ inputs.tag || github.ref_name }}
       - uses: https://data.forgejo.org/actions/setup-node@v4
@@ -159,7 +159,7 @@ jobs:
     env:
       AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/checkout@v7
         with:
           ref: ${{ inputs.tag || github.ref_name }}
       - name: Create the release and attach the assets
@@ -220,7 +220,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_KEY }}
       S3_ENDPOINT: ${{ vars.S3_ENDPOINT }}
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/checkout@v7
         with:
           ref: ${{ inputs.tag || github.ref_name }}
       - uses: https://data.forgejo.org/actions/setup-node@v4

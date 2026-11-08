@@ -1,3 +1,13 @@
+# [0.10.0](https://github.com/metapatrol/brand/compare/v0.9.0...v0.10.0) (2026-11-08)
+
+
+### Features
+
+* **ng,style:** the plain shell, from websearch and webfetch ([f9d03b6](https://github.com/metapatrol/brand/commit/f9d03b638d74cc30e52e77540f6ebcf2ca1dd924))
+* **ng:** an action beside a nav group's label ([3700a76](https://github.com/metapatrol/brand/commit/3700a76dfe94919f9e94d7d310167d53dc586730)), closes [#65](https://github.com/metapatrol/brand/issues/65)
+* **renovate:** a preset that keeps the metapatrol packages in one pull request ([6734d5a](https://github.com/metapatrol/brand/commit/6734d5ad1051cb9676e370956ecdfe8f62c29c68))
+* **tokens,style:** subtle text at 4.5:1, field labels in the reading face ([3248712](https://github.com/metapatrol/brand/commit/3248712a68d13ca12a3ada23b1b434e61dae6b6e)), closes [#5F6B78](https://github.com/metapatrol/brand/issues/5F6B78) [#5F6B78](https://github.com/metapatrol/brand/issues/5F6B78) [#7A8896](https://github.com/metapatrol/brand/issues/7A8896)
+
 # [0.9.0](https://github.com/metapatrol/brand/compare/v0.8.1...v0.9.0) (2026-10-09)
 
 

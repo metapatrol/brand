@@ -205,7 +205,7 @@ Applications use these semantic roles, never the raw values.
 | `line-strong` | `#5B6776` | `#748291` | borders of inputs and controls |
 | `fg` | `#E6EDF3` | `#171D25` | primary text |
 | `fg-muted` | `#9AA7B4` | `#4A5563` | secondary text, labels, metadata |
-| `fg-subtle` | `#748291` | `#748291` | placeholders, disabled, non-essential text |
+| `fg-subtle` | `#7A8896` | `#5F6B78` | placeholders, disabled, supporting text; at least 4.5:1 on every surface, as it is mostly small |
 | `signal` | `#00E5FF` | `#00E5FF` | signal as fill: active state, selection |
 | `signal-fg` | `#00E5FF` | `#00707F` (petrol) | signal as text or line: links, focus rings |
 | `on-signal` | `#050607` | `#050607` | text on a signal fill |
@@ -252,6 +252,10 @@ Use for:
 - metadata
 - technical labels
 - small section headings where a systems / instrument-panel feel is appropriate
+
+A form field's label is not one of them: it names a thing for whoever fills the
+form, so it is set in Inter, as written (`mp-field-label`). The section label
+(`mp-label`, "01  DEPLOYMENT") stays mono capitals: it is structure.
 
 The contrast between Inter and JetBrains Mono is part of the identity: human-readable interface plus machine-readable system layer.
 

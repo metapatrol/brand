@@ -164,12 +164,12 @@
   .mp-input:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--mp-signal-fg) 40%, transparent); }
   .mp-input[aria-invalid="true"] { border-color: var(--mp-error); }
   .mp-input[aria-invalid="true"]:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--mp-error) 40%, transparent); }
+  /* a field's label names a thing: in the reading face, as written — unlike
+     mp-label, the section label, which is structure and stays mono capitals */
   .mp-field-label {
     display: block;
     margin-bottom: 4px;
-    font: var(--mp-font-size-xs) / 1.4 var(--mp-font-family-mono);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font: var(--mp-font-weight-medium) var(--mp-font-size-sm) / 1.4 var(--mp-font-family-sans);
     color: var(--mp-fg-muted);
   }
   .mp-field-error {

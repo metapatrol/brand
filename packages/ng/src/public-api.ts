@@ -11,6 +11,8 @@ export * from './lib/mark';
 export * from './lib/namespace';
 export * from './lib/page-header';
 export * from './lib/panel';
+export * from './lib/plain-shell';
+export * from './lib/charts';
 export * from './lib/status';
 export * from './lib/theme';
 export * from './lib/theme-toggle';

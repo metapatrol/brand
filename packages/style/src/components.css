@@ -352,3 +352,90 @@
   .mp-markdown hr { margin: 20px 0; }
   .mp-markdown img { max-width: 100%; }
 }
+
+/* The plain shell's furniture and figures, lifted from the websearch and
+   webfetch consoles. */
+@layer components {
+  /* a link that stays out of the way until pointed at: footers, hints */
+  .mp-quiet-link {
+    padding: 0;
+    font: inherit;
+    color: var(--mp-fg-muted);
+    text-decoration: none;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+  .mp-quiet-link:hover,
+  .mp-quiet-link:focus-visible {
+    color: var(--mp-signal-fg);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  /* the page one is on, among quiet links */
+  .mp-here {
+    color: var(--mp-fg);
+    font-weight: var(--mp-font-weight-medium);
+  }
+
+  /* a figure at the top of a page: the number, what it counts, a word more
+     <div class="mp-tile"><span class="mp-tile-value">1 204</span>
+       <span class="mp-tile-label">requests</span><span class="mp-tile-sub">30 days</span></div> */
+  .mp-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    padding: 12px 14px;
+    background: var(--mp-surface);
+    border: 1px solid var(--mp-line);
+    border-radius: var(--mp-radius-lg);
+  }
+  .mp-tile-value {
+    font-size: 22px;
+    font-weight: var(--mp-font-weight-semibold);
+    line-height: 1.15;
+    color: var(--mp-fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .mp-tile-label { font-size: var(--mp-font-size-sm); color: var(--mp-fg-muted); }
+  .mp-tile-sub { font-size: var(--mp-font-size-xs); color: var(--mp-fg-subtle); }
+
+  /* a choice of few: buttons joined in one frame, the chosen one raised
+     (aria-pressed or aria-checked) */
+  .mp-segmented {
+    display: inline-flex;
+    flex-wrap: wrap;
+    padding: 2px;
+    background: var(--mp-surface-2);
+    border: 1px solid var(--mp-line);
+    border-radius: var(--mp-radius-md);
+  }
+  .mp-segmented > button {
+    padding: 3px 10px;
+    font: var(--mp-font-size-xs) / 1.5 var(--mp-font-family-sans);
+    color: var(--mp-fg-muted);
+    background: transparent;
+    border: 0;
+    border-radius: var(--mp-radius-sm);
+    cursor: pointer;
+  }
+  .mp-segmented > button:hover:not(:disabled) { color: var(--mp-fg); }
+  .mp-segmented > button:is([aria-pressed="true"], [aria-checked="true"]) {
+    color: var(--mp-fg);
+    background: var(--mp-surface);
+    box-shadow: 0 0 0 1px var(--mp-line);
+  }
+  .mp-segmented > button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* nothing to show yet, and what to do about it */
+  .mp-empty {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px 20px;
+    color: var(--mp-fg-muted);
+    border: 1px dashed var(--mp-line-strong);
+    border-radius: var(--mp-radius-lg);
+  }
+}

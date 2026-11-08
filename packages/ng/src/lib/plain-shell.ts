@@ -55,7 +55,7 @@ export class MpLockup {
     .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 32px; min-height: 44px; }
     .page { padding: 24px 0 48px; }
     .row, .page { padding-inline: 16px; }
-    @media (min-width: 40rem) { .row, .page { padding-inline: 24px; } }
+    @media (min-width: 64rem) { .row, .page { padding-inline: 24px; } }
     .home { text-decoration: none; border-radius: var(--mp-radius-md); }
     .home:focus-visible { outline: 2px solid var(--mp-signal-fg); outline-offset: 4px; }
   `,
@@ -109,7 +109,7 @@ export interface MpFooterLink {
       padding: 10px 16px; font-size: var(--mp-font-size-sm);
       background: var(--mp-surface); border-top: 1px solid var(--mp-line);
     }
-    @media (min-width: 40rem) { footer { padding-inline: 24px; } }
+    @media (min-width: 64rem) { footer { padding-inline: 24px; } }
     .version { color: var(--mp-fg-subtle); }
     .version span { font-family: var(--mp-font-family-mono); }
     nav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }

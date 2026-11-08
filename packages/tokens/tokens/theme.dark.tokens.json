@@ -9,7 +9,7 @@
     "line-strong":  { "$value": "{color.neutral.600}", "$description": "borders of inputs and controls (>= 3:1)" },
     "fg":           { "$value": "{color.neutral.100}", "$description": "primary text" },
     "fg-muted":     { "$value": "{color.neutral.400}", "$description": "secondary text, labels, metadata" },
-    "fg-subtle":    { "$value": "{color.neutral.500}", "$description": "placeholders, disabled, non-essential text" },
+    "fg-subtle":    { "$value": "{color.neutral.450}", "$description": "placeholders, disabled, non-essential text" },
     "signal":       { "$value": "{color.cyan.400}", "$description": "signal as fill: active state, selection, the mark's panel" },
     "signal-fg":    { "$value": "{color.cyan.400}", "$description": "signal as text or line: links, focus rings" },
     "on-signal":    { "$value": "{color.neutral.950}", "$description": "text on a signal fill" },

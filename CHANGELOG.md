@@ -1,3 +1,10 @@
+## [0.10.1](https://github.com/metapatrol/brand/compare/v0.10.0...v0.10.1) (2026-11-08)
+
+
+### Bug Fixes
+
+* **ng:** the plain shell's gutter widens at 64rem, as in websearch and webfetch ([2716a39](https://github.com/metapatrol/brand/commit/2716a39131136ca129fb127e5b4d8acd6607931e))
+
 # [0.10.0](https://github.com/metapatrol/brand/compare/v0.9.0...v0.10.0) (2026-11-08)
 
 

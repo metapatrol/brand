@@ -28,7 +28,7 @@ jobs:
   secret-scan:
     runs-on: docker
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/checkout@v7
       - name: Scan for committed credentials
         run: |
           M=""
@@ -40,7 +40,7 @@ jobs:
     needs: secret-scan
     runs-on: docker
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/checkout@v7
       - uses: https://data.forgejo.org/actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}

@@ -73,7 +73,7 @@ jobs:
     if: "${{ !startsWith(github.event.head_commit.message, 'chore: release v') }}"
     runs-on: docker
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/checkout@v7
       - name: Scan for committed credentials
         run: |
           M=""
@@ -85,7 +85,7 @@ jobs:
     needs: secret-scan
     runs-on: docker
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/checkout@v7
       - uses: https://data.forgejo.org/actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -104,7 +104,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_KEY }}
       S3_ENDPOINT: ${{ vars.S3_ENDPOINT }}
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/checkout@v7
       - uses: https://data.forgejo.org/actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -120,7 +120,7 @@ jobs:
     env:
       AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/checkout@v7
         with:
           # semantic-release reads the whole history to work out what the
           # commits since the last tag amount to.

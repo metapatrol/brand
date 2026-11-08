@@ -1,6 +1,6 @@
 {
   "name": "@metapatrol/style",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "private": false,
   "description": "metapatrol styles: fonts, light and dark themes, element defaults, patterns, Tailwind CSS v4 theme, shadcn/spartan mapping, Sass API.",
   "license": "Apache-2.0",
@@ -39,7 +39,7 @@
   "dependencies": {
     "@fontsource/inter": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
-    "@metapatrol/tokens": "^0.10.1"
+    "@metapatrol/tokens": "^0.11.0"
   },
   "peerDependencies": {
     "tailwindcss": "^4.3.0"

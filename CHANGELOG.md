@@ -1,3 +1,10 @@
+# [0.11.0](https://github.com/metapatrol/brand/compare/v0.10.1...v0.11.0) (2026-11-08)
+
+
+### Features
+
+* **style:** mp-segmented with checkboxes or radios inside labels ([264ccb1](https://github.com/metapatrol/brand/commit/264ccb113b194ad36ed3f4aeba961290be306dca))
+
 ## [0.10.1](https://github.com/metapatrol/brand/compare/v0.10.0...v0.10.1) (2026-11-08)
 
 

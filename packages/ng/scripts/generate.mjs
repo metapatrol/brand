@@ -38,6 +38,7 @@ const ICONS = [
   "info",
   "external-link",
   "plus",
+  "search",
 ];
 
 const pascal = (name) => name.replace(/(^|-)([a-z0-9])/g, (_, __, c) => c.toUpperCase());

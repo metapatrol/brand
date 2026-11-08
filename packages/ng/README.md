@@ -67,6 +67,41 @@ What the shell and the theme remember (folded sidebar, chosen theme) goes to
 `localStorage` under `mp.*`; `provideMetapatrol({ storagePrefix: 'engram' })`
 changes the prefix.
 
+## the plain shell
+
+For a tool that does one thing — a search, a fetch — and needs no sidebar, as
+websearch and webfetch are: a start page with the large lockup and its one
+field, every other page in a plain frame, and a thin footer under all of them.
+
+```html
+<!-- the root -->
+<main class="flex flex-1 flex-col"><router-outlet /></main>
+<mp-footer-bar project="websearch" [version]="version" [links]="links">
+  <button class="mp-quiet-link" (click)="signOut()">Sign out</button>
+</mp-footer-bar>
+
+<!-- the start page -->
+<h1><mp-lockup project="websearch" size="lg" /></h1>
+<form role="search">…</form>
+
+<!-- any other page -->
+<mp-frame project="websearch">
+  <form mpFrameTop role="search">…</form>
+  …
+</mp-frame>
+```
+
+| part | |
+|---|---|
+| `<mp-lockup project size="sm\|lg">` | the mark and `metapatrol / <project>` from the brand's components, compact or for a start page |
+| `<mp-frame project home>` | the compact lockup leading home, `[mpFrameTop]` beside it, the page under it |
+| `<mp-footer-bar project version [links]>` | the version, quiet links (`mp-quiet-link`, the current one `mp-here`), the content — language, account — and the theme switch |
+| `<mp-meter [value] [max]>` | a thin bar towards a limit: a warning from `warnAt` (¾), an error from `errorAt` (the limit) |
+| `<mp-day-bars label [days] [values] [lighter]>` | a measure per UTC day as bars, a lighter part at each foot (cached, say), the day and figures on hover; `shortDay()` writes a day |
+
+With `mp-tile`, `mp-segmented` and `mp-empty` from `@metapatrol/style`. The
+Angular example has both shells: `/plain` and `/plain/usage` in the shell preview.
+
 ## the sign-in page
 
 A console's sign-in stands alone, without the shell: give its route

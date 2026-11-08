@@ -2,17 +2,23 @@ import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
-import { conditionTone, firstProblem, MpAppShell, MpNavBadge, MpNavGroup, MpShellAccount, MpShellStatus, MpStatus } from '@metapatrol/ng';
+import { conditionTone, firstProblem, MpAppShell, MpFooterBar, MpFooterLink, MpNavBadge, MpNavGroup, MpShellAccount, MpShellStatus, MpStatus } from '@metapatrol/ng';
 import { SERVERS } from './pages/servers-data';
 
 /** The whole frame is one component from @metapatrol/ng; the pages are routes. */
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, MpAppShell, MpShellAccount, MpShellStatus, MpStatus],
+  imports: [MpFooterBar, RouterOutlet, RouterLink, MpAppShell, MpShellAccount, MpShellStatus, MpStatus],
   template: `
-    <!-- a page with route data bare (the sign-in) stands alone, without the shell -->
-    @if (bare()) {
+    <!-- route data picks the frame: bare (the sign-in) stands alone; plain is the other
+         shell, the page with the footer bar under it; everything else is the console -->
+    @if (frame() === 'bare') {
       <router-outlet />
+    } @else if (frame() === 'plain') {
+      <div class="flex min-h-dvh flex-col">
+        <main id="main" class="flex flex-1 flex-col"><router-outlet /></main>
+        <mp-footer-bar project="angular-tailwind" version="0.0.0" [links]="plainLinks" />
+      </div>
     } @else {
     <mp-app-shell project="angular-tailwind" [nav]="nav" home="/overview">
       <ng-template mpShellAccount>
@@ -36,18 +42,24 @@ import { SERVERS } from './pages/servers-data';
 })
 export class App {
   private readonly route = inject(ActivatedRoute);
-  /** Whether the page on screen asks to stand alone (route data bare). */
-  protected readonly bare = toSignal(
+  /** Which frame the page on screen asks for (route data bare or shell: 'plain'). */
+  protected readonly frame = toSignal(
     inject(Router).events.pipe(
       filter((e) => e instanceof NavigationEnd),
       map(() => {
         let r = this.route.snapshot;
         while (r.firstChild) r = r.firstChild;
-        return !!r.data['bare'];
+        return r.data['bare'] ? 'bare' : r.data['shell'] === 'plain' ? 'plain' : 'console';
       }),
     ),
-    { initialValue: false },
+    { initialValue: 'console' },
   );
+
+  protected readonly plainLinks: MpFooterLink[] = [
+    { path: '/plain', label: 'Search', exact: true },
+    { path: '/plain/usage', label: 'Usage' },
+    { path: '/overview', label: 'The console' },
+  ];
 
   protected readonly nav: MpNavGroup[] = [
     {
@@ -59,6 +71,10 @@ export class App {
         { path: '/servers', label: 'Servers', icon: 'external-link', badge: notReady() },
         { path: '/settings', label: 'Settings', icon: 'menu' },
       ],
+    },
+    {
+      label: 'other shells',
+      items: [{ path: '/plain', label: 'Plain shell', icon: 'search' }],
     },
   ];
 }

@@ -47,6 +47,9 @@ const cached = requests.map((r, i) => Math.round(r * (0.3 + 0.2 * Math.cos(i / 4
           <button type="button" [attr.aria-pressed]="range() === r" (click)="range.set(r)">{{ r }}</button>
         }
       </div>
+      <span mpFrameTop class="mp-segmented">
+        <label><input type="checkbox" [checked]="split()" (change)="split.set(!split())" />cached apart</label>
+      </span>
       <h1 class="mp-page-title mb-4">Usage</h1>
       <div class="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
         <div class="mp-tile"><span class="mp-tile-value">{{ total() }}</span><span class="mp-tile-label">requests</span><span class="mp-tile-sub">{{ range() }}</span></div>
@@ -55,7 +58,7 @@ const cached = requests.map((r, i) => Math.round(r * (0.3 + 0.2 * Math.cos(i / 4
         <div class="mp-tile"><span class="mp-tile-value">0</span><span class="mp-tile-label">cost in credit</span><span class="mp-tile-sub">mean latency 412 ms</span></div>
       </div>
       <section class="mp-panel mb-4">
-        <mp-day-bars label="Requests per day" [days]="shown().days" [values]="shown().requests" [lighter]="shown().cached" darkerLabel="asked" lighterLabel="cached" />
+        <mp-day-bars label="Requests per day" [days]="shown().days" [values]="shown().requests" [lighter]="split() ? shown().cached : []" darkerLabel="asked" lighterLabel="cached" />
       </section>
       <section class="mp-panel grid gap-2">
         <div class="flex justify-between text-sm"><span class="text-fg-muted">Requests today</span><span class="tabular-nums">812 of 1 000</span></div>
@@ -68,6 +71,7 @@ const cached = requests.map((r, i) => Math.round(r * (0.3 + 0.2 * Math.cos(i / 4
 export class PlainUsage {
   protected readonly ranges = ['7 days', '30 days'];
   protected readonly range = signal('30 days');
+  protected readonly split = signal(true);
   protected readonly shown = computed(() => {
     const n = this.range() === '7 days' ? 7 : 30;
     return { days: days.slice(-n), requests: requests.slice(-n), cached: cached.slice(-n) };

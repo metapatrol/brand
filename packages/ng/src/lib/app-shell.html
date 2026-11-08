@@ -35,7 +35,19 @@
     <nav id="mp-nav" aria-label="Main" class="nav" [class.open]="navOpen()">
       @for (group of nav(); track group.label) {
         <div class="group">
-          <p class="mp-label group-label">{{ group.label }}</p>
+          <div class="group-head">
+            <p class="mp-label group-label">{{ group.label }}</p>
+            @if (group.label && group.action; as action) {
+              <a
+                class="group-action"
+                [routerLink]="action.path"
+                [attr.aria-label]="action.label"
+                [title]="action.label"
+                (click)="navOpen.set(false)"
+                ><mp-icon [name]="action.icon || 'plus'"
+              /></a>
+            }
+          </div>
           <span class="group-rule" aria-hidden="true"></span>
           @for (item of group.items; track item.path) {
             <a

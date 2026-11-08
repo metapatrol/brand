@@ -56,6 +56,13 @@ not ready: `{ count: 2, tone: 'bad', tip: 'grep · Unreachable', label: 'not rea
 (`tone` `bad`, `warn` by default, `info`, `neutral`; folded, it is a dot on the
 icon). Give items an `icon` when the sidebar may fold.
 
+A group's `action` puts a small link beside its label — "+" to make one of its
+items: `{ label: 'Projects', action: { path: '/projects/new', label: 'New project' }, items }`
+(`icon` is `plus` by default). It is never shown as the current page, follows
+the label in reading order, closes the nav on a phone, and is hidden in the
+folded sidebar as the labels are; a group without a label shows none. Whether
+someone may use it stays the app's: leave `action` out.
+
 What the shell and the theme remember (folded sidebar, chosen theme) goes to
 `localStorage` under `mp.*`; `provideMetapatrol({ storagePrefix: 'engram' })`
 changes the prefix.

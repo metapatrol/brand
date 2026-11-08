@@ -16,7 +16,13 @@ import { MpAppShell, MpNavGroup, MpShellAccount, MpShellStatus } from './app-she
 class Host {
   nav: MpNavGroup[] = [
     { label: 'Memory', items: [{ path: '/overview', label: 'Overview', icon: 'info' }, { path: '/recall', label: 'Recall' }] },
-    { label: 'Operations', items: [{ path: '/system', label: 'System', badge: { count: 2, tone: 'bad', tip: 'grep · Unreachable', label: 'not ready' } }] },
+    {
+      label: 'Operations',
+      action: { path: '/system/new', label: 'New system' },
+      items: [{ path: '/system', label: 'System', badge: { count: 2, tone: 'bad', tip: 'grep · Unreachable', label: 'not ready' } }],
+    },
+    // no label, so no action either
+    { label: '', action: { path: '/x/new', label: 'New x', icon: 'info' }, items: [{ path: '/x', label: 'X' }] },
   ];
 }
 
@@ -26,7 +32,8 @@ function setDesktop(desktop: boolean) {
 }
 
 async function render() {
-  TestBed.configureTestingModule({ providers: [provideRouter([])] });
+  // any path resolves, so following a link in a test does not fail
+  TestBed.configureTestingModule({ providers: [provideRouter([{ path: '**', children: [] }])] });
   const fixture = TestBed.createComponent(Host);
   await fixture.whenStable();
   return fixture;
@@ -41,8 +48,8 @@ describe('MpAppShell', () => {
   it('renders the namespace, the grouped navigation and the projected content', async () => {
     const el: HTMLElement = (await render()).nativeElement;
     expect(el.querySelector('mp-namespace')?.textContent).toBe('metapatrol / engram');
-    expect([...el.querySelectorAll('.group-label')].map((g) => g.textContent)).toEqual(['Memory', 'Operations']);
-    expect([...el.querySelectorAll('a.item')].map((a) => a.getAttribute('href'))).toEqual(['/overview', '/recall', '/system']);
+    expect([...el.querySelectorAll('.group-label')].map((g) => g.textContent)).toEqual(['Memory', 'Operations', '']);
+    expect([...el.querySelectorAll('a.item')].map((a) => a.getAttribute('href'))).toEqual(['/overview', '/recall', '/system', '/x']);
     expect(el.querySelector('main#mp-main .page')?.textContent).toBe('content');
   });
 
@@ -85,6 +92,28 @@ describe('MpAppShell', () => {
     expect(badges.length).toBe(1);
     expect(badges[0].getAttribute('data-tone')).toBe('bad');
     expect(badges[0].textContent?.replace(/\s+/g, ' ').trim()).toBe('2 not ready');
+  });
+
+  it('puts a group action beside its label: a link, never current, closing the phone nav', async () => {
+    const fixture = await render();
+    const el: HTMLElement = fixture.nativeElement;
+    const actions = [...el.querySelectorAll<HTMLAnchorElement>('a.group-action')];
+    expect(actions.length).toBe(1);
+    const [action] = actions;
+    expect(action.getAttribute('href')).toBe('/system/new');
+    expect(action.getAttribute('aria-label')).toBe('New system');
+    expect(action.getAttribute('title')).toBe('New system');
+    expect(action.closest('.group-head')?.querySelector('.group-label')?.textContent).toBe('Operations');
+    expect(action.querySelector('mp-icon')).not.toBeNull();
+
+    setDesktop(false);
+    const shell = fixture.debugElement.children[0].componentInstance as MpAppShell;
+    shell.navOpen.set(true);
+    action.click();
+    // the router follows the link; let it finish before the test does
+    await fixture.whenStable();
+    expect(shell.navOpen()).toBe(false);
+    expect(action.classList).not.toContain('active');
   });
 
   it('has a skip link to the main content', async () => {

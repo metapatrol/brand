@@ -91,7 +91,7 @@ All of them, in the `components` layer, so Tailwind utilities override them:
 | `mp-notice` | what is wrong or worth knowing, above the rest (`data-tone`: `warn`, `bad`, `info`, `ok`, `neutral`) |
 | `mp-chip`, `mp-chip-active` | filters and tags; `aria-pressed="true"` fills it |
 | `mp-btn`, `mp-btn-primary`, `mp-btn-danger`, `mp-btn-ghost` | buttons |
-| `mp-input`, `mp-field-label`, `mp-field-error` | form fields (`aria-invalid="true"` marks an error) |
+| `mp-input`, `mp-field-label`, `mp-field-error` | form fields (`aria-invalid="true"` marks an error); a field's label is in the reading face as written, unlike the section label `mp-label` |
 | `mp-link` | a link that reads as an identifier |
 | `mp-table`, `mp-num`, `mp-row-link` | data tables, numeric cells, clickable rows |
 | `mp-markdown` | rendered Markdown in the console's type |

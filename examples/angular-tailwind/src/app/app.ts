@@ -64,6 +64,8 @@ export class App {
   protected readonly nav: MpNavGroup[] = [
     {
       label: 'deployments',
+      // the "+" beside the label: an action, not a place
+      action: { path: '/servers/new', label: 'New server' },
       items: [
         { path: '/overview', label: 'Overview', icon: 'info' },
         { path: '/servers', label: 'Servers', icon: 'external-link', badge: notReady() },

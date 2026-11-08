@@ -38,8 +38,8 @@
         "surface",
         "surface-2"
       ],
-      "min": 3,
-      "why": "non-essential text"
+      "min": 4.5,
+      "why": "subtle text is still text, mostly small (1.4.3)"
     },
     {
       "fg": [

@@ -37,6 +37,7 @@ const ICONS = [
   "eye-off",
   "info",
   "external-link",
+  "plus",
   "search",
 ];
 

@@ -14,6 +14,8 @@ export const appConfig: ApplicationConfig = {
         { path: '', pathMatch: 'full', redirectTo: 'overview' },
         { path: 'overview', component: Overview, title: 'overview' },
         { path: 'servers', component: Servers, title: 'servers' },
+        // before servers/:name, which would take "new" for a name
+        { path: 'servers/new', loadComponent: () => import('./pages/new-server').then((m) => m.NewServer), title: 'new server' },
         // the detail page brings the code viewer (CodeMirror) and Markdown:
         // loaded when it is opened, not with the application
         { path: 'servers/:name', loadComponent: () => import('./pages/server').then((m) => m.ServerPage), title: 'server' },

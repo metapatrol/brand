@@ -22,7 +22,7 @@ on:
 
 env:
   GIT_SSL_NO_VERIFY: "true"
-  NODE_VERSION: "24"
+  NODE_VERSION: "26"
   # From the runner, not hardcoded: the workflows are meant to be copied between
   # repositories without an edit. Nothing here is called FORGEJO_TOKEN; see
   # .forgejo/README.md.
@@ -73,7 +73,7 @@ jobs:
     if: "${{ !startsWith(github.event.head_commit.message, 'chore: release v') }}"
     runs-on: docker
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/checkout@v7
       - name: Scan for committed credentials
         run: |
           M=""
@@ -85,8 +85,8 @@ jobs:
     needs: secret-scan
     runs-on: docker
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
-      - uses: https://data.forgejo.org/actions/setup-node@v4
+      - uses: https://data.forgejo.org/actions/checkout@v7
+      - uses: https://data.forgejo.org/actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
       - run: make install
@@ -104,8 +104,8 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_KEY }}
       S3_ENDPOINT: ${{ vars.S3_ENDPOINT }}
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
-      - uses: https://data.forgejo.org/actions/setup-node@v4
+      - uses: https://data.forgejo.org/actions/checkout@v7
+      - uses: https://data.forgejo.org/actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
       - run: make install
@@ -120,12 +120,12 @@ jobs:
     env:
       AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/checkout@v7
         with:
           # semantic-release reads the whole history to work out what the
           # commits since the last tag amount to.
           fetch-depth: 0
-      - uses: https://data.forgejo.org/actions/setup-node@v4
+      - uses: https://data.forgejo.org/actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Decide and tag a version

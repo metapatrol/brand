@@ -121,6 +121,16 @@ component:
 Details: [packages/style](packages/style/README.md),
 [packages/ng](packages/ng/README.md); working code: [examples/](examples).
 
+**Keep them together** — the five packages are released in one version, and
+`@metapatrol/ng` needs the `@metapatrol/style` of its own release. With
+Renovate, extend the preset in [`renovate/metapatrol.json`](renovate/metapatrol.json)
+so they arrive in one pull request instead of one each, of which all but the
+first fail:
+
+```json
+{ "extends": ["config:recommended", "local>metapatrol/brand//renovate/metapatrol"] }
+```
+
 **A project repository** — `npx @metapatrol/brand-kit init` writes
 `metapatrol.json`, the project lockup `metapatrol / <name>`, a social preview,
 the favicon set and a README header, and — where there are none — a README

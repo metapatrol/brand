@@ -1,0 +1,12 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "For a repository that uses the metapatrol packages: extend it with \"local>metapatrol/brand//renovate/metapatrol\".",
+  "packageRules": [
+    {
+      "description": "One pull request for the @metapatrol packages: they are released together in one version, and @metapatrol/ng needs the @metapatrol/style of its own release (a peer dependency), so updated one by one, the lockfile of all but the first cannot be resolved.",
+      "matchPackageNames": ["@metapatrol/**"],
+      "groupName": "metapatrol packages",
+      "groupSlug": "metapatrol"
+    }
+  ]
+}

@@ -91,10 +91,14 @@ All of them, in the `components` layer, so Tailwind utilities override them:
 | `mp-notice` | what is wrong or worth knowing, above the rest (`data-tone`: `warn`, `bad`, `info`, `ok`, `neutral`) |
 | `mp-chip`, `mp-chip-active` | filters and tags; `aria-pressed="true"` fills it |
 | `mp-btn`, `mp-btn-primary`, `mp-btn-danger`, `mp-btn-ghost` | buttons |
-| `mp-input`, `mp-field-label`, `mp-field-error` | form fields (`aria-invalid="true"` marks an error) |
+| `mp-input`, `mp-field-label`, `mp-field-error` | form fields (`aria-invalid="true"` marks an error); a field's label is in the reading face as written, unlike the section label `mp-label` |
 | `mp-link` | a link that reads as an identifier |
 | `mp-table`, `mp-num`, `mp-row-link` | data tables, numeric cells, clickable rows |
 | `mp-markdown` | rendered Markdown in the console's type |
+| `mp-tile`, `mp-tile-value`, `mp-tile-label`, `mp-tile-sub` | a figure at the top of a page: the number, what it counts, a word more |
+| `mp-segmented` | a choice of few: joined buttons, the chosen one (`aria-pressed`/`aria-checked`) raised |
+| `mp-empty` | nothing to show yet, and what to do about it |
+| `mp-quiet-link`, `mp-here` | a link that stays out of the way until pointed at (footers, hints); the current one among them |
 | `mp-tip` | a tooltip placed on the page (what `@metapatrol/ng`'s `mpTip` renders) |
 | `mp-namespace`, `mp-namespace-org`, `mp-namespace-project` | "metapatrol / project" |
 | `mp-mark-structure`, `mp-mark-signal` | the parts of an inline mark, coloured by the theme |

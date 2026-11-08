@@ -56,9 +56,51 @@ not ready: `{ count: 2, tone: 'bad', tip: 'grep · Unreachable', label: 'not rea
 (`tone` `bad`, `warn` by default, `info`, `neutral`; folded, it is a dot on the
 icon). Give items an `icon` when the sidebar may fold.
 
+A group's `action` puts a small link beside its label — "+" to make one of its
+items: `{ label: 'Projects', action: { path: '/projects/new', label: 'New project' }, items }`
+(`icon` is `plus` by default). It is never shown as the current page, follows
+the label in reading order, closes the nav on a phone, and is hidden in the
+folded sidebar as the labels are; a group without a label shows none. Whether
+someone may use it stays the app's: leave `action` out.
+
 What the shell and the theme remember (folded sidebar, chosen theme) goes to
 `localStorage` under `mp.*`; `provideMetapatrol({ storagePrefix: 'engram' })`
 changes the prefix.
+
+## the plain shell
+
+For a tool that does one thing — a search, a fetch — and needs no sidebar, as
+websearch and webfetch are: a start page with the large lockup and its one
+field, every other page in a plain frame, and a thin footer under all of them.
+
+```html
+<!-- the root -->
+<main class="flex flex-1 flex-col"><router-outlet /></main>
+<mp-footer-bar project="websearch" [version]="version" [links]="links">
+  <button class="mp-quiet-link" (click)="signOut()">Sign out</button>
+</mp-footer-bar>
+
+<!-- the start page -->
+<h1><mp-lockup project="websearch" size="lg" /></h1>
+<form role="search">…</form>
+
+<!-- any other page -->
+<mp-frame project="websearch">
+  <form mpFrameTop role="search">…</form>
+  …
+</mp-frame>
+```
+
+| part | |
+|---|---|
+| `<mp-lockup project size="sm\|lg">` | the mark and `metapatrol / <project>` from the brand's components, compact or for a start page |
+| `<mp-frame project home>` | the compact lockup leading home, `[mpFrameTop]` beside it, the page under it |
+| `<mp-footer-bar project version [links]>` | the version, quiet links (`mp-quiet-link`, the current one `mp-here`), the content — language, account — and the theme switch |
+| `<mp-meter [value] [max]>` | a thin bar towards a limit: a warning from `warnAt` (¾), an error from `errorAt` (the limit) |
+| `<mp-day-bars label [days] [values] [lighter]>` | a measure per UTC day as bars, a lighter part at each foot (cached, say), the day and figures on hover; `shortDay()` writes a day |
+
+With `mp-tile`, `mp-segmented` and `mp-empty` from `@metapatrol/style`. The
+Angular example has both shells: `/plain` and `/plain/usage` in the shell preview.
 
 ## the sign-in page
 

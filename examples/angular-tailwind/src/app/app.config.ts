@@ -14,10 +14,15 @@ export const appConfig: ApplicationConfig = {
         { path: '', pathMatch: 'full', redirectTo: 'overview' },
         { path: 'overview', component: Overview, title: 'overview' },
         { path: 'servers', component: Servers, title: 'servers' },
+        // before servers/:name, which would take "new" for a name
+        { path: 'servers/new', loadComponent: () => import('./pages/new-server').then((m) => m.NewServer), title: 'new server' },
         // the detail page brings the code viewer (CodeMirror) and Markdown:
         // loaded when it is opened, not with the application
         { path: 'servers/:name', loadComponent: () => import('./pages/server').then((m) => m.ServerPage), title: 'server' },
         { path: 'settings', component: Settings, title: 'settings' },
+        // the other shell: a start page and a framed page, with the footer bar (see App)
+        { path: 'plain', loadComponent: () => import('./pages/plain').then((m) => m.PlainHome), title: 'plain shell', data: { shell: 'plain' } },
+        { path: 'plain/usage', loadComponent: () => import('./pages/plain').then((m) => m.PlainUsage), title: 'usage', data: { shell: 'plain' } },
         // stands alone, without the shell: see App
         { path: 'sign-in', loadComponent: () => import('./pages/sign-in').then((m) => m.SignInPage), title: 'sign in', data: { bare: true } },
       ],

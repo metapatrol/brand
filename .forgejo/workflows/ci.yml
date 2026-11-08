@@ -22,13 +22,13 @@ env:
   # The instance uses a private CA the runner may not carry.
   GIT_SSL_NO_VERIFY: "true"
   # Same Node as the Angular 22 applications that consume these packages.
-  NODE_VERSION: "24"
+  NODE_VERSION: "26"
 
 jobs:
   secret-scan:
     runs-on: docker
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://data.forgejo.org/actions/checkout@v7
       - name: Scan for committed credentials
         run: |
           M=""
@@ -40,8 +40,8 @@ jobs:
     needs: secret-scan
     runs-on: docker
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
-      - uses: https://data.forgejo.org/actions/setup-node@v4
+      - uses: https://data.forgejo.org/actions/checkout@v7
+      - uses: https://data.forgejo.org/actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
       # One step per target, so a failure names its stage.

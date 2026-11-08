@@ -42,6 +42,18 @@ export interface MpNavBadge {
 export interface MpNavGroup {
   label: string;
   items: MpNavItem[];
+  /** A small action beside the label, e.g. "+" to make one of the group's items. Not shown without a label. */
+  action?: MpNavAction;
+}
+
+/** A link beside a nav group's label: an action, never shown as the current page. */
+export interface MpNavAction {
+  /** Where it leads, like an item's path (routerLink). */
+  path: string;
+  /** What it does, e.g. "New project": its tooltip and accessible name. */
+  label: string;
+  /** A built-in icon or one registered with provideMpIcons(); "plus" by default. */
+  icon?: string;
 }
 
 /** The signed-in user or other account controls: <ng-template mpShellAccount>…</ng-template> */

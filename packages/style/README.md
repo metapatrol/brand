@@ -96,7 +96,7 @@ All of them, in the `components` layer, so Tailwind utilities override them:
 | `mp-table`, `mp-num`, `mp-row-link` | data tables, numeric cells, clickable rows |
 | `mp-markdown` | rendered Markdown in the console's type |
 | `mp-tile`, `mp-tile-value`, `mp-tile-label`, `mp-tile-sub` | a figure at the top of a page: the number, what it counts, a word more |
-| `mp-segmented` | a choice of few: joined buttons, the chosen one (`aria-pressed`/`aria-checked`) raised |
+| `mp-segmented` | a choice of few: joined buttons, the chosen one (`aria-pressed`/`aria-checked`) raised; or labels around hidden checkboxes or radios, the checked ones raised |
 | `mp-empty` | nothing to show yet, and what to do about it |
 | `mp-quiet-link`, `mp-here` | a link that stays out of the way until pointed at (footers, hints); the current one among them |
 | `mp-tip` | a tooltip placed on the page (what `@metapatrol/ng`'s `mpTip` renders) |

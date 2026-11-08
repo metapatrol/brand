@@ -427,6 +427,37 @@
     box-shadow: 0 0 0 1px var(--mp-line);
   }
   .mp-segmented > button:disabled { opacity: 0.4; cursor: not-allowed; }
+  /* or checkboxes and radios inside labels, the inputs hidden (but not from
+     the keyboard or a screen reader), the checked ones raised
+     <span class="mp-segmented"><label><input type="radio" name="r" checked />day</label>…</span> */
+  .mp-segmented > label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    font: var(--mp-font-size-xs) / 1.5 var(--mp-font-family-sans);
+    color: var(--mp-fg-muted);
+    border-radius: var(--mp-radius-sm);
+    cursor: pointer;
+    user-select: none;
+  }
+  .mp-segmented > label > input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .mp-segmented > label:hover:not(:has(input:disabled)) { color: var(--mp-fg); }
+  .mp-segmented > label:has(input:checked) {
+    color: var(--mp-fg);
+    background: var(--mp-surface);
+    box-shadow: 0 0 0 1px var(--mp-line);
+  }
+  .mp-segmented > label:has(input:focus-visible) { outline: 2px solid var(--mp-signal-fg); outline-offset: 1px; }
+  .mp-segmented > label:has(input:disabled) { cursor: default; }
 
   /* nothing to show yet, and what to do about it */
   .mp-empty {
